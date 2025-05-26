@@ -1,0 +1,235 @@
+Navbar - "Foto" z podmenu: Zmieniamy "Galeria" na "Foto" i dodajemy odpowiednie podmenu.
+Popupy do powiększania zdjęć w sliderach: Dodajemy to jako wymóg dla wszystkich galerii/sliderów.
+✂️ Projekt: SŁODKOLANDIA wita: Atrakcje Eventowe i Wynajem Sprzętu Imprezowego – Radom i okolice
+(Wynajem namiotów imprezowych, zjeżdżalni i zamków dmuchanych dla dzieci. Profesjonalna obsługa urządzeń do waty cukrowej, popcornu i fontann czekoladowych. Kompleksowa organizacja atrakcji na Twoją imprezę! ☎ +48 505-977-940)
+✅ Stack technologiczny
+Frontend Framework: React (z Vite)
+Stylowanie: TailwindCSS (dostosowane do estetyki zabawy, radości, profesjonalizmu eventowego)
+Routing: React Router DOM
+Multilingual: react-i18next (PL / EN - opcjonalnie, jeśli jest taka potrzeba)
+Formularz: HTML5 + React Hook Form + EmailJS/Formspree (do wysyłki zapytań ofertowych/rezerwacji)
+Popup / Modal: React Portals (z animacjami przez Framer Motion, wewnętrznym skrolowaniem dla opisów atrakcji). Dla powiększania zdjęć w galeriach/sliderach, wykorzystanie modala typu lightbox (np. z biblioteki yet-another-react-lightbox lub implementacja własna).
+Ikony: react-icons
+Responsywność: TailwindCSS (mobile-first)
+SEO & OpenGraph: react-helmet-async
+Tryb Dark/Light: useContext + localStorage (opcjonalnie, priorytetem jest jasny, energetyczny i czytelny wygląd)
+Dostępność (a11y): aria-labels, focus management, semantyczny HTML
+Obrazy: Format .avif + fallback .webp (optymalizacja dla szybkości i jakości wizualnej)
+Favicons: RealFaviconGenerator (na podstawie dostarczonego logo Słodkolandii). Implementacja analogiczna do projektu SUPER PUCUŚ:
+<!-- Klasyczne favicony -->
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+<!-- Favicony w formacie PNG o różnych rozmiarach -->
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+<!-- Favicon w formacie SVG dla przeglądarek wspierających wektory -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<!-- Ikona dla urządzeń Apple -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<!-- Plik manifestu aplikacji webowej -->
+<link rel="manifest" href="/site.webmanifest" />
+Use code with caution.
+Html
+Animacje: Framer Motion (dla subtelnych przejść, efektów przy najeżdżaniu, animacji modali i galerii)
+Hosting: Vercel / Netlify (rekomendowane dla projektów React z Vite, łatwy deployment statyczny)
+🧭 Struktura projektu
+/public
+  ├── favicons/                     # Folder na wszystkie pliki favicon
+  ├── images/
+  │   └── (ew. inne publiczne obrazy)
+  └── index.html
+/src
+  ├── assets/
+  │   ├── images/
+  │   │   ├── logo-slodkolandia.png   # Twoje logo
+  │   │   ├── atrakcje/               # Zdjęcia dla galerii atrakcji
+  │   │   │   ├── namioty/            # (np. namiot_5x10.avif, namiot_eventowy.webp)
+  │   │   │   ├── dmuchance/          # (np. zjezdzalnia_clown.avif, zamek_ksiezniczki.webp)
+  │   │   │   ├── wata_cukrowa/       # (np. wata_stanowisko.avif)
+  │   │   │   ├── popcorn/            # (np. popcorn_maszyna_event.webp)
+  │   │   │   ├── fontanny_czekoladowe/ # (np. fontanna_slodki_stol.webp)
+  │   │   │   └── realizacje_eventy/  # Ogólne zdjęcia z imprez, pokazujące różne atrakcje razem
+  │   │   └── hero/                   # Zdjęcia do sekcji Hero na stronie głównej
+  │   └── fonts/                      # Opcjonalnie, jeśli niestandardowe fonty lokalnie
+  ├── components/
+  │   ├── Navbar.jsx
+  │   ├── Footer.jsx
+  │   ├── LanguageSelector.jsx        # (Jeśli multilingual)
+  │   ├── ThemeToggle.jsx             # (Jeśli tryb Dark/Light)
+  │   ├── AttractionGallery.jsx       # Do wyświetlania galerii zdjęć atrakcji/realizacji (z funkcją lightbox)
+  │   ├── AttractionCard.jsx          # Karta atrakcji/usługi, wywołująca Modal z opisem
+  │   ├── Modal.jsx                   # Zaawansowany Modal z animacją i skrolowaniem (dla opisów)
+  │   ├── Lightbox.jsx                # Komponent do powiększania zdjęć (lub użycie biblioteki)
+  │   ├── CallToAction.jsx
+  │   ├── ScrollToTopButton.jsx
+  │   ├── CookieConsent.jsx
+  │   └── InquiryForm.jsx             # Formularz do zapytań/rezerwacji
+  ├── pages/
+  │   ├── Home.jsx
+  │   ├── ONas.jsx
+  │   ├── Oferta.jsx                  # Strona z listą kategorii atrakcji/usług
+  │   ├── Galeria.jsx                 # Strona z galerią realizacji/atrakcji w akcji (główna strona dla "Foto")
+  │   ├── Cennik.jsx                  # Strona z informacjami o cenach lub zasadach wyceny
+  │   ├── Kontakt.jsx
+  │   └── PolitykaPrywatnosci.jsx     # (Ważne przy formularzach)
+  ├── translations/                   # (Jeśli multilingual)
+  │   ├── pl.json
+  │   └── en.json
+  ├── App.jsx                         # Główny plik aplikacji z routingiem
+  ├── main.jsx                        # Punkt wejścia aplikacji React
+  └── i18n.js                         # (Jeśli multilingual) Konfiguracja react-i18next
+Use code with caution.
+📌 Funkcjonalności
+Navbar (Navbar.jsx)
+Logo: Twoje logo "SŁODKOLANDIA wita:".
+Linki nawigacyjne:
+Strona Główna (/)
+O Nas (/o-nas)
+Oferta (dropdown lub osobna strona /oferta):
+Namioty Imprezowe (link do /oferta#namioty lub /oferta/namioty)
+Dmuchane Atrakcje (link do /oferta#dmuchance lub /oferta/dmuchance)
+Sprzęt Gastronomiczny (link do /oferta#sprzet-gastro lub /oferta/sprzet-gastro)
+Foto (dropdown):
+Wszystkie (/galeria) - opcjonalnie, jeśli chcesz mieć ogólny widok
+Namioty (link do /galeria#foto-namioty)
+Dmuchańce (link do /galeria#foto-dmuchance)
+Wata Cukrowa (link do /galeria#foto-wata)
+Popcorn (link do /galeria#foto-popcorn)
+Fontanny Czekoladowe (link do /galeria#foto-fontanny)
+Cennik / Wycena (/cennik)
+Kontakt (/kontakt)
+Numer telefonu: Wyświetlany i klikalny: <a href="tel:+48505977940" className="font-semibold"><strong>Zadzwoń i zarezerwuj!</strong> +48 505 977 940</a>.
+(Opcjonalnie) Przełącznik języka (PL / EN).
+(Opcjonalnie) Dark/Light toggle.
+Ikony Social Media: Jeśli posiadasz (np. Facebook, Instagram) - linkujące do profili.
+Menu mobilne: Typu "hamburger", otwierane płynnie. Po kliknięciu elementu menu, zamyka się płynnie.
+Strona główna (Home.jsx)
+Hero Section: Duże, dynamiczne zdjęcie/slider (np. AttractionGallery.jsx z kilkoma najlepszymi zdjęciami) z najlepszymi atrakcjami w akcji. Każde zdjęcie w sliderze powinno być klikalne i otwierać się w powiększonym modalu (lightbox).
+Główny nagłówek (jeden <h1> na stronie): np. <h1>SŁODKOLANDIA wita: – Niezapomniane Atrakcje na Twoją Imprezę!</h1>
+Krótkie motto: np. <p>Gwarantujemy <strong>świetną zabawę i profesjonalną obsługę</strong> na każdym evencie!</p>.
+Przyciski CTA: "Zobacz naszą ofertę", "Zapytaj o termin".
+Sekcja "Nasze Główne Atrakcje" (z nagłówkami <h2> lub <h3>): Krótkie zajawki (z ikonkami i linkami) do głównych kategorii oferty.
+Sekcja "Dlaczego 'Słodkolandia wita:'?": Wyróżniki.
+O Nas (ONas.jsx)
+Nagłówek: <h2>O Naszej Firmie – Pasja do Tworzenia Niezapomnianych Chwil</h2>.
+Opis misji, doświadczenia, wartości.
+Oferta (Oferta.jsx)
+Nagłówek: <h2>Nasza Oferta Atrakcji Eventowych</h2>.
+Podział na sekcje (Namioty, Dmuchańce, Sprzęt Gastro) z kotwicami.
+Dla każdej kategorii lista dostępnych atrakcji/usług używając AttractionCard.jsx.
+AttractionCard.jsx:
+Zdjęcie atrakcji.
+Nazwa, krótki opis.
+Przycisk np. "<strong>Szczegóły</strong>".
+Otwiera Modal.jsx z animacją.
+Treść Modala: Więcej zdjęć danej atrakcji (mała galeria, gdzie każde zdjęcie jest powiększalne w lightboxie), szczegółowy opis, specyfikacja, warunki.
+Responsywność Modala: wewnętrzne skrolowanie (overflow-y: auto), max-h-[80vh].
+Galeria (Galeria.jsx)
+Nagłówek: <h2>Zobacz Nasze Atrakcje w Akcji!</h2>.
+Strona powinna zawierać sekcje odpowiadające linkom z podmenu "Foto" (np. <section id="foto-namioty">, <section id="foto-dmuchance"> itd.).
+W każdej sekcji odpowiednia AttractionGallery.jsx (lub kilka) prezentująca zdjęcia danej kategorii.
+Każde zdjęcie w AttractionGallery.jsx musi być klikalne i otwierać się w powiększonym modalu (lightbox) z możliwością nawigacji między zdjęciami w danej galerii/sekcji.
+Możliwość dodania filtrów w ramach poszczególnych sekcji (np. dla dmuchańców: zjeżdżalnie, zamki, place zabaw).
+Cennik / Wycena (Cennik.jsx)
+Nagłówek: <h2>Cennik Naszych Usług / Zapytaj o Indywidualną Wycenę</h2>
+Informacje o cenach lub zasadach wyceny. CTA do kontaktu/formularza.
+Kontakt (Contact.jsx)
+Nagłówek: <h2>Skontaktuj się z Nami – Zorganizujmy Razem Twoją Imprezę!</h2>.
+Formularz kontaktowy/rezerwacji (InquiryForm.jsx).
+Mapa Google, dane kontaktowe.
+Polityka Prywatności (PolitykaPrywatnosci.jsx)
+Nagłówek: <h2>Polityka Prywatności</h2>.
+Standardowa treść.
+Stopka (Footer.jsx)
+Linki Social Media, kluczowe linki nawigacyjne, Copyright.
+Przycisk Scroll to Top (ScrollToTopButton.jsx)
+Ikonka, płynne przewijanie.
+CookieConsent.jsx
+Baner cookies.
+🌐 SEO + Open Graph + UX
+Meta tagi + Open Graph: react-helmet-async. Jeden <h1> na renderowanej stronie. Poprawna hierarchia <h2>-<h6>.
+JSON-LD: Schema.org markup.
+Canonical URLs.
+Responsywność: Pełna.
+Favicony: Z RealFaviconGenerator.
+Lazy loading zdjęć.
+Smooth scroll (dla kotwic).
+404 Page Not Found: Przyjazna strona błędu.
+Accessibility skip link.
+Sitemap.xml i robots.txt: Do przygotowania i umieszczenia na serwerze.
+✨ Styl wizualny (Propozycje Kolorystyczne)
+Motyw Jasny (Domyślny i Preferowany dla tej branży)
+Celem jest stworzenie wrażenia czystości, energii, radości i profesjonalizmu. Kolory powinny być żywe, ale nie przytłaczające.
+Tło główne (Background):
+Bardzo jasny, prawie biały, ale z lekkim "ciepłem" lub neutralnością, aby uniknąć sterylności.
+Przykłady Tailwind: bg-slate-50 (#F8FAFC), bg-gray-50 (#F9FAFB), lub nawet bg-white.
+Tekst główny (Text):
+Ciemnoszary dla najlepszej czytelności, unikamy czystej czerni, która może być zbyt kontrastowa.
+Przykłady Tailwind: text-slate-700 (#334155), text-gray-800 (#1F2937).
+Nagłówki (Headings):
+Mogą być nieco ciemniejsze niż tekst główny dla podkreślenia hierarchii.
+Przykłady Tailwind: text-slate-800 (#1E293B), text-gray-900 (#111827).
+Kolory Akcentujące (Accent Colors):
+Tutaj jest miejsce na energię i zabawę. Wybierz 2-3 dobrze współgrające, żywe kolory.
+Propozycja 1 (Dynamiczna i Radosna):
+Główny Akcent (np. dla CTA, linków, ważnych elementów): Jasny, dynamiczny niebieski.
+Tailwind: bg-sky-500 (#0EA5E9), text-sky-600 (#0284C7)
+Drugi Akcent (np. dla ikon, mniejszych wyróżnień, niektórych teł sekcji): Energetyczny zielony (limonkowy lub szmaragdowy).
+Tailwind: bg-emerald-500 (#10B981), text-emerald-600 (#059669) lub bg-lime-500 (#84CC16)
+Trzeci Akcent (opcjonalnie, dla detali): Ciepły żółty lub pomarańczowy.
+Tailwind: bg-amber-400 (#FBBF24), text-orange-500 (#F97316)
+Propozycja 2 (Bardziej Zrównoważona, ale nadal Radosna):
+Główny Akcent: Średni niebieski (nieco spokojniejszy).
+Tailwind: bg-blue-600 (#2563EB), text-blue-700 (#1D4ED8)
+Drugi Akcent: Ciepły pomarańczowy.
+Tailwind: bg-orange-500 (#F97316), text-orange-600 (#EA580C)
+Trzeci Akcent (opcjonalnie): Jasny fiolet/lawendowy (dodaje nutę oryginalności).
+Tailwind: bg-violet-500 (#8B5CF6), text-violet-600 (#7C3AED)
+Przyciski Call to Action (CTA):
+Powinny używać głównego koloru akcentującego, aby się wyróżniać.
+Np. tło bg-sky-500 z białym tekstem text-white.
+Karty / Kontenery:
+Mogą mieć tło bg-white z delikatnym cieniem (shadow-md lub shadow-lg) dla oddzielenia od głównego tła.
+Alternatywnie, bardzo jasny odcień szarości/błękitu dla tła karty.
+Motyw Ciemny (Opcjonalny)
+Jeśli zdecydujesz się na motyw ciemny, kluczowe jest zachowanie czytelności i unikanie zbyt mrocznego klimatu. Akcenty powinny być jaśniejsze, aby dobrze kontrastowały.
+Tło główne (Background):
+Głęboki, ale nie czarny, odcień szarości lub granatu.
+Przykłady Tailwind: bg-slate-800 (#1E293B), bg-gray-900 (#111827), bg-zinc-900 (#18181B). Można też rozważyć bg-blue-900 (ciemny granat, np. #1E3A8A, ale może wymagać jaśniejszych akcentów).
+Tekst główny (Text):
+Jasnoszary lub złamana biel dla dobrej czytelności.
+Przykłady Tailwind: text-slate-200 (#E2E8F0), text-gray-300 (#D1D5DB).
+Nagłówki (Headings):
+Mogą być nieco jaśniejsze niż tekst główny lub białe.
+Przykłady Tailwind: text-slate-50 (#F8FAFC), text-white.
+Kolory Akcentujące (Accent Colors):
+Te same kolory co w motywie jasnym, ale w jaśniejszych odcieniach, aby dobrze kontrastowały z ciemnym tłem.
+Kontynuując Propozycję 1 (Dynamiczna i Radosna) z motywu jasnego:
+Główny Akcent: Jaśniejszy odcień błękitu.
+Tailwind: bg-sky-400 (#38BDF8), text-sky-300 (#7DD3FC)
+Drugi Akcent: Jaśniejszy zielony.
+Tailwind: bg-emerald-400 (#34D399), text-emerald-300 (#6EE7B7) lub bg-lime-400 (#A3E635)
+Trzeci Akcent (opcjonalnie): Jaśniejszy żółty/pomarańczowy.
+Tailwind: bg-amber-300 (#FCD34D), text-orange-400 (#FB923C)
+Kontynuując Propozycję 2 (Bardziej Zrównoważona) z motywu jasnego:
+Główny Akcent: Jaśniejszy niebieski.
+Tailwind: bg-blue-500 (#3B82F6), text-blue-400 (#60A5FA)
+Drugi Akcent: Jaśniejszy pomarańczowy.
+Tailwind: bg-orange-400 (#FB923C), text-orange-300 (#FDBA74)
+Trzeci Akcent (opcjonalnie): Jaśniejszy fiolet/lawendowy.
+Tailwind: bg-violet-400 (#A78BFA), text-violet-300 (#C4B5FD)
+Przyciski Call to Action (CTA):
+Mogą używać jaśniejszego odcienia głównego koloru akcentującego z ciemnym tekstem (np. bg-sky-400 z text-slate-900) lub jasnego koloru akcentującego z białym tekstem, jeśli kontrast jest wystarczający.
+Karty / Kontenery:
+Mogą mieć tło o jeden lub dwa stopnie jaśniejsze niż tło główne (np. bg-slate-700 jeśli tło główne to bg-slate-800) z subtelnym obramowaniem w kolorze akcentującym lub jaśniejszym szarym.
+Wskazówki Ogólne:
+Spójność: Używaj wybranej palety konsekwentnie na całej stronie.
+Kontrast: Zawsze dbaj o odpowiedni kontrast między tekstem a tłem, aby zapewnić czytelność (możesz użyć narzędzi online do sprawdzania kontrastu WCAG).
+Hierarchia Wizualna: Użyj kolorów, aby kierować wzrok użytkownika do najważniejszych elementów (CTA, nagłówki).
+Testowanie: Zobacz, jak kolory wyglądają na różnych urządzeniach i w różnych warunkach oświetleniowych.
+Mniej znaczy więcej: Nie przesadzaj z ilością kolorów. Zazwyczaj tło, kolor tekstu i 2-3 kolory akcentujące w zupełności wystarczą.
+🖼️ Zasoby Graficzne
+Logo: Twoje logo.
+Zdjęcia atrakcji i realizacji: Z Twojej obecnej strony, posegregowane i zoptymalizowane. Pamiętaj, aby kategorie zdjęć odpowiadały podziałowi w nowej strukturze /src/assets/images/atrakcje/.
