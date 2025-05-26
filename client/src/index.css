@@ -147,6 +147,20 @@
   }
 }
 
+/* Responsywne poprawki dla navbaru */
+@media (max-width: 1024px) {
+  .brand-title {
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .brand-title {
+    font-size: 0.875rem;
+  }
+}
+
 @layer utilities {
   .animate-fadeIn {
     animation: fadeIn 0.5s ease-in-out;

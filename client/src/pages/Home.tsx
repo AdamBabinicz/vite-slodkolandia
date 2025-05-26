@@ -29,7 +29,7 @@ export default function Home() {
   return (
     <>
       <SEOHead />
-      
+
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Hero Background Slider */}
@@ -58,18 +58,18 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              {t('hero.title')}
-            </h1>
-            
+            <h1 className="brand-title text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+          SŁODKOLANDIA wita:
+        </h1>
+
             <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-amber-300 mb-6">
               {t('hero.subtitle')}
             </div>
-            
+
             <p className="text-xl sm:text-2xl mb-8 text-white/90 font-medium">
               {t('hero.description')}
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/oferta">
                 <Button size="lg" className="bg-white text-sky-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg">
@@ -91,7 +91,7 @@ export default function Home() {
           </motion.div>
         </div>
 
-        
+
 
         {/* Scroll Down Arrow */}
         <motion.div 
