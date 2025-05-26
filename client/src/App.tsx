@@ -15,6 +15,7 @@ import Cennik from "./pages/Cennik";
 import Kontakt from "./pages/Kontakt";
 import ONas from "./pages/ONas";
 import NotFound from "./pages/not-found";
+import { LanguageProvider } from "@/hooks/useLanguage";
 
 function Router() {
   return (
@@ -42,10 +43,12 @@ function App() {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
         <TooltipProvider>
           <Toaster />
           <Router />
         </TooltipProvider>
+        </LanguageProvider>
       </QueryClientProvider>
     </HelmetProvider>
   );

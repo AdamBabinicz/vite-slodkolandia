@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Phone, ChevronDown } from "lucide-react";
+import { Menu, X, Phone, ChevronDown, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,12 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [location] = useLocation();
+  const { language, setLanguage, t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +46,7 @@ export default function Navbar() {
               <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
-              <span className="text-xl font-bold text-slate-800 dark:text-white">SŁODKOLANDIA wita</span>
+              <span className="text-xl font-bold text-slate-800 dark:text-white">{t('hero.title')}</span>
             </div>
           </Link>
 
@@ -53,20 +55,26 @@ export default function Navbar() {
             <Link href="/">
               <Button
                 variant={isActive("/") ? "default" : "ghost"}
-                className="text-base font-medium"
+                className={cn(
+                  "text-base font-medium",
+                  !isActive("/") && "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                )}
                 onClick={handleLinkClick}
               >
-                Strona Główna
+                {t('nav.home')}
               </Button>
             </Link>
 
             <Link href="/o-nas">
               <Button
                 variant={isActive("/o-nas") ? "default" : "ghost"}
-                className="text-base font-medium"
+                className={cn(
+                  "text-base font-medium",
+                  !isActive("/o-nas") && "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                )}
                 onClick={handleLinkClick}
               >
-                O Nas
+                {t('nav.about')}
               </Button>
             </Link>
 
@@ -75,30 +83,33 @@ export default function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant={isActive("/oferta") ? "default" : "ghost"}
-                  className="text-base font-medium"
+                  className={cn(
+                    "text-base font-medium",
+                    !isActive("/oferta") && "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
                 >
-                  Oferta <ChevronDown className="ml-1 h-4 w-4" />
+                  {t('nav.offer')} <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link href="/oferta" onClick={handleLinkClick} className="w-full">
-                    Wszystkie Atrakcje
+                    {t('nav.allAttractions')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/oferta#namioty" onClick={handleLinkClick} className="w-full">
-                    Namioty Imprezowe
+                    {t('nav.tents')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/oferta#dmuchance" onClick={handleLinkClick} className="w-full">
-                    Dmuchane Atrakcje
+                    {t('nav.inflatables')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/oferta#sprzet-gastro" onClick={handleLinkClick} className="w-full">
-                    Sprzęt Gastronomiczny
+                  <Link href="/oferta#sprzet-cukiernicze" onClick={handleLinkClick} className="w-full">
+                    {t('nav.catering')}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -109,40 +120,43 @@ export default function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant={isActive("/galeria") ? "default" : "ghost"}
-                  className="text-base font-medium"
+                  className={cn(
+                    "text-base font-medium",
+                    !isActive("/galeria") && "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
                 >
-                  Foto <ChevronDown className="ml-1 h-4 w-4" />
+                  {t('nav.photo')} <ChevronDown className="ml-1 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" className="w-56">
                 <DropdownMenuItem asChild>
                   <Link href="/galeria" onClick={handleLinkClick} className="w-full">
-                    Wszystkie Zdjęcia
+                    {t('nav.allPhotos')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/galeria#foto-namioty" onClick={handleLinkClick} className="w-full">
-                    Namioty
+                    {t('nav.photoTents')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/galeria#foto-dmuchance" onClick={handleLinkClick} className="w-full">
-                    Dmuchańce
+                    {t('nav.photoInflatables')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/galeria#foto-wata" onClick={handleLinkClick} className="w-full">
-                    Wata Cukrowa
+                    {t('nav.photoCottonCandy')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/galeria#foto-popcorn" onClick={handleLinkClick} className="w-full">
-                    Popcorn
+                    {t('nav.photoPopcorn')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/galeria#foto-fontanny" onClick={handleLinkClick} className="w-full">
-                    Fontanny Czekoladowe
+                    {t('nav.photoFountains')}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -151,22 +165,45 @@ export default function Navbar() {
             <Link href="/cennik">
               <Button
                 variant={isActive("/cennik") ? "default" : "ghost"}
-                className="text-base font-medium"
+                className={cn(
+                  "text-base font-medium",
+                  !isActive("/cennik") && "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                )}
                 onClick={handleLinkClick}
               >
-                Cennik
+                {t('nav.pricing')}
               </Button>
             </Link>
 
             <Link href="/kontakt">
               <Button
                 variant={isActive("/kontakt") ? "default" : "ghost"}
-                className="text-base font-medium"
+                className={cn(
+                  "text-base font-medium",
+                  !isActive("/kontakt") && "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                )}
                 onClick={handleLinkClick}
               >
-                Kontakt
+                {t('nav.contact')}
               </Button>
             </Link>
+
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Globe className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setLanguage('pl')}>
+                  🇵🇱 Polski
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setLanguage('en')}>
+                  🇬🇧 English
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <ThemeToggle />
             
@@ -199,124 +236,130 @@ export default function Navbar() {
               <Link href="/">
                 <Button
                   variant={isActive("/") ? "default" : "ghost"}
-                  className="w-full justify-start text-base font-medium"
+                  className={cn(
+                    "w-full justify-start text-base font-medium",
+                    !isActive("/") && "text-slate-700 dark:text-slate-200"
+                  )}
                   onClick={handleLinkClick}
                 >
-                  Strona Główna
+                  {t('nav.home')}
                 </Button>
               </Link>
 
               <Link href="/o-nas">
                 <Button
                   variant={isActive("/o-nas") ? "default" : "ghost"}
-                  className="w-full justify-start text-base font-medium"
+                  className={cn(
+                    "w-full justify-start text-base font-medium",
+                    !isActive("/o-nas") && "text-slate-700 dark:text-slate-200"
+                  )}
                   onClick={handleLinkClick}
                 >
-                  O Nas
+                  {t('nav.about')}
                 </Button>
               </Link>
 
               <div className="space-y-1">
-                <div className="px-3 py-2 text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                  Oferta
+                <div className="px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                  {t('nav.offer')}
                 </div>
                 <div className="ml-3 space-y-1">
                   <Link href="/oferta">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Wszystkie Atrakcje
+                      {t('nav.allAttractions')}
                     </Button>
                   </Link>
                   <Link href="/oferta#namioty">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Namioty Imprezowe
+                      {t('nav.tents')}
                     </Button>
                   </Link>
                   <Link href="/oferta#dmuchance">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Dmuchane Atrakcje
+                      {t('nav.inflatables')}
                     </Button>
                   </Link>
-                  <Link href="/oferta#sprzet-gastro">
+                  <Link href="/oferta#sprzet-cukiernicze">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Sprzęt Gastronomiczny
+                      {t('nav.catering')}
                     </Button>
                   </Link>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <div className="px-3 py-2 text-sm font-semibold text-slate-500 uppercase tracking-wider">
-                  Foto
+                <div className="px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                  {t('nav.photo')}
                 </div>
                 <div className="ml-3 space-y-1">
                   <Link href="/galeria">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Wszystkie Zdjęcia
+                      {t('nav.allPhotos')}
                     </Button>
                   </Link>
                   <Link href="/galeria#foto-namioty">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Namioty
+                      {t('nav.photoTents')}
                     </Button>
                   </Link>
                   <Link href="/galeria#foto-dmuchance">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Dmuchańce
+                      {t('nav.photoInflatables')}
                     </Button>
                   </Link>
                   <Link href="/galeria#foto-wata">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Wata Cukrowa
+                      {t('nav.photoCottonCandy')}
                     </Button>
                   </Link>
                   <Link href="/galeria#foto-popcorn">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Popcorn
+                      {t('nav.photoPopcorn')}
                     </Button>
                   </Link>
                   <Link href="/galeria#foto-fontanny">
                     <Button
                       variant="ghost"
-                      className="w-full justify-start text-sm"
+                      className="w-full justify-start text-sm text-slate-700 dark:text-slate-200"
                       onClick={handleLinkClick}
                     >
-                      Fontanny Czekoladowe
+                      {t('nav.photoFountains')}
                     </Button>
                   </Link>
                 </div>
@@ -325,25 +368,47 @@ export default function Navbar() {
               <Link href="/cennik">
                 <Button
                   variant={isActive("/cennik") ? "default" : "ghost"}
-                  className="w-full justify-start text-base font-medium"
+                  className={cn(
+                    "w-full justify-start text-base font-medium",
+                    !isActive("/cennik") && "text-slate-700 dark:text-slate-200"
+                  )}
                   onClick={handleLinkClick}
                 >
-                  Cennik
+                  {t('nav.pricing')}
                 </Button>
               </Link>
 
               <Link href="/kontakt">
                 <Button
                   variant={isActive("/kontakt") ? "default" : "ghost"}
-                  className="w-full justify-start text-base font-medium"
+                  className={cn(
+                    "w-full justify-start text-base font-medium",
+                    !isActive("/kontakt") && "text-slate-700 dark:text-slate-200"
+                  )}
                   onClick={handleLinkClick}
                 >
-                  Kontakt
+                  {t('nav.contact')}
                 </Button>
               </Link>
 
               <div className="pt-4 space-y-3">
-                <div className="flex justify-center">
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setLanguage('pl')}
+                    className={language === 'pl' ? 'bg-sky-100 dark:bg-sky-900' : ''}
+                  >
+                    🇵🇱 PL
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setLanguage('en')}
+                    className={language === 'en' ? 'bg-sky-100 dark:bg-sky-900' : ''}
+                  >
+                    🇬🇧 EN
+                  </Button>
                   <ThemeToggle />
                 </div>
                 <a

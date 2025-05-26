@@ -155,9 +155,9 @@ export default function Oferta() {
                   </p>
                 </div>
 
-                <div id="sprzet-gastro">
+                <div id="sprzet-cukiernicze">
                   <h2 className="text-2xl font-bold text-slate-800 mb-4 flex items-center">
-                    🍭 Sprzęt Gastronomiczny
+                    🍭 Sprzęt Cukierniczy
                   </h2>
                   <p className="text-slate-600 leading-relaxed">
                     Maszyny do waty cukrowej, popcornu i eleganckie fontanny czekoladowe. 

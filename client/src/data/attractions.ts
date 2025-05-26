@@ -89,7 +89,7 @@ export const attractions: Attraction[] = [
   {
     id: "wata-cukrowa",
     name: "Wata Cukrowa",
-    category: "gastro",
+    category: "cukiernicze",
     description: "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami i aromatami. Nasza wata cukrowa to nie tylko słodka przekąska, ale także atrakcja wizualna, która zachwyci gości w każdym wieku. Oferujemy różne smaki i kolory.",
     shortDescription: "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
     images: [
@@ -122,7 +122,7 @@ export const attractions: Attraction[] = [
   {
     id: "popcorn",
     name: "Popcorn",
-    category: "gastro",
+    category: "cukiernicze",
     description: "Maszyny do popcornu w stylu retro, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
     shortDescription: "Maszyny do popcornu w stylu retro. Świeży, aromatyczny popcorn na Twoim evencie.",
     images: [
@@ -155,7 +155,7 @@ export const attractions: Attraction[] = [
   {
     id: "fontanny-czekoladowe",
     name: "Fontanny Czekoladowe",
-    category: "gastro",
+    category: "cukiernicze",
     description: "Eleganckie fontanny czekoladowe z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
     shortDescription: "Eleganckie fontanny czekoladowe z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
     images: [

@@ -12,7 +12,7 @@ export default function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">S</span>
               </div>
-              <span className="text-xl font-bold">SŁODKOLANDIA</span>
+              <span className="text-xl font-bold">SŁODKOLANDIA wita</span>
             </div>
             <p className="text-slate-300 mb-4 text-sm leading-relaxed">
               Profesjonalny wynajem atrakcji eventowych w Radomiu i okolicach. 
@@ -78,7 +78,7 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-6">Nasze Usługi</h3>
             <ul className="space-y-3 text-sm">
               <li className="text-slate-300">Namioty Imprezowe</li>
-              <li className="text-slate-300">Dmuchane Atrakcje</li>
+              <li className="text-slate-300">Dmuchańce</li>
               <li className="text-slate-300">Wata Cukrowa</li>
               <li className="text-slate-300">Maszyny do Popcornu</li>
               <li className="text-slate-300">Fontanny Czekoladowe</li>

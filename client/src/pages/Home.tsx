@@ -10,9 +10,11 @@ import AttractionCard from "@/components/AttractionCard";
 import CallToAction from "@/components/CallToAction";
 import { attractions } from "@/data/attractions";
 import { heroImages } from "@/data/stockPhotos";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -57,21 +59,22 @@ export default function Home() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-              <span className="block">SŁODKOLANDIA</span>
-              <span className="block text-2xl sm:text-3xl lg:text-4xl font-semibold text-amber-300 mt-2">
-                Niezapomniane Atrakcje na Twoją Imprezę!
-              </span>
+              {t('hero.title')}
             </h1>
             
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-amber-300 mb-6">
+              {t('hero.subtitle')}
+            </div>
+            
             <p className="text-xl sm:text-2xl mb-8 text-white/90 font-medium">
-              Gwarantujemy <strong>świetną zabawę i profesjonalną obsługę</strong> na każdym evencie!
+              {t('hero.description')}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link href="/oferta">
                 <Button size="lg" className="bg-white text-sky-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg">
                   <Star className="h-5 w-5 mr-2" />
-                  Zobacz naszą ofertę
+                  {t('hero.seeOffer')}
                 </Button>
               </Link>
               <Link href="/kontakt">
@@ -81,30 +84,18 @@ export default function Home() {
                   className="border-2 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
                 >
                   <Calendar className="h-5 w-5 mr-2" />
-                  Zapytaj o termin
+                  {t('hero.askDate')}
                 </Button>
               </Link>
             </div>
           </motion.div>
         </div>
 
-        {/* Hero Navigation Dots */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
-          {heroImages.map((_, index) => (
-            <button
-              key={index}
-              className={`w-3 h-3 rounded-full transition-opacity ${
-                index === currentSlide ? "bg-white opacity-100" : "bg-white opacity-50"
-              }`}
-              onClick={() => setCurrentSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
+        
 
         {/* Scroll Down Arrow */}
         <motion.div 
-          className="absolute bottom-20 left-1/2 transform -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
@@ -122,10 +113,9 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-slate-800 mb-4">Nasze Główne Atrakcje</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">{t('services.title')}</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Oferujemy kompleksowy wynajem sprzętu eventowego i atrakcji, które sprawią, 
-              że Twoja impreza będzie niezapomniana
+              {t('services.description')}
             </p>
           </motion.div>
 
@@ -148,7 +138,7 @@ export default function Home() {
           >
             <Link href="/oferta">
               <Button size="lg" className="btn-gradient text-white px-8 py-4 text-lg font-semibold hover:shadow-lg transition-all">
-                Zobacz wszystkie atrakcje
+                {t('services.seeAll')}
               </Button>
             </Link>
           </motion.div>
@@ -165,9 +155,9 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold text-slate-800 mb-4">Dlaczego SŁODKOLANDIA?</h2>
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">{t('whyUs.title')}</h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Łączymy pasję do tworzenia niezapomnianych chwil z profesjonalnym podejściem do każdego eventu
+              {t('whyUs.description')}
             </p>
           </motion.div>
 
@@ -175,26 +165,26 @@ export default function Home() {
             {[
               {
                 icon: <Award className="h-8 w-8 text-sky-600" />,
-                title: "Doświadczenie",
-                description: "Lata doświadczenia w organizacji eventów różnej skali",
+                title: t('whyUs.experience'),
+                description: t('whyUs.experienceDesc'),
                 color: "bg-sky-100"
               },
               {
                 icon: <Shield className="h-8 w-8 text-emerald-600" />,
-                title: "Bezpieczeństwo",
-                description: "Certyfikowany sprzęt i pełne ubezpieczenie każdej atrakcji",
+                title: t('whyUs.safety'),
+                description: t('whyUs.safetyDesc'),
                 color: "bg-emerald-100"
               },
               {
                 icon: <Clock className="h-8 w-8 text-amber-600" />,
-                title: "Punktualność",
-                description: "Zawsze na czasie - dotrzymujemy terminów dostaw i montażu",
+                title: t('whyUs.punctuality'),
+                description: t('whyUs.punctualityDesc'),
                 color: "bg-amber-100"
               },
               {
                 icon: <Heart className="h-8 w-8 text-purple-600" />,
-                title: "Indywidualne Podejście",
-                description: "Każdy event jest wyjątkowy - dostosowujemy się do Twoich potrzeb",
+                title: t('whyUs.individual'),
+                description: t('whyUs.individualDesc'),
                 color: "bg-purple-100"
               }
             ].map((feature, index) => (
