@@ -26,7 +26,11 @@ export const attractions: Attraction[] = [
     category: "namioty",
     description: "Profesjonalne namioty imprezowe w różnych rozmiarach, idealne na wesela, urodziny, eventy firmowe i inne okazje. Nasze namioty są wykonane z wysokiej jakości materiałów, odpornych na warunki atmosferyczne. Zapewniamy pełny serwis montażu i demontażu.",
     shortDescription: "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
-    images: stockPhotos.partyTents,
+    images: [
+      "/img/d/1.jpg",
+      "/img/d/2.jpg",
+      "/img/d/3.jpg"
+    ],
     icon: "fas fa-campground",
     features: [
       "Różne rozmiary dostępne",
@@ -55,7 +59,11 @@ export const attractions: Attraction[] = [
     category: "dmuchance",
     description: "Kolorowe zjeżdżalnie, zamki dmuchane i place zabaw dla dzieci. Nasze atrakcje są bezpieczne, regularnie serwisowane i posiadają wszystkie wymagane certyfikaty. Gwarantujemy radość i bezpieczną zabawę dla dzieci w każdym wieku.",
     shortDescription: "Zjeżdżalnie, zamki dmuchane i place zabaw. Gwarantowana radość dla dzieci w każdym wieku!",
-    images: stockPhotos.inflatableCastles,
+    images: [
+      "/img/d/4.jpg",
+      "/img/d/5.jpg",
+      "/img/d/6.jpg"
+    ],
     icon: "fas fa-castle",
     features: [
       "Certyfikowane i bezpieczne",
@@ -84,7 +92,11 @@ export const attractions: Attraction[] = [
     category: "gastro",
     description: "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami i aromatami. Nasza wata cukrowa to nie tylko słodka przekąska, ale także atrakcja wizualna, która zachwyci gości w każdym wieku. Oferujemy różne smaki i kolory.",
     shortDescription: "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
-    images: stockPhotos.cottonCandyMachine,
+    images: [
+      "/img/d/7.jpg",
+      "/img/d/8.jpg",
+      "/img/d/9.jpg"
+    ],
     icon: "fas fa-candy-cane",
     features: [
       "Różne smaki i kolory",
@@ -113,7 +125,11 @@ export const attractions: Attraction[] = [
     category: "gastro",
     description: "Maszyny do popcornu w stylu retro, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
     shortDescription: "Maszyny do popcornu w stylu retro. Świeży, aromatyczny popcorn na Twoim evencie.",
-    images: stockPhotos.popcornMachine,
+    images: [
+      "/img/d/10.jpg",
+      "/img/d/11.jpg",
+      "/img/d/12.jpg"
+    ],
     icon: "fas fa-seedling",
     features: [
       "Maszyny w stylu retro",
@@ -142,7 +158,11 @@ export const attractions: Attraction[] = [
     category: "gastro",
     description: "Eleganckie fontanny czekoladowe z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
     shortDescription: "Eleganckie fontanny czekoladowe z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
-    images: stockPhotos.chocolateFountain,
+    images: [
+      "/img/d/13.jpg",
+      "/img/d/14.jpg",
+      "/img/d/15.jpg"
+    ],
     icon: "fas fa-birthday-cake",
     features: [
       "Różne rodzaje czekolady",
@@ -171,7 +191,11 @@ export const attractions: Attraction[] = [
     category: "kompleksowa",
     description: "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania i projektowania, przez organizację przestrzeni, aż po pełną obsługę podczas imprezy. Zajmujemy się wszystkim, abyś mógł cieszyć się swoim eventem.",
     shortDescription: "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
-    images: stockPhotos.eventSetup,
+    images: [
+      "/img/d/16.jpg",
+      "/img/d/17.jpg",
+      "/img/d/18.jpg"
+    ],
     icon: "fas fa-users",
     features: [
       "Konsultacja i planowanie",
