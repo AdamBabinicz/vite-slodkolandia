@@ -34,7 +34,7 @@ export default function Navbar() {
   return (
     <nav className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg" : "bg-white"
+      isScrolled ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg" : "bg-white dark:bg-slate-900"
     )}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -44,7 +44,7 @@ export default function Navbar() {
               <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
-              <span className="text-xl font-bold text-slate-800">SŁODKOLANDIA</span>
+              <span className="text-xl font-bold text-slate-800 dark:text-white">SŁODKOLANDIA</span>
             </div>
           </Link>
 
@@ -194,7 +194,7 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-slate-200 bg-white/95 backdrop-blur-md">
+          <div className="lg:hidden border-t border-slate-200 dark:border-slate-700 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md">
             <div className="px-2 pt-2 pb-3 space-y-1">
               <Link href="/">
                 <Button
