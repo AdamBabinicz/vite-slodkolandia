@@ -46,7 +46,7 @@ export default function Navbar() {
               <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">S</span>
               </div>
-              <span className="text-xl font-bold text-slate-800 dark:text-white">{t('hero.title')}</span>
+              <span className="brand-title text-xl font-bold text-slate-800 dark:text-white">{t('hero.title')}</span>
             </div>
           </Link>
 

@@ -3,7 +3,7 @@ import { Phone, Mail, MapPin, Facebook, Instagram } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-slate-800 text-white">
+    <footer className="bg-slate-700 dark:bg-slate-600 text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
@@ -12,7 +12,7 @@ export default function Footer() {
               <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold">S</span>
               </div>
-              <span className="text-xl font-bold">SŁODKOLANDIA wita</span>
+              <span className="brand-title text-xl font-bold">SŁODKOLANDIA wita</span>
             </div>
             <p className="text-slate-300 mb-4 text-sm leading-relaxed">
               Profesjonalny wynajem atrakcji eventowych w Radomiu i okolicach. 
