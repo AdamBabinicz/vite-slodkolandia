@@ -30,15 +30,15 @@
   --foreground: 248 250 252; /* #F8FAFC */
   --muted: 30 41 59; /* #1E293B */
   --muted-foreground: 148 163 184; /* #94A3B8 */
-  --popover: 15 23 42; /* #0F172A */
+  --popover: 30 41 59; /* #1E293B */
   --popover-foreground: 248 250 252; /* #F8FAFC */
-  --card: 15 23 42; /* #0F172A */
+  --card: 30 41 59; /* #1E293B */
   --card-foreground: 248 250 252; /* #F8FAFC */
-  --border: 30 41 59; /* #1E293B */
-  --input: 30 41 59; /* #1E293B */
+  --border: 51 65 85; /* #334155 */
+  --input: 51 65 85; /* #334155 */
   --primary: 14 165 233; /* #0EA5E9 */
   --primary-foreground: 255 255 255; /* #FFFFFF */
-  --secondary: 30 41 59; /* #1E293B */
+  --secondary: 51 65 85; /* #334155 */
   --secondary-foreground: 248 250 252; /* #F8FAFC */
   --accent: 16 185 129; /* #10B981 */
   --accent-foreground: 255 255 255; /* #FFFFFF */

@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -167,6 +168,8 @@ export default function Navbar() {
               </Button>
             </Link>
 
+            <ThemeToggle />
+            
             <a
               href="tel:+48505977940"
               className="btn-gradient text-white px-4 py-2 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center space-x-2"
@@ -339,7 +342,10 @@ export default function Navbar() {
                 </Button>
               </Link>
 
-              <div className="pt-4">
+              <div className="pt-4 space-y-3">
+                <div className="flex justify-center">
+                  <ThemeToggle />
+                </div>
                 <a
                   href="tel:+48505977940"
                   className="btn-gradient text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
