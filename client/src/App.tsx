@@ -8,7 +8,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
-// import CookieConsent from "./components/CookieConsent";
 import Home from "./pages/Home";
 import Oferta from "./pages/Oferta";
 import Galeria from "./pages/Galeria";
@@ -28,7 +27,7 @@ import {
   getLocalizedSlug,
   Language,
 } from "@/config/paths";
-import SEOHead from "@/components/SEOHead"; // Zakładając, że SEOHead.tsx jest w src/components/SEOHead.tsx
+import SEOHead from "@/components/SEOHead";
 
 const APP_DEBUG_MODE = false;
 
@@ -358,7 +357,6 @@ function AppMainContent() {
       </main>
       <Footer />
       <ScrollToTopButton />
-      {/* <CookieConsent /> */}
     </div>
   );
 }
@@ -370,8 +368,8 @@ function LanguageAwareRouter() {
     return null;
   }
 
-  const base = language === defaultLang ? "/" : `/${language}`;
-  const routerKey = `main-router-${base}`;
+  const base = language === defaultLang ? "" : `/${language}`;
+  const routerKey = `main-router-${base || "root"}`;
 
   return (
     <WouterRouter key={routerKey} base={base}>
