@@ -108,7 +108,7 @@ export default function AttractionCard({
                 </p>
 
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-md font-semibold text-sky-600 dark:text-sky-400">
+                  <div className="text-md font-semibold text-sky-700 dark:text-sky-800">
                     {isItemized && attraction.id === "stoly-krzesla-obrusy"
                       ? t("pricingPage.itemizedPricingLabel")
                       : language === "en"

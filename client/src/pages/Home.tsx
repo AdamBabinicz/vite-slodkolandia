@@ -248,7 +248,7 @@ export default function Home() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <div className="text-3xl md:text-4xl font-bold text-sky-600 mb-2">
+                <div className="text-3xl md:text-4xl font-bold text-sky-700 mb-2">
                   {stat.number}
                 </div>
                 <div className="text-slate-600 text-sm md:text-base">
