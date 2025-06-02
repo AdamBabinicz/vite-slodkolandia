@@ -1,0 +1,1579 @@
+export type Language = "pl" | "en";
+export const defaultLang: Language = "pl";
+export const supportedLngs: readonly Language[] = ["pl", "en"];
+
+export const PAGE_KEYS = {
+  HOME: "home",
+  ABOUT: "about",
+  OFFER: "offer",
+  GALLERY: "gallery",
+  PRICING: "pricing",
+  CONTACT: "contact",
+  PRIVACY_POLICY: "privacy",
+  TERMS: "terms",
+  NOT_FOUND: "notFound",
+  OFFER_TENTS: "offer_tents",
+  OFFER_TABLES_CHAIRS_LINENS: "offer_tables_chairs_linens",
+  OFFER_INFLATABLES: "offer_inflatables",
+  OFFER_POPCORN: "offer_popcorn",
+  OFFER_COTTON_CANDY: "offer_cotton_candy",
+  OFFER_CHOCOLATE_FOUNTAIN: "offer_chocolate_fountain",
+  GALLERY_PHOTO_TENTS: "gallery_photo_tents",
+  GALLERY_PHOTO_TABLES_CHAIRS_LINENS: "gallery_photo_tables_chairs_linens",
+  GALLERY_PHOTO_INFLATABLES: "gallery_photo_inflatables",
+  GALLERY_PHOTO_COTTON_CANDY: "gallery_photo_cotton_candy",
+  GALLERY_PHOTO_POPCORN: "gallery_photo_popcorn",
+  GALLERY_PHOTO_FOUNTAINS: "gallery_photo_fountains",
+} as const;
+
+export type PageKey = (typeof PAGE_KEYS)[keyof typeof PAGE_KEYS];
+
+export type OfferHashKey = Extract<
+  PageKey,
+  | typeof PAGE_KEYS.OFFER_TENTS
+  | typeof PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS
+  | typeof PAGE_KEYS.OFFER_INFLATABLES
+  | typeof PAGE_KEYS.OFFER_POPCORN
+  | typeof PAGE_KEYS.OFFER_COTTON_CANDY
+  | typeof PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN
+>;
+
+export type GalleryHashKey = Extract<
+  PageKey,
+  | typeof PAGE_KEYS.GALLERY_PHOTO_TENTS
+  | typeof PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS
+  | typeof PAGE_KEYS.GALLERY_PHOTO_INFLATABLES
+  | typeof PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY
+  | typeof PAGE_KEYS.GALLERY_PHOTO_POPCORN
+  | typeof PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS
+>;
+
+export type HashKey = OfferHashKey | GalleryHashKey;
+
+const slugsConfig: Record<Language, Record<PageKey, string>> = {
+  pl: {
+    home: "",
+    about: "o-nas",
+    offer: "oferta",
+    gallery: "galeria",
+    pricing: "cennik",
+    contact: "kontakt",
+    privacy: "polityka-prywatnosci",
+    terms: "regulamin",
+    notFound: "404",
+    offer_tents: "namioty",
+    offer_tables_chairs_linens: "stoly-krzesla-obrusy",
+    offer_inflatables: "dmuchance",
+    offer_popcorn: "popcorn",
+    offer_cotton_candy: "wata-cukrowa",
+    offer_chocolate_fountain: "fontanna-czekoladowa",
+    gallery_photo_tents: "foto-namioty",
+    gallery_photo_tables_chairs_linens: "foto-stoly-krzesla-obrusy",
+    gallery_photo_inflatables: "foto-dmuchance",
+    gallery_photo_cotton_candy: "foto-wata",
+    gallery_photo_popcorn: "foto-popcorn",
+    gallery_photo_fountains: "foto-fontanny",
+  },
+  en: {
+    home: "",
+    about: "about-us",
+    offer: "offer",
+    gallery: "gallery",
+    pricing: "pricing",
+    contact: "contact",
+    privacy: "privacy-policy",
+    terms: "terms-of-service",
+    notFound: "404",
+    offer_tents: "tents",
+    offer_tables_chairs_linens: "tables-chairs-linens",
+    offer_inflatables: "inflatables",
+    offer_popcorn: "popcorn",
+    offer_cotton_candy: "cotton-candy",
+    offer_chocolate_fountain: "chocolate-fountain",
+    gallery_photo_tents: "photo-tents",
+    gallery_photo_tables_chairs_linens: "photo-tables-chairs-linens",
+    gallery_photo_inflatables: "photo-inflatables",
+    gallery_photo_cotton_candy: "photo-cotton-candy",
+    gallery_photo_popcorn: "photo-popcorn",
+    gallery_photo_fountains: "photo-fountains",
+  },
+};
+
+export const getLocalizedSlug = (pageKey: PageKey, lang: Language): string => {
+  const slug = slugsConfig[lang]?.[pageKey];
+  if (typeof slug === "string") return slug;
+  const fallback = slugsConfig[defaultLang]?.[pageKey];
+  return fallback ?? pageKey.toLowerCase().replace(/_/g, "-");
+};
+
+export const getInternalRoutePath = (
+  pageKey: PageKey,
+  lang: Language
+): string => {
+  if (pageKey === PAGE_KEYS.HOME) return "/";
+  return `/${getLocalizedSlug(pageKey, lang)}`;
+};
+
+export const getPrefixedBasePath = (
+  pageKey: PageKey,
+  lang: Language
+): string => {
+  const slug = getLocalizedSlug(pageKey, lang);
+  const langPrefix = lang === defaultLang ? "" : `/${lang}`;
+  if (pageKey === PAGE_KEYS.HOME) return langPrefix || "/";
+  return `${langPrefix}/${slug}`;
+};
+
+export const getLocalizedPath = (
+  pageKey: PageKey,
+  lang: Language,
+  hashPageKey?: PageKey
+): string => {
+  let basePathKey = pageKey;
+  let hashKey = hashPageKey;
+
+  if (pageKey.startsWith("OFFER_") || pageKey.startsWith("GALLERY_PHOTO_")) {
+    basePathKey = pageKey.startsWith("OFFER_")
+      ? PAGE_KEYS.OFFER
+      : PAGE_KEYS.GALLERY;
+    hashKey = pageKey;
+  }
+
+  let path = getPrefixedBasePath(basePathKey, lang);
+  if (hashKey) {
+    const hashSlug = getLocalizedSlug(hashKey, lang);
+    if (hashSlug) path += `#${hashSlug}`;
+  }
+  return path;
+};
+
+// Używane do porównań URL-i bez trailing slashów i znormalizowane
+export const normalizePath = (path: string): string =>
+  path.toLowerCase().replace(/\/+$/, "").replace(/\/?#$/, "");
+
+export const findPageKeyByLocalizedPath = (
+  currentFullPath: string
+): {
+  pageKey: PageKey | null;
+  lang: Language | null;
+  hashKey: PageKey | null;
+  hashSlug: string | null;
+  basePathWithoutLang: string;
+} => {
+  console.log(`[FPLP v4] Input currentFullPath: "${currentFullPath}"`);
+  const [pathAndQuery, hashValueFromUrl] = currentFullPath.split("#");
+  const pathOnly = pathAndQuery.split("?")[0];
+  const pathSegments = pathOnly.split("/").filter(Boolean);
+
+  let detectedLang: Language = defaultLang;
+  let slugToAnalyze: string;
+
+  if (
+    pathSegments.length > 0 &&
+    supportedLngs.includes(pathSegments[0] as Language)
+  ) {
+    detectedLang = pathSegments[0] as Language;
+    slugToAnalyze =
+      pathSegments.slice(1).join("/") || slugsConfig[detectedLang].home;
+  } else {
+    slugToAnalyze = pathSegments.join("/") || slugsConfig[defaultLang].home;
+  }
+
+  const finalBasePathWithoutLang =
+    slugToAnalyze === slugsConfig[detectedLang].home
+      ? "/"
+      : `/${slugToAnalyze}`;
+
+  let foundPageKey: PageKey | null = null;
+
+  for (const key in slugsConfig[detectedLang]) {
+    if (slugsConfig[detectedLang][key as PageKey] === slugToAnalyze) {
+      foundPageKey = key as PageKey;
+      break;
+    }
+  }
+
+  if (!foundPageKey) {
+    foundPageKey = PAGE_KEYS.NOT_FOUND;
+  }
+
+  let foundHashKey: PageKey | null = null;
+  if (hashValueFromUrl && foundPageKey !== PAGE_KEYS.NOT_FOUND) {
+    for (const key in slugsConfig[detectedLang]) {
+      if (
+        (key.startsWith("OFFER_") || key.startsWith("GALLERY_PHOTO_")) &&
+        slugsConfig[detectedLang][key as PageKey] === hashValueFromUrl
+      ) {
+        foundHashKey = key as PageKey;
+        break;
+      }
+    }
+  }
+
+  return {
+    pageKey: foundPageKey,
+    lang: foundPageKey === PAGE_KEYS.NOT_FOUND ? null : detectedLang,
+    hashKey: foundHashKey,
+    hashSlug: hashValueFromUrl || null,
+    basePathWithoutLang: finalBasePathWithoutLang,
+  };
+};
+
+
+------------------------------
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Filter } from "lucide-react";
+import { motion } from "framer-motion";
+import SEOHead from "@/components/SEOHead";
+import AttractionCard from "@/components/AttractionCard";
+import CallToAction from "@/components/CallToAction";
+import {
+  attractions,
+  getAttractionsByCategory,
+  Attraction,
+} from "@/data/attractions";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useLocation } from "wouter";
+import {
+  getLocalizedPath,
+  getLocalizedSlug,
+  PageKey,
+  Language,
+  PAGE_KEYS,
+} from "@/config/paths";
+
+interface CategoryFilter {
+  id: string;
+  nameKey: string;
+  pageKeyForHash: PageKey | null;
+  count?: number;
+  filterLogic: (attraction: Attraction) => boolean;
+}
+
+const deriveInternalPathFromLocalized = (
+  pageKey: PageKey,
+  lang: Language,
+  fnGetLocalizedPath: (pk: PageKey, l: Language, h?: PageKey) => string
+): string => {
+  const fullLocalizedPathWithOptionalHash = fnGetLocalizedPath(pageKey, lang);
+
+  const fullLocalizedPath = fullLocalizedPathWithOptionalHash.split("#")[0];
+
+  if (lang === "pl") {
+    return fullLocalizedPath;
+  } else {
+    const prefix = `/${lang}`;
+    if (fullLocalizedPath.startsWith(prefix)) {
+      const pathAfterPrefix = fullLocalizedPath.substring(prefix.length);
+      return pathAfterPrefix === "" ? "/" : pathAfterPrefix;
+    } else {
+      return fullLocalizedPath;
+    }
+  }
+};
+
+export default function Oferta() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const { t, language } = useLanguage();
+  const [location, navigate] = useLocation();
+
+  const categories: CategoryFilter[] = [
+    {
+      id: "all",
+      nameKey: "nav.allAttractions",
+      pageKeyForHash: null,
+      count: attractions.filter((attr) => attr.category !== "uslugi").length,
+      filterLogic: (attr) => attr.category !== "uslugi",
+    },
+    {
+      id: "namioty",
+      nameKey: "nav.tents",
+      pageKeyForHash: PAGE_KEYS.OFFER_TENTS,
+      count: getAttractionsByCategory("namioty").length,
+      filterLogic: (attr) => attr.category === "namioty",
+    },
+    {
+      id: "stoly-krzesla-obrusy",
+      nameKey: "nav.tablesChairs",
+      pageKeyForHash: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+      count: getAttractionsByCategory("wyposazenie").length,
+      filterLogic: (attr) => attr.category === "wyposazenie",
+    },
+    {
+      id: "dmuchance",
+      nameKey: "nav.inflatables",
+      pageKeyForHash: PAGE_KEYS.OFFER_INFLATABLES,
+      count: getAttractionsByCategory("dmuchance").length,
+      filterLogic: (attr) => attr.category === "dmuchance",
+    },
+    {
+      id: "popcorn",
+      nameKey: "nav.popcorn",
+      pageKeyForHash: PAGE_KEYS.OFFER_POPCORN,
+      count: attractions.filter((a) => a.id === "popcorn").length,
+      filterLogic: (attr) => attr.id === "popcorn",
+    },
+    {
+      id: "wata-cukrowa",
+      nameKey: "nav.cottonCandy",
+      pageKeyForHash: PAGE_KEYS.OFFER_COTTON_CANDY,
+      count: attractions.filter((a) => a.id === "wata-cukrowa").length,
+      filterLogic: (attr) => attr.id === "wata-cukrowa",
+    },
+    {
+      id: "fontanna-czekoladowa",
+      nameKey: "nav.chocolateFountain",
+      pageKeyForHash: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+      count: attractions.filter((a) => a.id === "fontanna-czekoladowa").length,
+      filterLogic: (attr) => attr.id === "fontanna-czekoladowa",
+    },
+  ];
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    const categoryFromHash = categories.find((cat) => {
+      if (cat.id === "all" && !hash) return true;
+      if (
+        cat.pageKeyForHash &&
+        hash === getLocalizedSlug(cat.pageKeyForHash, language)
+      )
+        return true;
+      return false;
+    });
+
+    const offerPageBaseWouterPath = deriveInternalPathFromLocalized(
+      PAGE_KEYS.OFFER,
+      language,
+      getLocalizedPath
+    );
+
+    if (categoryFromHash) {
+      setActiveCategory(categoryFromHash.id);
+    } else if (!hash && location.split("#")[0] === offerPageBaseWouterPath) {
+      setActiveCategory("all");
+    }
+  }, [location, language, categories]);
+
+  const selectedFilter = categories.find((cat) => cat.id === activeCategory);
+  const filteredAttractions = selectedFilter
+    ? attractions.filter(selectedFilter.filterLogic)
+    : attractions.filter((attr) => attr.category !== "uslugi");
+
+  const activeCategoryName = selectedFilter?.nameKey || "nav.allAttractions";
+
+  const handleCategoryChange = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    const categoryObject = categories.find((c) => c.id === categoryId);
+    let hashTarget = "";
+
+    if (
+      categoryObject &&
+      categoryObject.id !== "all" &&
+      categoryObject.pageKeyForHash
+    ) {
+      const slug = getLocalizedSlug(categoryObject.pageKeyForHash, language);
+      if (slug) hashTarget = `#${slug}`;
+    }
+
+    const offerBase = getLocalizedPath(PAGE_KEYS.OFFER, language).split("#")[0];
+
+    if (`${offerBase}${hashTarget}` !== location) {
+      navigate(`${offerBase}${hashTarget}`, { replace: true });
+    }
+  };
+
+  return (
+    <>
+      <SEOHead
+        title={t("seo.offerTitle")}
+        description={t("seo.offerDescription")}
+        canonical={getLocalizedPath(PAGE_KEYS.OFFER, language)} //
+      />
+
+      <div className="pt-16">
+        <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">
+                {t("offerPage.heroTitle")}
+              </h2>
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+                {t("offerPage.heroDescription")}
+              </p>
+              <Badge
+                variant="secondary"
+                className="text-base md:text-lg px-4 py-2 bg-white/80 dark:bg-card dark:text-card-foreground"
+              >
+                {t("offerPage.badgeLocation")}
+              </Badge>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="py-6 bg-white dark:bg-muted-foreground border-b border-border sticky top-16 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+              <div className="w-full md:w-auto flex items-center justify-center md:justify-start mb-2 md:mb-0 md:mr-4">
+                <Filter className="h-4 w-4 text-muted-foreground mr-1.5" />
+                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                  {t("offerPage.filterLabel")}
+                </span>
+              </div>
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={
+                    activeCategory === category.id ? "default" : "outline"
+                  }
+                  onClick={() => handleCategoryChange(category.id)}
+                  size="sm"
+                  className="whitespace-nowrap"
+                >
+                  {t(category.nameKey)}
+                  {category.count !== undefined && category.count > 0 && (
+                    <Badge
+                      variant={
+                        activeCategory === category.id ? "outline" : "secondary"
+                      }
+                      className={`ml-2 ${
+                        activeCategory === category.id
+                          ? "border-primary-foreground/50 text-primary-foreground/80"
+                          : "bg-muted text-muted-foreground dark:bg-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      {category.count}
+                    </Badge>
+                  )}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-gradient-to-tl from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="mb-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                {activeCategory === "all"
+                  ? t("offerPage.allAttractionsCount", {
+                      count: filteredAttractions.length.toString(),
+                    })
+                  : t("offerPage.categoryAttractionsCount", {
+                      categoryName: t(activeCategoryName),
+                      count: filteredAttractions.length.toString(),
+                    })}
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {filteredAttractions.map((attraction, index) => (
+                <AttractionCard
+                  key={attraction.id}
+                  attraction={attraction}
+                  index={index}
+                />
+              ))}
+            </div>
+
+            {filteredAttractions.length === 0 && (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🎪</div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {t("offerPage.noAttractionsTitle")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("offerPage.noAttractionsDescription")}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-muted dark:bg-muted">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
+                <div id={getLocalizedSlug(PAGE_KEYS.OFFER_TENTS, language)}>
+                  {" "}
+                  {/* Używamy getLocalizedSlug dla id */}
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("offerPage.sectionTentsTitle")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("offerPage.sectionTentsDescription")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(
+                    PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+                    language
+                  )}
+                >
+                  {" "}
+                  {/* Używamy getLocalizedSlug dla id */}
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("offerPage.sectionTablesChairsTitle")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("offerPage.sectionTablesChairsDescription")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(PAGE_KEYS.OFFER_INFLATABLES, language)}
+                >
+                  {" "}
+                  {/* Używamy getLocalizedSlug dla id */}
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("offerPage.sectionInflatablesTitle")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("offerPage.sectionInflatablesDescription")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(PAGE_KEYS.OFFER_POPCORN, language)}
+                  className="pt-2"
+                >
+                  {" "}
+                  {/* Używamy getLocalizedSlug dla id */}
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("nav.popcorn")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("attractionsData.popcorn.description")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(PAGE_KEYS.OFFER_COTTON_CANDY, language)}
+                  className="pt-2"
+                >
+                  {" "}
+                  {/* Używamy getLocalizedSlug dla id */}
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("nav.cottonCandy")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("attractionsData.wata-cukrowa.description")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(
+                    PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+                    language
+                  )}
+                  className="pt-2"
+                >
+                  {" "}
+                  {/* Używamy getLocalizedSlug dla id */}
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("nav.chocolateFountain")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("attractionsData.fontanna-czekoladowa.description")}
+                  </p>
+                </div>
+              </motion.div>
+
+              <div className="lg:col-span-2">
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: true }}
+                  className="bg-card rounded-xl p-6 md:p-8 shadow-lg"
+                >
+                  <h3 className="text-xl md:text-2xl font-bold text-foreground mb-6">
+                    {t("offerPage.servicesIncludeTitle")}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      {[
+                        {
+                          titleKey: "offerPage.serviceTransport",
+                          descKey: "offerPage.serviceTransportDesc",
+                          color: "bg-sky-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceProfessional",
+                          descKey: "offerPage.serviceProfessionalDesc",
+                          color: "bg-emerald-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceInsurance",
+                          descKey: "offerPage.serviceInsuranceDesc",
+                          color: "bg-amber-500",
+                        },
+                      ].map((service) => (
+                        <div
+                          key={service.titleKey}
+                          className="flex items-start space-x-3"
+                        >
+                          <div
+                            className={`w-2 h-2 ${service.color} rounded-full mt-1.5 flex-shrink-0`}
+                          ></div>
+                          <div>
+                            <h4 className="font-semibold text-foreground">
+                              {t(service.titleKey)}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {t(service.descKey)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="space-y-4">
+                      {[
+                        {
+                          titleKey: "offerPage.serviceCertified",
+                          descKey: "offerPage.serviceCertifiedDesc",
+                          color: "bg-purple-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceFlexible",
+                          descKey: "offerPage.serviceFlexibleDesc",
+                          color: "bg-pink-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceConsultations",
+                          descKey: "offerPage.serviceConsultationsDesc",
+                          color: "bg-indigo-500",
+                        },
+                      ].map((service) => (
+                        <div
+                          key={service.titleKey}
+                          className="flex items-start space-x-3"
+                        >
+                          <div
+                            className={`w-2 h-2 ${service.color} rounded-full mt-1.5 flex-shrink-0`}
+                          ></div>
+                          <div>
+                            <h4 className="font-semibold text-foreground">
+                              {t(service.titleKey)}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {t(service.descKey)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <CallToAction
+          variant="secondary"
+          className="mx-4 sm:mx-6 lg:mx-8 my-12 md:my-16"
+        />
+      </div>
+    </>
+  );
+}
+
+
+--------------------------------
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Images, Filter } from "lucide-react";
+import { motion } from "framer-motion";
+import SEOHead from "@/components/SEOHead";
+import AttractionGallery from "@/components/AttractionGallery";
+import CallToAction from "@/components/CallToAction";
+import { stockPhotos } from "@/data/stockPhotos";
+import { useLanguage } from "@/hooks/useLanguage";
+
+export default function Galeria() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const { t } = useLanguage();
+
+  const galleryCategories = [
+    {
+      id: "all",
+      nameKey: "galleryPage.categoryAll",
+      images: [
+        ...stockPhotos.partyTents,
+        ...stockPhotos.inflatableCastles,
+        ...stockPhotos.cottonCandyMachine,
+        ...stockPhotos.popcornMachine,
+        ...stockPhotos.chocolateFountain,
+        ...stockPhotos.eventSetup,
+      ],
+    },
+    {
+      id: "namioty",
+      nameKey: "galleryPage.categoryTents",
+      images: stockPhotos.partyTents,
+    },
+    {
+      id: "dmuchance",
+      nameKey: "galleryPage.categoryInflatables",
+      images: stockPhotos.inflatableCastles,
+    },
+    {
+      id: "wata",
+      nameKey: "galleryPage.categoryCottonCandy",
+      images: stockPhotos.cottonCandyMachine,
+    },
+    {
+      id: "popcorn",
+      nameKey: "galleryPage.categoryPopcorn",
+      images: stockPhotos.popcornMachine,
+    },
+    {
+      id: "fontanna",
+      nameKey: "galleryPage.categoryFountains",
+      images: stockPhotos.chocolateFountain,
+    },
+    {
+      id: "realizacje",
+      nameKey: "galleryPage.categoryEventSetups",
+      images: stockPhotos.eventSetup,
+    },
+  ];
+
+  const currentCategoryData = galleryCategories.find(
+    (cat) => cat.id === activeCategory
+  );
+  const currentCategoryName = currentCategoryData
+    ? t(currentCategoryData.nameKey)
+    : t("galleryPage.categoryAll");
+  const currentCategoryImages = currentCategoryData
+    ? currentCategoryData.images
+    : galleryCategories.find((cat) => cat.id === "all")?.images || [];
+
+  return (
+    <>
+      <SEOHead
+        title={t("seo.galleryTitle")}
+        description={t("seo.galleryDescription")}
+        canonical="/galeria"
+      />
+
+      <div className="pt-16">
+        <section className="py-20 bg-gradient-to-br from-sky-50 to-emerald-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center">
+                  <Images className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 mb-6">
+                {t("galleryPage.heroTitle")}
+              </h2>
+              <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
+                {t("galleryPage.heroDescription")}
+              </p>
+              <Badge variant="secondary" className="text-lg px-4 py-2">
+                {t("galleryPage.badgeEventsDone")}
+              </Badge>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="py-8 bg-white border-b border-slate-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap justify-center gap-3">
+              <div className="flex items-center mr-4 mb-2">
+                <Filter className="h-4 w-4 text-slate-600 mr-2" />
+                <span className="text-sm font-medium text-slate-600">
+                  {t("galleryPage.filterLabel")}
+                </span>
+              </div>
+              {galleryCategories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={
+                    activeCategory === category.id ? "default" : "outline"
+                  }
+                  onClick={() => setActiveCategory(category.id)}
+                  className="mb-2"
+                >
+                  {t(category.nameKey)}
+                  <Badge
+                    variant="secondary"
+                    className="ml-2 bg-slate-100 text-slate-600"
+                  >
+                    {category.images.length}
+                  </Badge>
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {activeCategory === "all" ? (
+              <div className="space-y-20">
+                <div id="foto-namioty">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="mb-8"
+                  >
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4 flex items-center">
+                      {t("galleryPage.sectionTentsTitle")}
+                    </h2>
+                    <p className="text-slate-600 mb-6">
+                      {t("galleryPage.sectionTentsDesc")}
+                    </p>
+                  </motion.div>
+                  <AttractionGallery
+                    images={stockPhotos.partyTents}
+                    title={t("galleryPage.sectionTentsTitle")}
+                  />
+                </div>
+
+                <div id="foto-dmuchance">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="mb-8"
+                  >
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4 flex items-center">
+                      {t("galleryPage.sectionInflatablesTitle")}
+                    </h2>
+                    <p className="text-slate-600 mb-6">
+                      {t("galleryPage.sectionInflatablesDesc")}
+                    </p>
+                  </motion.div>
+                  <AttractionGallery
+                    images={stockPhotos.inflatableCastles}
+                    title={t("galleryPage.sectionInflatablesTitle")}
+                  />
+                </div>
+
+                <div id="foto-wata">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="mb-8"
+                  >
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4 flex items-center">
+                      {t("galleryPage.sectionCottonCandyTitle")}
+                    </h2>
+                    <p className="text-slate-600 mb-6">
+                      {t("galleryPage.sectionCottonCandyDesc")}
+                    </p>
+                  </motion.div>
+                  <AttractionGallery
+                    images={stockPhotos.cottonCandyMachine}
+                    title={t("galleryPage.sectionCottonCandyTitle")}
+                  />
+                </div>
+
+                <div id="foto-popcorn">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="mb-8"
+                  >
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4 flex items-center">
+                      {t("galleryPage.sectionPopcornTitle")}
+                    </h2>
+                    <p className="text-slate-600 mb-6">
+                      {t("galleryPage.sectionPopcornDesc")}
+                    </p>
+                  </motion.div>
+                  <AttractionGallery
+                    images={stockPhotos.popcornMachine}
+                    title={t("galleryPage.sectionPopcornTitle")}
+                  />
+                </div>
+
+                <div id="foto-fontanna">
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="mb-8"
+                  >
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4 flex items-center">
+                      {t("galleryPage.sectionFountainsTitle")}
+                    </h2>
+                    <p className="text-slate-600 mb-6">
+                      {t("galleryPage.sectionFountainsDesc")}
+                    </p>
+                  </motion.div>
+                  <AttractionGallery
+                    images={stockPhotos.chocolateFountain}
+                    title={t("galleryPage.sectionFountainsTitle")}
+                  />
+                </div>
+
+                <div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    viewport={{ once: true }}
+                    className="mb-8"
+                  >
+                    <h2 className="text-3xl font-bold text-slate-800 mb-4 flex items-center">
+                      {t("galleryPage.sectionEventSetupsTitle")}
+                    </h2>
+                    <p className="text-slate-600 mb-6">
+                      {t("galleryPage.sectionEventSetupsDesc")}
+                    </p>
+                  </motion.div>
+                  <AttractionGallery
+                    images={stockPhotos.eventSetup}
+                    title={t("galleryPage.sectionEventSetupsTitle")}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <motion.div
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="mb-8"
+                >
+                  <h2 className="text-3xl font-bold text-slate-800 mb-4">
+                    {currentCategoryName}
+                  </h2>
+                  <p className="text-slate-600">
+                    {t("galleryPage.currentCategoryInfo", {
+                      count: currentCategoryImages.length.toString(),
+                    })}
+                  </p>
+                </motion.div>
+
+                {currentCategoryData && (
+                  <AttractionGallery
+                    images={currentCategoryImages}
+                    title={currentCategoryName}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="py-16 bg-slate-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 mb-4">
+                {t("galleryPage.statsTitle")}
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[
+                {
+                  number: "500+",
+                  labelKey: "galleryPage.statEvents",
+                  icon: "🎪",
+                },
+                {
+                  number: "1000+",
+                  labelKey: "galleryPage.statKids",
+                  icon: "😊",
+                },
+                {
+                  number: "50+",
+                  labelKey: "galleryPage.statAttractions",
+                  icon: "🎨",
+                },
+                {
+                  number: "100 km",
+                  labelKey: "galleryPage.statRadius",
+                  icon: "🚛",
+                },
+              ].map((stat, index) => (
+                <motion.div
+                  key={index}
+                  className="text-center bg-white rounded-lg p-6 shadow-sm"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-sky-600 mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-slate-600 text-sm md:text-base">
+                    {t(stat.labelKey)}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <CallToAction
+          variant="secondary"
+          className="mx-4 sm:mx-6 lg:mx-8 mb-16"
+        />
+      </div>
+    </>
+  );
+}
+
+
+----------------------------
+
+export type Language = "pl" | "en";
+export const defaultLang: Language = "pl";
+export const supportedLngs: readonly Language[] = ["pl", "en"];
+
+export const PAGE_KEYS = {
+  HOME: "home",
+  ABOUT: "about",
+  OFFER: "offer",
+  GALLERY: "gallery",
+  PRICING: "pricing",
+  CONTACT: "contact",
+  PRIVACY_POLICY: "privacy",
+  TERMS: "terms",
+  NOT_FOUND: "notFound",
+  OFFER_TENTS: "offer_tents",
+  OFFER_TABLES_CHAIRS_LINENS: "offer_tables_chairs_linens",
+  OFFER_INFLATABLES: "offer_inflatables",
+  OFFER_POPCORN: "offer_popcorn",
+  OFFER_COTTON_CANDY: "offer_cotton_candy",
+  OFFER_CHOCOLATE_FOUNTAIN: "offer_chocolate_fountain",
+  GALLERY_PHOTO_TENTS: "gallery_photo_tents",
+  GALLERY_PHOTO_TABLES_CHAIRS_LINENS: "gallery_photo_tables_chairs_linens",
+  GALLERY_PHOTO_INFLATABLES: "gallery_photo_inflatables",
+  GALLERY_PHOTO_COTTON_CANDY: "gallery_photo_cotton_candy",
+  GALLERY_PHOTO_POPCORN: "gallery_photo_popcorn",
+  GALLERY_PHOTO_FOUNTAINS: "gallery_photo_fountains",
+} as const;
+
+export type PageKey = (typeof PAGE_KEYS)[keyof typeof PAGE_KEYS];
+export type OfferHashKey = Extract<
+  PageKey,
+  | typeof PAGE_KEYS.OFFER_TENTS
+  | typeof PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS
+  | typeof PAGE_KEYS.OFFER_INFLATABLES
+  | typeof PAGE_KEYS.OFFER_POPCORN
+  | typeof PAGE_KEYS.OFFER_COTTON_CANDY
+  | typeof PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN
+>;
+export type GalleryHashKey = Extract<
+  PageKey,
+  | typeof PAGE_KEYS.GALLERY_PHOTO_TENTS
+  | typeof PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS
+  | typeof PAGE_KEYS.GALLERY_PHOTO_INFLATABLES
+  | typeof PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY
+  | typeof PAGE_KEYS.GALLERY_PHOTO_POPCORN
+  | typeof PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS
+>;
+export type HashKey = OfferHashKey | GalleryHashKey;
+
+const slugsConfig: Record<Language, Record<PageKey, string>> = {
+  pl: {
+    [PAGE_KEYS.HOME]: "",
+    [PAGE_KEYS.ABOUT]: "o-nas",
+    [PAGE_KEYS.OFFER]: "oferta",
+    [PAGE_KEYS.GALLERY]: "galeria",
+    [PAGE_KEYS.PRICING]: "cennik",
+    [PAGE_KEYS.CONTACT]: "kontakt",
+    [PAGE_KEYS.PRIVACY_POLICY]: "polityka-prywatnosci",
+    [PAGE_KEYS.TERMS]: "regulamin",
+    [PAGE_KEYS.NOT_FOUND]: "404",
+    [PAGE_KEYS.OFFER_TENTS]: "namioty",
+    [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: "stoly-krzesla-obrusy",
+    [PAGE_KEYS.OFFER_INFLATABLES]: "dmuchance",
+    [PAGE_KEYS.OFFER_POPCORN]: "popcorn",
+    [PAGE_KEYS.OFFER_COTTON_CANDY]: "wata-cukrowa",
+    [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: "fontanna-czekoladowa",
+    [PAGE_KEYS.GALLERY_PHOTO_TENTS]: "foto-namioty",
+    [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]: "foto-stoly-krzesla-obrusy",
+    [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: "foto-dmuchance",
+    [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: "foto-wata",
+    [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: "foto-popcorn",
+    [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: "foto-fontanny",
+  },
+  en: {
+    [PAGE_KEYS.HOME]: "",
+    [PAGE_KEYS.ABOUT]: "about-us",
+    [PAGE_KEYS.OFFER]: "offer",
+    [PAGE_KEYS.GALLERY]: "gallery",
+    [PAGE_KEYS.PRICING]: "pricing",
+    [PAGE_KEYS.CONTACT]: "contact",
+    [PAGE_KEYS.PRIVACY_POLICY]: "privacy-policy",
+    [PAGE_KEYS.TERMS]: "terms-of-service",
+    [PAGE_KEYS.NOT_FOUND]: "404",
+    [PAGE_KEYS.OFFER_TENTS]: "tents",
+    [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: "tables-chairs-linens",
+    [PAGE_KEYS.OFFER_INFLATABLES]: "inflatables",
+    [PAGE_KEYS.OFFER_POPCORN]: "popcorn",
+    [PAGE_KEYS.OFFER_COTTON_CANDY]: "cotton-candy",
+    [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: "chocolate-fountain",
+    [PAGE_KEYS.GALLERY_PHOTO_TENTS]: "photo-tents",
+    [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]:
+      "photo-tables-chairs-linens",
+    [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: "photo-inflatables",
+    [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: "photo-cotton-candy",
+    [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: "photo-popcorn",
+    [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: "photo-fountains",
+  },
+};
+
+export const getLocalizedSlug = (pageKey: PageKey, lang: Language): string => {
+  const slug = slugsConfig[lang]?.[pageKey];
+  if (typeof slug === "string") return slug;
+  const fallback = slugsConfig[defaultLang]?.[pageKey];
+  if (typeof fallback === "string") return fallback;
+  return pageKey.toLowerCase().replace(/_/g, "-");
+};
+
+export const getInternalRoutePath = (
+  pageKey: PageKey,
+  lang: Language
+): string => {
+  if (pageKey === PAGE_KEYS.HOME) return "/";
+  return `/${getLocalizedSlug(pageKey, lang)}`;
+};
+
+export const getPrefixedBasePath = (
+  pageKey: PageKey,
+  lang: Language
+): string => {
+  const slug = getLocalizedSlug(pageKey, lang);
+  const langPrefix = lang === defaultLang ? "" : `/${lang}`;
+  if (pageKey === PAGE_KEYS.HOME) return langPrefix || "/";
+  return `${langPrefix}/${slug}`;
+};
+
+export const getLocalizedPath = (
+  pageKey: PageKey,
+  lang: Language,
+  hashPageKey?: PageKey
+): string => {
+  let basePathKey = pageKey;
+  let hashKey = hashPageKey;
+
+  if (pageKey.startsWith("OFFER_") || pageKey.startsWith("GALLERY_PHOTO_")) {
+    basePathKey = pageKey.startsWith("OFFER_")
+      ? PAGE_KEYS.OFFER
+      : PAGE_KEYS.GALLERY;
+    hashKey = pageKey;
+  }
+
+  let path = getPrefixedBasePath(basePathKey, lang);
+  if (hashKey) {
+    const hashSlug = getLocalizedSlug(hashKey, lang);
+    if (hashSlug) path += `#${hashSlug}`;
+  }
+  return path;
+};
+
+export function findPageKeyByLocalizedPath(currentFullPath: string): {
+  pageKey: PageKey | null;
+  lang: Language | null;
+  hashKey: PageKey | null;
+  hashSlug: string | null;
+  basePathWithoutLang: string;
+} {
+  console.log(`[FPLP v6] Input currentFullPath: "${currentFullPath}"`);
+  const [pathAndQuery, hashValueFromUrl] = currentFullPath.split("#");
+  const pathOnly = pathAndQuery.split("?")[0];
+  console.log(
+    `[FPLP v6] pathOnly: "${pathOnly}", hashValue: "${
+      hashValueFromUrl || "null"
+    }"`
+  );
+
+  let detectedLang: Language = defaultLang;
+  let slugSegments: string[];
+  const pathSegments = pathOnly.split("/").filter(Boolean);
+
+  if (
+    pathSegments.length > 0 &&
+    supportedLngs.includes(pathSegments[0] as Language)
+  ) {
+    detectedLang = pathSegments[0] as Language;
+    slugSegments = pathSegments.slice(1);
+    console.log(
+      `[FPLP v6] Detected lang from prefix: "${detectedLang}", slug segments: "[${slugSegments.join(
+        ","
+      )}]"`
+    );
+  } else {
+    detectedLang = defaultLang;
+    slugSegments = pathSegments;
+    console.log(
+      `[FPLP v6] No known lang prefix or path starts with default lang. Assumed lang: "${detectedLang}", slug segments: "[${slugSegments.join(
+        ","
+      )}]"`
+    );
+  }
+
+  const slugToAnalyze =
+    slugSegments.join("/") || slugsConfig[detectedLang][PAGE_KEYS.HOME];
+  const basePathWithoutLang =
+    `/${
+      slugToAnalyze === slugsConfig[detectedLang][PAGE_KEYS.HOME] &&
+      slugToAnalyze === ""
+        ? ""
+        : slugToAnalyze
+    }`.replace(/\/$/, "") || "/";
+
+  console.log(
+    `[FPLP v6] For detectedLang "${detectedLang}": slugToAnalyze="${slugToAnalyze}", basePathWithoutLang="${basePathWithoutLang}"`
+  );
+
+  let foundPageKey: PageKey | null = null;
+  console.log(
+    `[FPLP v6] Searching for slug "${slugToAnalyze}" in slugsConfig for lang "${detectedLang}"`
+  );
+  for (const key in slugsConfig[detectedLang]) {
+    if (
+      Object.prototype.hasOwnProperty.call(slugsConfig[detectedLang], key) &&
+      Object.values(PAGE_KEYS).includes(key as PageKey)
+    ) {
+      if (slugsConfig[detectedLang][key as PageKey] === slugToAnalyze) {
+        foundPageKey = key as PageKey;
+        console.log(
+          `[FPLP v6] Matched! foundPageKey: "${foundPageKey}" for slug "${slugToAnalyze}"`
+        );
+        break;
+      }
+    }
+  }
+
+  if (!foundPageKey) {
+    console.warn(
+      `[FPLP v6] No pageKey found for slug "${slugToAnalyze}" and lang "${detectedLang}", setting to NOT_FOUND.`
+    );
+    foundPageKey = PAGE_KEYS.NOT_FOUND;
+  }
+
+  let foundHashKey: PageKey | null = null;
+  if (
+    hashValueFromUrl &&
+    foundPageKey &&
+    foundPageKey !== PAGE_KEYS.NOT_FOUND
+  ) {
+    console.log(
+      `[FPLP v6] Searching for hashValue "${hashValueFromUrl}" in slugsConfig for lang "${detectedLang}"`
+    );
+    for (const key in slugsConfig[detectedLang]) {
+      if (
+        Object.prototype.hasOwnProperty.call(slugsConfig[detectedLang], key) &&
+        (key.startsWith("OFFER_") || key.startsWith("GALLERY_PHOTO_")) &&
+        Object.values(PAGE_KEYS).includes(key as PageKey)
+      ) {
+        if (slugsConfig[detectedLang][key as PageKey] === hashValueFromUrl) {
+          foundHashKey = key as PageKey;
+          console.log(
+            `[FPLP v6] Matched hash! foundHashKey: "${foundHashKey}"`
+          );
+          break;
+        }
+      }
+    }
+  }
+
+  const langToReturn =
+    foundPageKey === PAGE_KEYS.NOT_FOUND ? null : detectedLang;
+
+  console.log(
+    `[FPLP v6] Returning: pageKey="${foundPageKey}", lang="${langToReturn}", hashKey="${
+      foundHashKey || "null"
+    }", basePathWithoutLang="${basePathWithoutLang}"`
+  );
+  return {
+    pageKey: foundPageKey,
+    lang: langToReturn,
+    hashKey: foundHashKey,
+    hashSlug: hashValueFromUrl || null,
+    basePathWithoutLang: basePathWithoutLang,
+  };
+}
+
+
+------------------------------
+
+import React, { useEffect, useRef } from "react";
+import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
+import { queryClient } from "@/lib/queryClient";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ScrollToTopButton from "@/components/ScrollToTopButton";
+import CookieConsent from "@/components/CookieConsent";
+import Home from "@/pages/Home";
+import Oferta from "@/pages/Oferta";
+import Galeria from "@/pages/Galeria";
+import Cennik from "@/pages/Cennik";
+import Kontakt from "@/pages/Kontakt";
+import ONas from "@/pages/ONas";
+import NotFound from "@/pages/not-found";
+import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
+import {
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+  PAGE_KEYS,
+  defaultLang,
+  getInternalRoutePath,
+} from "@/config/paths";
+
+function ScrollRestoration() {
+  const [wouterLocation] = useLocation();
+  useEffect(() => {
+    const [, hashValue] = wouterLocation.split("#");
+    if (!hashValue) {
+      window.scrollTo(0, 0);
+    } else {
+      setTimeout(() => {
+        const element = document.getElementById(hashValue);
+        if (element) {
+          const navbarHeight =
+            document.querySelector("nav")?.offsetHeight || 70;
+          const yOffset = -navbarHeight - 20;
+          const y =
+            element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        } else {
+          window.scrollTo(0, 0);
+        }
+      }, 100);
+    }
+  }, [wouterLocation]);
+  return null;
+}
+
+function LanguageRouterLogic() {
+  const [wouterLocation, navigate] = useLocation();
+  const {
+    language,
+    setLanguage: setGlobalLanguage,
+    isLanguageInitialized,
+  } = useLanguage();
+
+  const effectUrlSyncRunCountRef = useRef(0);
+  const effectLangChangeNavRunCountRef = useRef(0);
+
+  useEffect(() => {
+    if (!isLanguageInitialized) return;
+
+    effectUrlSyncRunCountRef.current += 1;
+    const currentBrowserPath =
+      window.location.pathname + window.location.search + window.location.hash;
+
+    const {
+      pageKey: parsedPageKey,
+      lang: langFromUrl,
+      hashKey: parsedHashKey,
+    } = findPageKeyByLocalizedPath(currentBrowserPath);
+
+    let langToUse = language;
+    if (langFromUrl && langFromUrl !== language) {
+      setGlobalLanguage(langFromUrl, { preventNavigation: true });
+      return;
+    } else if (
+      !langFromUrl &&
+      parsedPageKey &&
+      parsedPageKey !== PAGE_KEYS.NOT_FOUND
+    ) {
+      if (language !== defaultLang) {
+        setGlobalLanguage(defaultLang, { preventNavigation: true });
+        return;
+      }
+      langToUse = defaultLang;
+    }
+
+    if (parsedPageKey && parsedPageKey !== PAGE_KEYS.NOT_FOUND) {
+      const canonicalPath = getLocalizedPath(
+        parsedPageKey,
+        langToUse,
+        parsedHashKey || undefined
+      );
+      const normalize = (s: string) =>
+        s.toLowerCase().replace(/\/$/, "").replace(/\/\#$/, "");
+
+      if (normalize(currentBrowserPath) !== normalize(canonicalPath)) {
+        effectUrlSyncRunCountRef.current = 0;
+        navigate(canonicalPath, { replace: true });
+        return;
+      } else {
+        effectUrlSyncRunCountRef.current = 0;
+      }
+    } else {
+      const homePath = getLocalizedPath(PAGE_KEYS.HOME, langToUse);
+      if (currentBrowserPath !== homePath) {
+        effectUrlSyncRunCountRef.current = 0;
+        navigate(homePath, { replace: true });
+      } else {
+        effectUrlSyncRunCountRef.current = 0;
+      }
+    }
+  }, [
+    wouterLocation,
+    language,
+    isLanguageInitialized,
+    setGlobalLanguage,
+    navigate,
+  ]);
+
+  useEffect(() => {
+    if (!isLanguageInitialized) return;
+
+    const runId = effectLangChangeNavRunCountRef.current + 1;
+    effectLangChangeNavRunCountRef.current = runId;
+
+    const currentBrowserPath =
+      window.location.pathname + window.location.search + window.location.hash;
+    const { pageKey: currentPageKey, hashKey: currentHashKey } =
+      findPageKeyByLocalizedPath(currentBrowserPath);
+
+    const targetPageKey =
+      currentPageKey && currentPageKey !== PAGE_KEYS.NOT_FOUND
+        ? currentPageKey
+        : PAGE_KEYS.HOME;
+    const newCanonicalPath = getLocalizedPath(
+      targetPageKey,
+      language,
+      currentHashKey || undefined
+    );
+
+    const normalize = (s: string) =>
+      s.toLowerCase().replace(/\/$/, "").replace(/\/\#$/, "");
+
+    if (normalize(currentBrowserPath) !== normalize(newCanonicalPath)) {
+      effectLangChangeNavRunCountRef.current = 0;
+      navigate(newCanonicalPath, { replace: true });
+    } else {
+      effectLangChangeNavRunCountRef.current = 0;
+    }
+  }, [language, isLanguageInitialized, navigate]);
+
+  return null;
+}
+
+function AppRoutes() {
+  const { language } = useLanguage();
+  return (
+    <Switch>
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.HOME, language)}
+        component={Home}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.ABOUT, language)}
+        component={ONas}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.OFFER, language)}
+        component={Oferta}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.GALLERY, language)}
+        component={Galeria}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.PRICING, language)}
+        component={Cennik}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.CONTACT, language)}
+        component={Kontakt}
+      />
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  );
+}
+
+function AppMainContent() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <ScrollRestoration />
+        <AppRoutes />
+      </main>
+      <Footer />
+      <ScrollToTopButton />
+      <CookieConsent />
+    </div>
+  );
+}
+
+function LanguageAwareRouter() {
+  const { language, isLanguageInitialized } = useLanguage();
+  if (!isLanguageInitialized) return <div>Loading language...</div>;
+
+  const base = language === defaultLang ? "/" : `/${language}`;
+  const routerKey = `main-router-${language}-${base}`;
+
+  return (
+    <WouterRouter base={base} key={routerKey}>
+      <LanguageRouterLogic />
+      <AppMainContent />
+    </WouterRouter>
+  );
+}
+
+function App() {
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <LanguageAwareRouter />
+          </TooltipProvider>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+}
+
+export default App;

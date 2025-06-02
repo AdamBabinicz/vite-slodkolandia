@@ -1,0 +1,725 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Link as WouterLink, useLocation } from "wouter";
+import {
+  Menu,
+  X,
+  Phone,
+  ChevronDown,
+  Globe,
+  MessageCircle,
+  Star,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
+import ThemeToggle from "./ThemeToggle";
+import {
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+  getLocalizedSlug,
+  PAGE_KEYS,
+  PageKey,
+  Language,
+} from "@/config/paths";
+import { AnimatePresence, motion } from "framer-motion";
+
+export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
+    oferta?: boolean;
+    foto?: boolean;
+  }>({});
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [currentWouterLocation, navigate] = useLocation();
+  const { language, setLanguage: setContextLanguage, t } = useLanguage();
+  const navRef = useRef<HTMLElement>(null);
+  const [scrollbarWidth, setScrollbarWidth] = useState(0);
+
+  useEffect(() => {
+    const calculateScrollbarWidth = () => {
+      const width = window.innerWidth - document.documentElement.clientWidth;
+      setScrollbarWidth(width > 0 ? width : 0);
+    };
+    calculateScrollbarWidth();
+    window.addEventListener("resize", calculateScrollbarWidth);
+    return () => window.removeEventListener("resize", calculateScrollbarWidth);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const body = document.body;
+    const navElement = navRef.current;
+    if (!navElement || scrollbarWidth === undefined) return;
+    const initialNavRight = navElement.style.right || "";
+    const initialNavPaddingRight = navElement.style.paddingRight || "";
+
+    const observer = new MutationObserver(() => {
+      const bodyIsLocked = body.style.overflow === "hidden";
+      const bodyHasSufficientPadding =
+        (parseFloat(body.style.paddingRight) || 0) >= scrollbarWidth;
+
+      if (bodyIsLocked && !bodyHasSufficientPadding && scrollbarWidth > 0) {
+        navElement.style.right = `${scrollbarWidth}px`;
+        navElement.style.paddingRight = "0px";
+      } else {
+        navElement.style.right = initialNavRight;
+        navElement.style.paddingRight = initialNavPaddingRight;
+      }
+    });
+    observer.observe(body, { attributes: true, attributeFilter: ["style"] });
+    return () => {
+      observer.disconnect();
+      if (navElement) {
+        navElement.style.right = initialNavRight;
+        navElement.style.paddingRight = initialNavPaddingRight;
+      }
+    };
+  }, [scrollbarWidth]);
+
+  const changeLanguageAndNavigate = (newLang: Language) => {
+    if (newLang === language) return;
+    setContextLanguage(newLang, { preventNavigation: true });
+
+    const { pageKey: currentPageKey, hashKey: currentCanonicalHashKey } =
+      findPageKeyByLocalizedPath(
+        window.location.pathname + window.location.search + window.location.hash
+      );
+
+    let targetPageKey =
+      currentPageKey && currentPageKey !== PAGE_KEYS.NOT_FOUND
+        ? currentPageKey
+        : PAGE_KEYS.HOME;
+
+    let newPath = getLocalizedPath(targetPageKey, newLang);
+
+    if (currentCanonicalHashKey) {
+      const newLocalizedHashSlug = getLocalizedSlug(
+        currentCanonicalHashKey,
+        newLang
+      );
+      if (newLocalizedHashSlug) {
+        newPath += `#${newLocalizedHashSlug}`;
+      }
+    }
+
+    if (currentWouterLocation !== newPath) {
+      navigate(newPath, { replace: true });
+    }
+  };
+
+  const isActive = (pageKeyToCheck: PageKey, hashPageKeyToCheck?: PageKey) => {
+    const {
+      pageKey: currentPageKey,
+      lang: currentLang,
+      hashSlug: currentHashSlugValue,
+    } = findPageKeyByLocalizedPath(currentWouterLocation);
+
+    if (currentLang !== language) return false;
+    if (currentPageKey !== pageKeyToCheck) return false;
+
+    if (hashPageKeyToCheck) {
+      const targetHashSlug = getLocalizedSlug(
+        hashPageKeyToCheck,
+        language as Language
+      );
+      return currentHashSlugValue === targetHashSlug;
+    }
+    return !currentHashSlugValue;
+  };
+
+  const handleLinkClick = (closeMobileMenu = true, targetPath?: string) => {
+    if (closeMobileMenu) {
+      setIsMobileMenuOpen(false);
+      setMobileDropdownsOpen({});
+    }
+    const homePathForCurrentLang = getLocalizedPath(PAGE_KEYS.HOME, language);
+    if (
+      targetPath === homePathForCurrentLang &&
+      currentWouterLocation === homePathForCurrentLang
+    ) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const toggleMobileDropdown = (key: "oferta" | "foto") => {
+    setMobileDropdownsOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const ofertaLinks: {
+    pageKey: PageKey;
+    hashKey?: PageKey;
+    labelKey: string;
+  }[] = [
+    { pageKey: PAGE_KEYS.OFFER, labelKey: "nav.allAttractions" },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_TENTS,
+      labelKey: "nav.tents",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+      labelKey: "nav.tablesChairs",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_INFLATABLES,
+      labelKey: "nav.inflatables",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_POPCORN,
+      labelKey: "nav.popcorn",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_COTTON_CANDY,
+      labelKey: "nav.cottonCandy",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+      labelKey: "nav.chocolateFountain",
+    },
+  ];
+
+  const galeriaLinks: {
+    pageKey: PageKey;
+    hashKey?: PageKey;
+    labelKey: string;
+  }[] = [
+    { pageKey: PAGE_KEYS.GALLERY, labelKey: "nav.allPhotos" },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_TENTS,
+      labelKey: "nav.photoTents",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS,
+      labelKey: "nav.photoTablesChairs",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_INFLATABLES,
+      labelKey: "nav.photoInflatables",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY,
+      labelKey: "nav.photoCottonCandy",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_POPCORN,
+      labelKey: "nav.photoPopcorn",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS,
+      labelKey: "nav.photoFountains",
+    },
+  ];
+
+  return (
+    <>
+      <nav
+        ref={navRef}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled
+            ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg"
+            : "bg-white dark:bg-slate-900"
+        )}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <WouterLink
+              href={getLocalizedPath(PAGE_KEYS.HOME, language)}
+              onClick={() =>
+                handleLinkClick(
+                  true,
+                  getLocalizedPath(PAGE_KEYS.HOME, language)
+                )
+              }
+            >
+              <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                <img
+                  src="/favicon.png"
+                  alt="Słodkolandia Logo"
+                  className="w-10 h-10"
+                />
+                <span className="brand-title text-xl font-bold text-slate-800 dark:text-white whitespace-nowrap">
+                  {t("hero.title")}
+                </span>
+              </div>
+            </WouterLink>
+
+            <div className="hidden lg:flex items-center space-x-4">
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.HOME, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.HOME) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.HOME) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() =>
+                    handleLinkClick(
+                      true,
+                      getLocalizedPath(PAGE_KEYS.HOME, language)
+                    )
+                  }
+                >
+                  {t("nav.home")}
+                </Button>
+              </WouterLink>
+
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.ABOUT, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.ABOUT) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.ABOUT) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.about")}
+                </Button>
+              </WouterLink>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isActive(PAGE_KEYS.OFFER) ? "default" : "ghost"}
+                    className={cn(
+                      "text-base font-medium px-3",
+                      !isActive(PAGE_KEYS.OFFER) &&
+                        "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                    )}
+                  >
+                    {t("nav.offer")} <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  {ofertaLinks.map((link) => (
+                    <DropdownMenuItem
+                      asChild
+                      key={`${link.pageKey}-${link.hashKey || "base"}`}
+                    >
+                      <WouterLink
+                        href={getLocalizedPath(
+                          link.pageKey,
+                          language,
+                          link.hashKey
+                        )}
+                        onClick={() => handleLinkClick()}
+                        className="w-full"
+                      >
+                        {t(link.labelKey)}
+                      </WouterLink>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isActive(PAGE_KEYS.GALLERY) ? "default" : "ghost"}
+                    className={cn(
+                      "text-base font-medium px-3",
+                      !isActive(PAGE_KEYS.GALLERY) &&
+                        "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                    )}
+                  >
+                    {t("nav.photo")}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  {galeriaLinks.map((link) => (
+                    <DropdownMenuItem
+                      asChild
+                      key={`${link.pageKey}-${link.hashKey || "base"}`}
+                    >
+                      <WouterLink
+                        href={getLocalizedPath(
+                          link.pageKey,
+                          language,
+                          link.hashKey
+                        )}
+                        onClick={() => handleLinkClick()}
+                        className="w-full"
+                      >
+                        {t(link.labelKey)}
+                      </WouterLink>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.PRICING, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.PRICING) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.PRICING) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.pricing")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.CONTACT, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.CONTACT) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.CONTACT) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.contact")}
+                </Button>
+              </WouterLink>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Globe className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={() => changeLanguageAndNavigate("pl")}
+                  >
+                    🇵🇱 Polski
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => changeLanguageAndNavigate("en")}
+                  >
+                    🇬🇧 English
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <ThemeToggle />
+              <a
+                href="https://m.me/slodkolandiawita"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Messenger"
+              >
+                <MessageCircle className="h-5 w-5" />
+              </a>
+              <Dialog
+                modal={false}
+                open={isReviewModalOpen}
+                onOpenChange={setIsReviewModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/20"
+                    title={t("nav.review")}
+                  >
+                    <Star className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md z-[60]">
+                  <DialogHeader>
+                    <DialogTitle className="text-center">
+                      Dodaj opinię o "{t("hero.title")}"!
+                    </DialogTitle>
+                    <DialogDescription className="text-center">
+                      Zeskanuj kod QR, aby dodać opinię na Google Maps.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col items-center space-y-4 py-4">
+                    <div className="bg-white p-4 rounded-lg shadow-inner">
+                      <img
+                        src="/qr-opinia.png"
+                        alt="QR Code - Dodaj opinię"
+                        className="w-48 h-48"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                      Kod QR - Dodaj opinię
+                      <br />
+                      lub kliknij w link:
+                    </p>
+                    <a
+                      href="https://g.page/r/CWM4dGuLyfXlEAE/review"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                      Dodaj opinię na Google
+                    </a>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <a
+                href="tel:+48531890827"
+                className="btn-gradient text-white px-3 py-2 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center space-x-2 whitespace-nowrap text-sm"
+              >
+                <Phone className="h-4 w-4" />
+                <span>531 890 827</span>
+              </a>
+            </div>
+
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setIsMobileMenuOpen(!isMobileMenuOpen);
+                  if (isMobileMenuOpen) setMobileDropdownsOpen({});
+                }}
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {isMobileMenuOpen && (
+          <div
+            className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md overflow-y-auto"
+            style={{ WebkitOverflowScrolling: "touch" }}
+          >
+            <div className="px-4 pt-2 pb-24 space-y-1">
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.HOME, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.HOME) ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start text-base font-medium py-3",
+                    !isActive(PAGE_KEYS.HOME) &&
+                      "text-slate-700 dark:text-slate-200"
+                  )}
+                  onClick={() =>
+                    handleLinkClick(
+                      true,
+                      getLocalizedPath(PAGE_KEYS.HOME, language)
+                    )
+                  }
+                >
+                  {t("nav.home")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.ABOUT, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.ABOUT) ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start text-base font-medium py-3",
+                    !isActive(PAGE_KEYS.ABOUT) &&
+                      "text-slate-700 dark:text-slate-200"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.about")}
+                </Button>
+              </WouterLink>
+              <div>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between text-base font-medium py-3 text-slate-700 dark:text-slate-200"
+                  onClick={() => toggleMobileDropdown("oferta")}
+                >
+                  {t("nav.offer")}
+                  <ChevronDown
+                    className={cn(
+                      "h-5 w-5 transition-transform",
+                      mobileDropdownsOpen.oferta && "rotate-180"
+                    )}
+                  />
+                </Button>
+                {mobileDropdownsOpen.oferta && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-slate-300 dark:border-slate-700 pl-4">
+                    {ofertaLinks.map((link) => (
+                      <WouterLink
+                        href={getLocalizedPath(
+                          link.pageKey,
+                          language,
+                          link.hashKey
+                        )}
+                        key={`${link.pageKey}-${link.hashKey || "base"}`}
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-sm text-slate-600 dark:text-slate-300 py-2"
+                          onClick={() => handleLinkClick()}
+                        >
+                          {t(link.labelKey)}
+                        </Button>
+                      </WouterLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div>
+                <Button
+                  variant="ghost"
+                  className="w-full justify-between text-base font-medium py-3 text-slate-700 dark:text-slate-200"
+                  onClick={() => toggleMobileDropdown("foto")}
+                >
+                  {t("nav.photo")}
+                  <ChevronDown
+                    className={cn(
+                      "h-5 w-5 transition-transform",
+                      mobileDropdownsOpen.foto && "rotate-180"
+                    )}
+                  />
+                </Button>
+                {mobileDropdownsOpen.foto && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-slate-300 dark:border-slate-700 pl-4">
+                    {galeriaLinks.map((link) => (
+                      <WouterLink
+                        href={getLocalizedPath(
+                          link.pageKey,
+                          language,
+                          link.hashKey
+                        )}
+                        key={`${link.pageKey}-${link.hashKey || "base"}`}
+                      >
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start text-sm text-slate-600 dark:text-slate-300 py-2"
+                          onClick={() => handleLinkClick()}
+                        >
+                          {t(link.labelKey)}
+                        </Button>
+                      </WouterLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.PRICING, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.PRICING) ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start text-base font-medium py-3",
+                    !isActive(PAGE_KEYS.PRICING) &&
+                      "text-slate-700 dark:text-slate-200"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.pricing")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={getLocalizedPath(PAGE_KEYS.CONTACT, language)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.CONTACT) ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start text-base font-medium py-3",
+                    !isActive(PAGE_KEYS.CONTACT) &&
+                      "text-slate-700 dark:text-slate-200"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.contact")}
+                </Button>
+              </WouterLink>
+              <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700 mt-3">
+                <div className="flex justify-center space-x-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => changeLanguageAndNavigate("pl")}
+                    className={
+                      language === "pl" ? "bg-sky-100 dark:bg-sky-900" : ""
+                    }
+                  >
+                    🇵🇱 PL
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => changeLanguageAndNavigate("en")}
+                    className={
+                      language === "en" ? "bg-sky-100 dark:bg-sky-900" : ""
+                    }
+                  >
+                    🇬🇧 EN
+                  </Button>
+                  <ThemeToggle />
+                </div>
+                <Button
+                  onClick={() => {
+                    setIsReviewModalOpen(true);
+                    handleLinkClick();
+                  }}
+                  className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold flex items-center justify-center space-x-2"
+                >
+                  <Star className="h-4 w-4" />
+                  <span>{t("nav.review")}</span>
+                </Button>
+                <a
+                  href="https://m.me/slodkolandiawita"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
+                  onClick={() => handleLinkClick()}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>Messenger</span>
+                </a>
+                <a
+                  href="tel:+48531890827"
+                  className="btn-gradient text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
+                  onClick={() => handleLinkClick()}
+                >
+                  <Phone className="h-4 w-4" />
+                  <span>Zadzwoń: 531 890 827</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </nav>
+      <AnimatePresence>
+        {isReviewModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/60 z-[55] modal-backdrop"
+            onClick={() => setIsReviewModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}

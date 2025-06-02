@@ -1,4 +1,21 @@
-import { stockPhotos } from "./stockPhotos";
+import { PageKey, PAGE_KEYS } from "@/config/paths"; // Zaimportuj PageKey i PAGE_KEYS
+
+export interface SpecificationDetail {
+  labelKey: string;
+  value: string;
+  isTranslatableValue?: boolean;
+  price?: number;
+  currency?: string;
+  period?: string;
+}
+
+export interface PricingOption {
+  base: number;
+  currency: string;
+  period: string;
+  descriptionKey?: string;
+  capacityKey?: string;
+}
 
 export interface Attraction {
   id: string;
@@ -9,14 +26,10 @@ export interface Attraction {
   images: string[];
   icon: string;
   features: string[];
-  specifications: {
-    [key: string]: string;
-  };
-  pricing: {
-    base: number;
-    currency: string;
-    period: string;
-  };
+  specifications: SpecificationDetail[];
+  pricingOptions: PricingOption[];
+  pricingDisplayMode?: "standard" | "itemList";
+  offerSectionPageKey?: PageKey; // NOWE POLE
 }
 
 export const attractions: Attraction[] = [
@@ -24,206 +37,374 @@ export const attractions: Attraction[] = [
     id: "namioty-imprezowe",
     name: "Namioty Imprezowe",
     category: "namioty",
-    description: "Profesjonalne namioty imprezowe w różnych rozmiarach, idealne na wesela, urodziny, eventy firmowe i inne okazje. Nasze namioty są wykonane z wysokiej jakości materiałów, odpornych na warunki atmosferyczne. Zapewniamy pełny serwis montażu i demontażu.",
-    shortDescription: "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
+    description: "attractionsData.namioty-imprezowe.description",
+    shortDescription: "attractionsData.namioty-imprezowe.shortDescription",
     images: [
-      "/img/d/1.jpg",
-      "/img/d/2.jpg",
-      "/img/d/3.jpg"
+      "/img/n/1.avif",
+      "/img/n/2.avif",
+      "/img/n/3.avif",
+      "/img/n/18.avif",
+      "/img/n/20.avif",
+      "/img/n/21.avif",
     ],
     icon: "fas fa-campground",
     features: [
-      "Różne rozmiary dostępne",
-      "Odporne na warunki atmosferyczne",
-      "Profesjonalny montaż i demontaż",
-      "Możliwość dodania podłogi",
-      "Oświetlenie LED",
-      "Dekoracje ślubne i eventowe"
+      "feature.variousSizes",
+      "feature.weatherResistant",
+      "feature.professionalSetup",
+      "feature.optionalFloor",
+      "feature.ledLighting",
     ],
-    specifications: {
-      "Rozmiary": "5x10m, 6x12m, 8x15m, 10x20m",
-      "Materiał": "PVC 650g/m²",
-      "Wysokość": "2.5m - 3.5m",
-      "Montaż": "2-4 godziny",
-      "Pojemność": "50-200 osób"
-    },
-    pricing: {
-      base: 350,
-      currency: "zł",
-      period: "1 dzień"
-    }
+    specifications: [
+      {
+        labelKey: "specification.label.material",
+        value: "attractionsData.namioty-imprezowe.materialValue",
+        isTranslatableValue: true,
+      },
+      { labelKey: "specification.label.height", value: "2.5m - 3.5m" },
+      {
+        labelKey: "specification.label.assemblyTime",
+        value: "specification.value.assemblyTime24",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.availableSizes",
+        value: "attractionsData.namioty-imprezowe.availableSizesValue",
+        isTranslatableValue: true,
+      },
+    ],
+    pricingOptions: [
+      {
+        base: 600,
+        currency: "zł",
+        period: "impreza",
+        descriptionKey: "attractionsData.namioty-imprezowe.option1.description",
+        capacityKey: "attractionsData.namioty-imprezowe.option1.capacity",
+      },
+      {
+        base: 800,
+        currency: "zł",
+        period: "impreza",
+        descriptionKey: "attractionsData.namioty-imprezowe.option2.description",
+        capacityKey: "attractionsData.namioty-imprezowe.option2.capacity",
+      },
+    ],
+    pricingDisplayMode: "standard",
+    offerSectionPageKey: PAGE_KEYS.OFFER_TENTS,
+  },
+  {
+    id: "stoly-krzesla-obrusy",
+    name: "Stoły, Krzesła i Obrusy",
+    category: "wyposazenie",
+    description: "attractionsData.stoly-krzesla-obrusy.description",
+    shortDescription: "attractionsData.stoly-krzesla-obrusy.shortDescription",
+    images: ["/img/s/3.webp", "/img/s/19.jpg", "/img/s/18.jpg"],
+    icon: "fas fa-chair",
+    features: [
+      "feature.tablesFor6",
+      "feature.comfortableChairs",
+      "feature.elegantTablecloths",
+      "feature.decorativeGrass",
+      "feature.nightLighting",
+      "feature.variousConfigurations",
+    ],
+    specifications: [
+      {
+        labelKey: "specification.label.tableRentalItem",
+        value: "specification.value.tableRentalDesc",
+        isTranslatableValue: true,
+        price: 25,
+        currency: "zł",
+        period: "sztuka/dzień",
+      },
+      {
+        labelKey: "specification.label.chairRentalItem",
+        value: "specification.value.chairRentalDesc",
+        isTranslatableValue: true,
+        price: 10,
+        currency: "zł",
+        period: "sztuka/dzień",
+      },
+      {
+        labelKey: "specification.label.tableclothRentalItem",
+        value: "specification.value.tableclothRentalDesc",
+        isTranslatableValue: true,
+        price: 20,
+        currency: "zł",
+        period: "sztuka/dzień",
+      },
+      {
+        labelKey: "specification.label.grassRentalItem",
+        value: "specification.value.grassRentalDesc",
+        isTranslatableValue: true,
+        price: 0,
+        currency: "zł",
+        period: "gratis",
+      },
+      {
+        labelKey: "specification.label.lightingRentalItem",
+        value: "specification.value.lightingRentalDesc",
+        isTranslatableValue: true,
+        price: 0,
+        currency: "zł",
+        period: "gratis",
+      },
+    ],
+    pricingOptions: [{ base: 10, currency: "zł", period: "od" }],
+    pricingDisplayMode: "itemList",
+    offerSectionPageKey: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
   },
   {
     id: "dmuchane-atrakcje",
-    name: "Dmuchane Atrakcje",
+    name: "Zamki i Zjeżdżalnie Dmuchane",
     category: "dmuchance",
-    description: "Kolorowe zjeżdżalnie, zamki dmuchane i place zabaw dla dzieci. Nasze atrakcje są bezpieczne, regularnie serwisowane i posiadają wszystkie wymagane certyfikaty. Gwarantujemy radość i bezpieczną zabawę dla dzieci w każdym wieku.",
-    shortDescription: "Zjeżdżalnie, zamki dmuchane i place zabaw. Gwarantowana radość dla dzieci w każdym wieku!",
+    description: "attractionsData.dmuchane-atrakcje.description",
+    shortDescription: "attractionsData.dmuchane-atrakcje.shortDescription",
     images: [
+      "/img/d/1.jpg",
+      "/img/d/2.jpg",
+      "/img/d/3.jpg",
       "/img/d/4.jpg",
       "/img/d/5.jpg",
-      "/img/d/6.jpg"
+      "/img/d/6.jpg",
     ],
     icon: "fas fa-castle",
     features: [
-      "Certyfikowane i bezpieczne",
-      "Różne motywy i rozmiary",
-      "Obsługa podczas eventu",
-      "Ubezpieczenie OC",
-      "Agregat prądotwórczy w zestawie",
-      "Maty ochronne"
+      "feature.certifiedSafe",
+      "feature.variousThemes",
+      "feature.eventSupport",
+      "feature.liabilityInsurance",
+      "feature.generatorIncluded",
+      "feature.protectiveMats",
     ],
-    specifications: {
-      "Wiek dzieci": "3-12 lat",
-      "Wymiary": "4x4m - 8x6m",
-      "Wysokość": "3-5 metrów",
-      "Pojemność": "8-15 dzieci jednocześnie",
-      "Zasilanie": "230V/16A"
-    },
-    pricing: {
-      base: 250,
-      currency: "zł",
-      period: "1 dzień"
-    }
+    specifications: [
+      { labelKey: "specification.label.age", value: "3-12 lat" },
+      { labelKey: "specification.label.dimensions", value: "4x4m - 8x6m" },
+      { labelKey: "specification.label.height", value: "3-5 metrów" },
+      {
+        labelKey: "specification.label.capacity",
+        value: "specification.value.capacity815children",
+        isTranslatableValue: true,
+      },
+      { labelKey: "specification.label.power", value: "230V/16A" },
+    ],
+    pricingOptions: [{ base: 800, currency: "zł", period: "impreza" }],
+    pricingDisplayMode: "standard",
+    offerSectionPageKey: PAGE_KEYS.OFFER_INFLATABLES,
   },
   {
     id: "wata-cukrowa",
     name: "Wata Cukrowa",
     category: "cukiernicze",
-    description: "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami i aromatami. Nasza wata cukrowa to nie tylko słodka przekąska, ale także atrakcja wizualna, która zachwyci gości w każdym wieku. Oferujemy różne smaki i kolory.",
-    shortDescription: "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
+    description: "attractionsData.wata-cukrowa.description",
+    shortDescription: "attractionsData.wata-cukrowa.shortDescription",
     images: [
-      "/img/d/7.jpg",
-      "/img/d/8.jpg",
-      "/img/d/9.jpg"
+      "/img/w/11-.avif",
+      "/img/w/22-.avif",
+      "/img/w/33-.avif",
+      "/img/w/44-.avif",
+      "/img/w/55-.avif",
+      "/img/w/p5.avif",
     ],
     icon: "fas fa-candy-cane",
     features: [
-      "Różne smaki i kolory",
-      "Profesjonalna obsługa",
-      "Higieniczne opakowania",
-      "Atrakcja wizualna",
-      "Szybka produkcja",
-      "Ekologiczne cukry"
+      "feature.variousFlavorsColors",
+      "feature.professionalService",
+      "feature.hygienicPackaging",
+      "feature.visualAttraction",
+      "feature.fastProduction",
+      "feature.ecoSugars",
     ],
-    specifications: {
-      "Smaki": "Truskawka, wanilia, malina, jabłko",
-      "Kolory": "Różowy, niebieski, żółty, zielony",
-      "Wydajność": "100-150 porcji/godzinę",
-      "Zasilanie": "230V",
-      "Obsługa": "Operator w zestawie"
-    },
-    pricing: {
-      base: 150,
-      currency: "zł",
-      period: "1 dzień"
-    }
+    specifications: [
+      {
+        labelKey: "specification.label.flavors",
+        value: "specification.value.flavorsCottonCandy",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.colors",
+        value: "specification.value.colorsCottonCandy",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.efficiency",
+        value: "specification.value.efficiency100150Portions",
+        isTranslatableValue: true,
+      },
+      { labelKey: "specification.label.power", value: "230V" },
+      {
+        labelKey: "specification.label.operator",
+        value: "specification.value.operatorIncluded",
+        isTranslatableValue: true,
+      },
+    ],
+    pricingOptions: [{ base: 250, currency: "zł", period: "hour" }],
+    pricingDisplayMode: "standard",
+    offerSectionPageKey: PAGE_KEYS.OFFER_COTTON_CANDY,
   },
   {
     id: "popcorn",
     name: "Popcorn",
     category: "cukiernicze",
-    description: "Maszyny do popcornu w stylu retro, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
-    shortDescription: "Maszyny do popcornu w stylu retro. Świeży, aromatyczny popcorn na Twoim evencie.",
+    description: "attractionsData.popcorn.description",
+    shortDescription: "attractionsData.popcorn.shortDescription",
     images: [
-      "/img/d/10.jpg",
-      "/img/d/11.jpg",
-      "/img/d/12.jpg"
+      "/img/p/1.jpg",
+      "/img/p/2.jpg",
+      "/img/p/4.jpg",
+      "/img/p/p1.jpg",
+      "/img/p/p2.jpg",
+      "/img/p/p3.jpg",
     ],
     icon: "fas fa-seedling",
     features: [
-      "Maszyny w stylu retro",
-      "Świeży popcorn na żywo",
-      "Różne smaki dostępne",
-      "Atrakcyjne opakowania",
-      "Profesjonalna obsługa",
-      "Higiena i jakość"
+      "feature.popcornMachines",
+      "feature.freshPopcornLive",
+      "feature.variousFlavors",
+      "feature.attractivePackaging",
+      "feature.professionalService",
+      "feature.hygieneQuality",
     ],
-    specifications: {
-      "Smaki": "Słony, słodki, karmelowy, serowy",
-      "Wydajność": "200 porcji/godzinę",
-      "Typ maszyny": "Retro cart",
-      "Zasilanie": "230V",
-      "Opakowania": "Papierowe torby i pudełka"
-    },
-    pricing: {
-      base: 180,
-      currency: "zł",
-      period: "1 dzień"
-    }
+    specifications: [
+      {
+        labelKey: "specification.label.flavors",
+        value: "specification.value.flavorsPopcorn",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.efficiency",
+        value: "specification.value.efficiency200Portions",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.machineType",
+        value: "specification.value.machineTypePopcorn",
+        isTranslatableValue: true,
+      },
+      { labelKey: "specification.label.power", value: "230V" },
+      {
+        labelKey: "specification.label.packaging",
+        value: "specification.value.packagingPaper",
+        isTranslatableValue: true,
+      },
+    ],
+    pricingOptions: [{ base: 280, currency: "zł", period: "hour" }],
+    pricingDisplayMode: "standard",
+    offerSectionPageKey: PAGE_KEYS.OFFER_POPCORN,
   },
   {
-    id: "fontanny-czekoladowe",
-    name: "Fontanny Czekoladowe",
+    id: "fontanna-czekoladowa",
+    name: "Fontanna Czekoladowa",
     category: "cukiernicze",
-    description: "Eleganckie fontanny czekoladowe z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
-    shortDescription: "Eleganckie fontanny czekoladowe z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+    description: "attractionsData.fontanna-czekoladowa.description",
+    shortDescription: "attractionsData.fontanna-czekoladowa.shortDescription",
     images: [
-      "/img/d/13.jpg",
-      "/img/d/14.jpg",
-      "/img/d/15.jpg"
+      "/img/f/1.jpg",
+      "/img/f/2.jpg",
+      "/img/f/3.jpg",
+      "/img/f/4.jpg",
+      "/img/f/5.jpg",
+      "/img/f/6.jpg",
     ],
     icon: "fas fa-birthday-cake",
     features: [
-      "Różne rodzaje czekolady",
-      "Świeże owoce w zestawie",
-      "Elegancka prezentacja",
-      "Profesjonalna obsługa",
-      "Higiena i bezpieczeństwo",
-      "Dodatki do maczania"
+      "feature.variousChocolateTypes",
+      "feature.freshFruitIncluded",
+      "feature.elegantPresentation",
+      "feature.professionalService",
+      "feature.hygieneSafety",
+      "feature.toppings",
     ],
-    specifications: {
-      "Rodzaje czekolady": "Mleczna, gorzka, biała",
-      "Wysokość fontanny": "60-80 cm",
-      "Pojemność": "3-5 kg czekolady",
-      "Dodatki": "Owoce, ciasteczka, marshmallows",
-      "Obsługa": "Kelner w zestawie"
-    },
-    pricing: {
-      base: 200,
-      currency: "zł",
-      period: "1 dzień"
-    }
+    specifications: [
+      {
+        labelKey: "specification.label.chocolateTypes",
+        value: "specification.value.chocolateTypesFull",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.fountainHeight",
+        value: "specification.value.fountainHeightCm",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.chocolateCapacity",
+        value: "specification.value.chocolateCapacityKg",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.toppings",
+        value: "specification.value.toppingsFull",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.waiter",
+        value: "specification.value.waiterIncluded",
+        isTranslatableValue: true,
+      },
+    ],
+    pricingOptions: [{ base: 800, currency: "zł", period: "impreza" }],
+    pricingDisplayMode: "standard",
+    offerSectionPageKey: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
   },
   {
     id: "kompleksowa-obsluga",
     name: "Kompleksowa Obsługa Eventów",
-    category: "kompleksowa",
-    description: "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania i projektowania, przez organizację przestrzeni, aż po pełną obsługę podczas imprezy. Zajmujemy się wszystkim, abyś mógł cieszyć się swoim eventem.",
-    shortDescription: "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
+    category: "uslugi",
+    description: "attractionsData.kompleksowa-obsluga.description",
+    shortDescription: "attractionsData.kompleksowa-obsluga.shortDescription",
     images: [
-      "/img/d/16.jpg",
-      "/img/d/17.jpg",
-      "/img/d/18.jpg"
+      "/img/k/1.jpg",
+      "/img/k/2.jpg",
+      "/img/k/3.jpg",
+      "/img/k/16.jpg",
+      "/img/k/17.jpg",
+      "/img/k/18.jpg",
     ],
     icon: "fas fa-users",
     features: [
-      "Konsultacja i planowanie",
-      "Projekt aranżacji przestrzeni",
-      "Koordynacja dostaw",
-      "Montaż i demontaż",
-      "Obsługa podczas eventu",
-      "Ubezpieczenie kompleksowe"
+      "feature.consultationPlanning",
+      "feature.spaceDesign",
+      "feature.deliveryCoordination",
+      "feature.professionalSetup",
+      "feature.eventSupport",
+      "feature.comprehensiveInsurance",
     ],
-    specifications: {
-      "Doświadczenie": "Ponad 5 lat",
-      "Zespół": "Profesjonalni organizatorzy",
-      "Obszar": "Radom i okolice 50km",
-      "Rodzaje eventów": "Wesela, urodziny, eventy firmowe",
-      "Czas realizacji": "2-8 godzin"
-    },
-    pricing: {
-      base: 500,
-      currency: "zł",
-      period: "event"
-    }
-  }
+    specifications: [
+      {
+        labelKey: "specification.label.experience",
+        value: "specification.value.experienceYears",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.team",
+        value: "specification.value.teamProfessional",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.area",
+        value: "specification.value.areaKm",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.eventTypes",
+        value: "specification.value.eventTypesFull",
+        isTranslatableValue: true,
+      },
+      {
+        labelKey: "specification.label.realizationTime",
+        value: "specification.value.realizationTimeHours",
+        isTranslatableValue: true,
+      },
+    ],
+    pricingOptions: [{ base: 500, currency: "zł", period: "event" }],
+    pricingDisplayMode: "standard",
+  },
 ];
 
 export const getAttractionsByCategory = (category: string): Attraction[] => {
-  return attractions.filter(attraction => attraction.category === category);
+  return attractions.filter((attraction) => attraction.category === category);
 };
 
 export const getAttractionById = (id: string): Attraction | undefined => {
-  return attractions.find(attraction => attraction.id === id);
+  return attractions.find((attraction) => attraction.id === id);
 };

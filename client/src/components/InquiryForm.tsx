@@ -11,31 +11,40 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/hooks/useLanguage";
 
 const inquirySchema = z.object({
-  name: z.string().min(2, "Imię i nazwisko musi mieć co najmniej 2 znaki"),
-  email: z.string().email("Nieprawidłowy adres email"),
+  name: z.string().min(2, "inquiryForm.nameError"),
+  email: z.string().email("inquiryForm.emailError"),
   phone: z.string().optional(),
   eventDate: z.string().optional(),
-  attractions: z.array(z.string()).optional(),
-  message: z.string().min(10, "Wiadomość musi mieć co najmniej 10 znaków"),
+  message: z.string().min(10, "inquiryForm.messageError"),
 });
 
-type InquiryFormData = z.infer<typeof inquirySchema>;
-
-const attractionOptions = [
-  { id: "namioty", label: "Namioty Imprezowe" },
-  { id: "dmuchance", label: "Dmuchane Atrakcje" },
-  { id: "wata", label: "Wata Cukrowa" },
-  { id: "popcorn", label: "Maszyny do Popcornu" },
-  { id: "fontanny", label: "Fontanny Czekoladowe" },
-  { id: "kompleksowa", label: "Kompleksowa Obsługa" },
-];
+type InquiryFormData = Omit<z.infer<typeof inquirySchema>, "attractions">;
 
 export default function InquiryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedAttractions, setSelectedAttractions] = useState<string[]>([]);
   const { toast } = useToast();
+  const { t } = useLanguage();
+
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xnnvqaan";
+
+  const attractionOptions = [
+    { id: "namioty", labelKey: "inquiryForm.attractionOptionTents" },
+    { id: "stoly", labelKey: "inquiryForm.attractionOptionTables" },
+    { id: "krzesla", labelKey: "inquiryForm.attractionOptionChairs" },
+    { id: "obrusy", labelKey: "inquiryForm.attractionOptionLinens" },
+    { id: "dmuchance", labelKey: "inquiryForm.attractionOptionInflatables" },
+    { id: "wata", labelKey: "inquiryForm.attractionOptionCottonCandy" },
+    { id: "popcorn", labelKey: "inquiryForm.attractionOptionPopcorn" },
+    { id: "fontanna", labelKey: "inquiryForm.attractionOptionFountains" },
+    {
+      id: "kompleksowa",
+      labelKey: "inquiryForm.attractionOptionComprehensive",
+    },
+  ];
 
   const {
     register,
@@ -44,40 +53,56 @@ export default function InquiryForm() {
     formState: { errors },
   } = useForm<InquiryFormData>({
     resolver: zodResolver(inquirySchema),
-    defaultValues: {
-      attractions: [],
-    },
+    defaultValues: {},
   });
 
   const handleAttractionChange = (attractionId: string, checked: boolean) => {
-    setSelectedAttractions(prev => 
-      checked 
+    setSelectedAttractions((prev) =>
+      checked
         ? [...prev, attractionId]
-        : prev.filter(id => id !== attractionId)
+        : prev.filter((id) => id !== attractionId)
     );
   };
 
   const onSubmit = async (data: InquiryFormData) => {
     setIsSubmitting(true);
-    
+
+    const formDataToSubmit = {
+      ...data,
+      attractions: selectedAttractions.join(", "),
+    };
+
     try {
-      // In a real application, this would integrate with EmailJS or a backend service
-      console.log("Form data:", { ...data, attractions: selectedAttractions });
-      
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      toast({
-        title: "Zapytanie wysłane!",
-        description: "Dziękujemy za kontakt. Odpowiemy w ciągu 24 godzin.",
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formDataToSubmit),
       });
-      
-      reset();
-      setSelectedAttractions([]);
+
+      if (response.ok) {
+        toast({
+          title: t("inquiryForm.successTitle"),
+          description: t("inquiryForm.successDescription"),
+        });
+        reset();
+        setSelectedAttractions([]);
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        console.error("Formspree error data:", errorData);
+        toast({
+          title: t("inquiryForm.errorTitle"),
+          description: errorData.error || t("inquiryForm.errorDescription"),
+          variant: "destructive",
+        });
+      }
     } catch (error) {
+      console.error("Error submitting form:", error);
       toast({
-        title: "Błąd wysyłania",
-        description: "Przepraszamy, wystąpił problem. Spróbuj ponownie lub zadzwoń.",
+        title: t("inquiryForm.errorTitle"),
+        description: t("inquiryForm.errorDescription"),
         variant: "destructive",
       });
     } finally {
@@ -92,82 +117,99 @@ export default function InquiryForm() {
       transition={{ duration: 0.5 }}
     >
       <Card className="border border-slate-200 shadow-lg">
+        {" "}
+        {/* Zachowano oryginalne klasy Card */}
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-slate-800">
-            Formularz Zapytania
+            {" "}
+            {/* Zachowano oryginalne klasy CardTitle */}
+            {t("inquiryForm.title")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Name */}
             <div>
-              <Label htmlFor="name" className="text-sm font-medium text-slate-700">
-                Imię i nazwisko *
+              <Label
+                htmlFor="name"
+                className="text-sm font-medium text-slate-700" // Zachowano oryginalne klasy Label
+              >
+                {t("inquiryForm.nameLabel")}
               </Label>
               <Input
                 id="name"
                 {...register("name")}
-                placeholder="Twoje imię i nazwisko"
-                className="mt-1"
+                placeholder={t("inquiryForm.namePlaceholder")}
+                className="mt-1" // Zachowano oryginalne klasy Input
                 disabled={isSubmitting}
               />
               {errors.name && (
-                <p className="text-sm text-red-600 mt-1">{errors.name.message}</p>
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.name.message ? t(errors.name.message) : ""}
+                </p>
               )}
             </div>
 
-            {/* Email */}
             <div>
-              <Label htmlFor="email" className="text-sm font-medium text-slate-700">
-                Email *
+              <Label
+                htmlFor="email"
+                className="text-sm font-medium text-slate-700" // Zachowano oryginalne klasy Label
+              >
+                {t("inquiryForm.emailLabel")}
               </Label>
               <Input
                 id="email"
                 type="email"
                 {...register("email")}
-                placeholder="twoj@email.pl"
-                className="mt-1"
+                placeholder={t("inquiryForm.emailPlaceholder")}
+                className="mt-1" // Zachowano oryginalne klasy Input
                 disabled={isSubmitting}
               />
               {errors.email && (
-                <p className="text-sm text-red-600 mt-1">{errors.email.message}</p>
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.email.message ? t(errors.email.message) : ""}
+                </p>
               )}
             </div>
 
-            {/* Phone */}
             <div>
-              <Label htmlFor="phone" className="text-sm font-medium text-slate-700">
-                Telefon
+              <Label
+                htmlFor="phone"
+                className="text-sm font-medium text-slate-700" // Zachowano oryginalne klasy Label
+              >
+                {t("inquiryForm.phoneLabel")}
               </Label>
               <Input
                 id="phone"
                 type="tel"
                 {...register("phone")}
-                placeholder="+48 123 456 789"
-                className="mt-1"
+                placeholder={t("inquiryForm.phonePlaceholder")}
+                className="mt-1" // Zachowano oryginalne klasy Input
                 disabled={isSubmitting}
               />
             </div>
 
-            {/* Event Date */}
             <div>
-              <Label htmlFor="eventDate" className="text-sm font-medium text-slate-700">
-                Data eventu
+              <Label
+                htmlFor="eventDate"
+                className="text-sm font-medium text-slate-700" // Zachowano oryginalne klasy Label
+              >
+                {t("inquiryForm.eventDateLabel")}
               </Label>
               <Input
                 id="eventDate"
                 type="date"
                 {...register("eventDate")}
-                className="mt-1"
-                min={new Date().toISOString().split('T')[0]}
+                className="mt-1" // Zachowano oryginalne klasy Input
+                min={new Date().toISOString().split("T")[0]}
                 disabled={isSubmitting}
               />
             </div>
 
-            {/* Attractions */}
             <div>
               <Label className="text-sm font-medium text-slate-700 mb-3 block">
-                Interesujące atrakcje
+                {" "}
+                {/* Zachowano oryginalne klasy Label */}
+                {t("inquiryForm.attractionsLabel")}
               </Label>
               <div className="grid grid-cols-2 gap-3">
                 {attractionOptions.map((option) => (
@@ -175,38 +217,45 @@ export default function InquiryForm() {
                     <Checkbox
                       id={option.id}
                       checked={selectedAttractions.includes(option.id)}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         handleAttractionChange(option.id, checked as boolean)
                       }
                       disabled={isSubmitting}
+                      // Usunięto klasy dark dla Checkbox
                     />
-                    <Label htmlFor={option.id} className="text-sm cursor-pointer">
-                      {option.label}
+                    <Label
+                      htmlFor={option.id}
+                      className="text-sm cursor-pointer" // Zachowano oryginalne klasy Label
+                    >
+                      {t(option.labelKey)}
                     </Label>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Message */}
             <div>
-              <Label htmlFor="message" className="text-sm font-medium text-slate-700">
-                Wiadomość *
+              <Label
+                htmlFor="message"
+                className="text-sm font-medium text-slate-700" // Zachowano oryginalne klasy Label
+              >
+                {t("inquiryForm.messageLabel")}
               </Label>
               <Textarea
                 id="message"
                 {...register("message")}
-                placeholder="Opisz swój event, liczbę gości, dodatkowe wymagania..."
+                placeholder={t("inquiryForm.messagePlaceholder")}
                 rows={4}
-                className="mt-1"
+                className="mt-1" // Zachowano oryginalne klasy Textarea
                 disabled={isSubmitting}
               />
               {errors.message && (
-                <p className="text-sm text-red-600 mt-1">{errors.message.message}</p>
+                <p className="text-sm text-red-600 mt-1">
+                  {errors.message.message ? t(errors.message.message) : ""}
+                </p>
               )}
             </div>
 
-            {/* Submit Button */}
             <Button
               type="submit"
               className="w-full btn-gradient text-white py-4 text-lg font-semibold hover:shadow-lg transition-all"
@@ -215,12 +264,12 @@ export default function InquiryForm() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                  Wysyłanie...
+                  {t("inquiryForm.submittingButton")}
                 </>
               ) : (
                 <>
                   <Send className="h-5 w-5 mr-2" />
-                  Wyślij Zapytanie
+                  {t("inquiryForm.submitButton")}
                 </>
               )}
             </Button>

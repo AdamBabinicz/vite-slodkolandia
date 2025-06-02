@@ -1,75 +1,120 @@
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Calendar } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Calendar,
+  Truck,
+  Star as StarIcon,
+} from "lucide-react";
+import { BsMessenger } from "react-icons/bs";
 import { motion } from "framer-motion";
-import SEOHead from "@/components/SEOHead";
+// import SEOHead from "@/components/SEOHead";
 import InquiryForm from "@/components/InquiryForm";
-
-const contactMethods = [
-  {
-    icon: <Phone className="h-6 w-6 text-sky-600" />,
-    title: "Telefon",
-    description: "Najszybszy kontakt",
-    details: "+48 505 977 940",
-    action: "tel:+48505977940",
-    bgColor: "bg-sky-100"
-  },
-  {
-    icon: <Mail className="h-6 w-6 text-emerald-600" />,
-    title: "Email",
-    description: "Napisz do nas",
-    details: "kontakt@slodkolandia.pl",
-    action: "mailto:kontakt@slodkolandia.pl",
-    bgColor: "bg-emerald-100"
-  },
-  {
-    icon: <MessageCircle className="h-6 w-6 text-purple-600" />,
-    title: "WhatsApp",
-    description: "Szybka wiadomość",
-    details: "+48 505 977 940",
-    action: "https://wa.me/48505977940",
-    bgColor: "bg-purple-100"
-  },
-  {
-    icon: <Calendar className="h-6 w-6 text-amber-600" />,
-    title: "Spotkanie",
-    description: "Umów się na prezentację",
-    details: "Po wcześniejszym kontakcie",
-    action: "tel:+48505977940",
-    bgColor: "bg-amber-100"
-  }
-];
-
-const workingHours = [
-  { day: "Poniedziałek - Piątek", hours: "8:00 - 20:00" },
-  { day: "Sobota", hours: "9:00 - 18:00" },
-  { day: "Niedziela", hours: "10:00 - 16:00" },
-  { day: "Dni świąteczne", hours: "Na umowę" }
-];
-
-const serviceAreas = [
-  { city: "Radom", distance: "0km", note: "Siedziba firmy" },
-  { city: "Białobrzegi", distance: "25km", note: "Darmowy transport" },
-  { city: "Szydłowiec", distance: "30km", note: "Darmowy transport" },
-  { city: "Kozienice", distance: "35km", note: "Dodatkowa opłata" },
-  { city: "Ostrowiec Św.", distance: "40km", note: "Dodatkowa opłata" },
-  { city: "Skarżysko-Kamienna", distance: "45km", note: "Dodatkowa opłata" }
-];
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function Kontakt() {
+  const { t } = useLanguage();
+
+  const contactMethods = [
+    {
+      icon: <Phone className="h-6 w-6 text-sky-600" />,
+      titleKey: "contactPage.phoneTitle",
+      descriptionKey: "contactPage.phoneDescription",
+      details: "+48 531 890 827",
+      action: "tel:+48531890827",
+      bgColor: "bg-sky-100",
+    },
+    {
+      icon: <Mail className="h-6 w-6 text-emerald-600" />,
+      titleKey: "contactPage.emailTitle",
+      descriptionKey: "contactPage.emailDescription",
+      details: "mariusz1989poczta@wp.pl",
+      action: "mailto:mariusz1989poczta@wp.pl",
+      bgColor: "bg-emerald-100",
+    },
+    {
+      icon: <BsMessenger className="h-6 w-6 text-purple-600" />,
+      titleKey: "contactPage.whatsappTitle",
+      descriptionKey: "contactPage.whatsappDescription",
+      details: "+48 531 890 827",
+      action: "https://wa.me/48531890827",
+      bgColor: "bg-purple-100",
+    },
+    {
+      icon: <Calendar className="h-6 w-6 text-amber-600" />,
+      titleKey: "contactPage.meetingTitle",
+      descriptionKey: "contactPage.meetingDescription",
+      detailsKey: "contactPage.meetingDetails",
+      action: "tel:+48531890827",
+      bgColor: "bg-amber-100",
+    },
+  ];
+
+  const workingHours = [
+    {
+      dayKey: "contactPage.workingHoursMonFri",
+      hoursKey: "contactPage.workingHoursMonFriTime",
+    },
+    {
+      dayKey: "contactPage.workingHoursSat",
+      hoursKey: "contactPage.workingHoursSatTime",
+    },
+    {
+      dayKey: "contactPage.workingHoursSun",
+      hoursKey: "contactPage.workingHoursSunTime",
+    },
+    {
+      dayKey: "contactPage.workingHoursHoliday",
+      hoursKey: "contactPage.workingHoursHolidayTime",
+    },
+  ];
+
+  // Nowa definicja dla głównych miast obsługi
+  const mainServiceCities = [
+    "contactPage.serviceAreaRadom",
+    "contactPage.serviceAreaWarsaw",
+    "contactPage.serviceAreaLublin",
+  ];
+
+  const faqItems = [
+    {
+      questionKey: "contactPage.faq1Question",
+      answerKey: "contactPage.faq1Answer",
+    },
+    {
+      questionKey: "contactPage.faq2Question",
+      answerKey: "contactPage.faq2Answer",
+    },
+    {
+      questionKey: "contactPage.faq3Question",
+      answerKey: "contactPage.faq3Answer",
+    },
+    {
+      questionKey: "contactPage.faq4Question",
+      answerKey: "contactPage.faq4Answer",
+    },
+    {
+      questionKey: "contactPage.faq5Question",
+      answerKey: "contactPage.faq5Answer",
+    },
+  ];
+
   return (
     <>
-      <SEOHead
-        title="Kontakt - Wynajem Atrakcji Eventowych Radom | SŁODKOLANDIA"
-        description="Skontaktuj się z nami już dziś! Telefon: +48 505 977 940. Profesjonalny wynajem atrakcji eventowych w Radomiu i okolicach."
+      {/* <SEOHead
+        title={t("seo.contactTitle")}
+        description={t("seo.contactDescription")}
         canonical="/kontakt"
-      />
+      /> */}
 
       <div className="pt-16">
-        {/* Hero Section */}
         <section className="py-20 bg-gradient-to-br from-sky-50 to-emerald-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div 
+            <motion.div
               className="text-center"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -80,29 +125,27 @@ export default function Kontakt() {
                   <Phone className="h-8 w-8 text-white" />
                 </div>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6">
-                Skontaktuj się z Nami
-              </h1>
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 mb-6">
+                {t("contactPage.heroTitle")}
+              </h2>
               <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
-                Zorganizujmy razem Twoją niezapomnianą imprezę! Skontaktuj się z nami już dziś 
-                i sprawdź dostępność na Twój termin.
+                {t("contactPage.heroDescription")}
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Badge variant="secondary" className="text-lg px-4 py-2">
-                  ⚡ Szybka odpowiedź
+                  {t("contactPage.badgeQuickResponse")}
                 </Badge>
                 <Badge variant="secondary" className="text-lg px-4 py-2">
-                  💬 Darmowa konsultacja
+                  {t("contactPage.badgeFreeConsultation")}
                 </Badge>
                 <Badge variant="secondary" className="text-lg px-4 py-2">
-                  📋 Indywidualne wyceny
+                  {t("contactPage.badgeIndividualQuotes")}
                 </Badge>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Quick Contact Methods */}
         <section className="py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -113,10 +156,10 @@ export default function Kontakt() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-bold text-slate-800 mb-4">
-                Wybierz Najwygodniejszy Sposób Kontaktu
+                {t("contactPage.quickContactTitle")}
               </h2>
               <p className="text-xl text-slate-600">
-                Jesteśmy dostępni przez cały tydzień. Odpowiadamy szybko na wszystkie zapytania!
+                {t("contactPage.quickContactDescription")}
               </p>
             </motion.div>
 
@@ -131,22 +174,36 @@ export default function Kontakt() {
                 >
                   <Card className="h-full hover:shadow-lg transition-all card-hover group">
                     <CardContent className="p-6 text-center">
-                      <div className={`w-16 h-16 ${method.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-                        {method.icon}
+                      <div
+                        className={`w-16 h-16 ${method.bgColor} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}
+                      >
+                        {React.cloneElement(method.icon, {
+                          className: `${method.icon.props.className} dark:text-slate-600`,
+                        })}
                       </div>
                       <h3 className="text-lg font-bold text-slate-800 mb-2">
-                        {method.title}
+                        {t(method.titleKey)}
                       </h3>
                       <p className="text-sm text-slate-600 mb-3">
-                        {method.description}
+                        {t(method.descriptionKey)}
                       </p>
                       <a
                         href={method.action}
                         className="text-sky-600 hover:text-sky-700 font-semibold text-sm block"
-                        target={method.action.startsWith('http') ? '_blank' : undefined}
-                        rel={method.action.startsWith('http') ? 'noopener noreferrer' : undefined}
+                        target={
+                          method.action.startsWith("http")
+                            ? "_blank"
+                            : undefined
+                        }
+                        rel={
+                          method.action.startsWith("http")
+                            ? "noopener noreferrer"
+                            : undefined
+                        }
                       >
-                        {method.details}
+                        {method.detailsKey
+                          ? t(method.detailsKey)
+                          : method.details}
                       </a>
                     </CardContent>
                   </Card>
@@ -154,7 +211,6 @@ export default function Kontakt() {
               ))}
             </div>
 
-            {/* Quick Call to Action */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -163,37 +219,36 @@ export default function Kontakt() {
               className="text-center mt-12"
             >
               <div className="bg-gradient-to-r from-sky-500 to-emerald-500 rounded-xl p-8 text-white">
-                <h3 className="text-2xl font-bold mb-4">Zadzwoń już teraz!</h3>
+                <h3 className="text-2xl font-bold mb-4">
+                  {t("contactPage.callToActionTitle")}
+                </h3>
                 <p className="text-lg mb-6 text-white/90">
-                  Sprawdzimy dostępność terminu i przygotujemy indywidualną wycenę
+                  {t("contactPage.callToActionDescription")}
                 </p>
                 <a
-                  href="tel:+48505977940"
-                  className="inline-block bg-white text-sky-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-colors transform hover:scale-105 shadow-lg"
+                  href="tel:+48531890827"
+                  className="h-11 bg-white text-sky-600 px-8 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg inline-flex items-center justify-center gap-2"
                 >
                   <Phone className="h-5 w-5 mr-2 inline" />
-                  +48 505 977 940
+                  +48 531 890 827
                 </a>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Contact Form and Info */}
         <section className="py-16 bg-slate-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Contact Form */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <InquiryForm />
+                <InquiryForm />{" "}
               </motion.div>
 
-              {/* Contact Information */}
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -201,100 +256,123 @@ export default function Kontakt() {
                 viewport={{ once: true }}
                 className="space-y-8"
               >
-                {/* Working Hours */}
                 <Card>
+                  {" "}
                   <CardHeader>
                     <CardTitle className="flex items-center text-slate-800">
-                      <Clock className="h-5 w-5 mr-2 text-sky-600" />
-                      Godziny Pracy
+                      <Clock className="h-5 w-5 mr-2 text-sky-600" />{" "}
+                      {t("contactPage.workingHoursTitle")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
                       {workingHours.map((schedule, index) => (
-                        <div key={index} className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
-                          <span className="text-slate-700 font-medium">{schedule.day}</span>
-                          <span className="text-sky-600 font-semibold">{schedule.hours}</span>
+                        <div
+                          key={index}
+                          className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0"
+                        >
+                          <span className="text-slate-700 font-medium">
+                            {t(schedule.dayKey)}
+                          </span>
+                          <span className="text-sky-600 font-semibold">
+                            {t(schedule.hoursKey)}
+                          </span>
                         </div>
                       ))}
                     </div>
                     <div className="mt-4 p-3 bg-sky-50 rounded-lg">
+                      {" "}
                       <p className="text-sm text-sky-800">
-                        <strong>Uwaga:</strong> W przypadku pilnych spraw jesteśmy dostępni również poza godzinami pracy.
+                        <strong>{t("contactPage.workingHoursNote")}</strong>
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Service Area */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center text-slate-800">
                       <MapPin className="h-5 w-5 mr-2 text-emerald-600" />
-                      Obszar Obsługi
+                      {t("contactPage.serviceAreaTitle")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-3">
-                      {serviceAreas.map((area, index) => (
-                        <div key={index} className="flex justify-between items-center py-2">
-                          <div>
-                            <span className="text-slate-700 font-medium">{area.city}</span>
-                            <span className="text-xs text-slate-500 ml-2">({area.distance})</span>
-                          </div>
-                          <Badge 
-                            variant={area.note === "Darmowy transport" ? "default" : "secondary"}
-                            className="text-xs"
-                          >
-                            {area.note}
-                          </Badge>
-                        </div>
+                    <div className="p-6 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 dark:from-emerald-600 dark:to-green-700 text-white shadow-lg text-center mb-6">
+                      <Truck className="h-12 w-12 mx-auto mb-4 opacity-80" />
+                      <h3 className="text-2xl font-bold mb-2">
+                        {t("contactPage.serviceAreaFreeTransport100km")}
+                      </h3>
+                    </div>
+                    <p className="text-slate-700 font-medium">
+                      {t("contactPage.serviceAreaMainCities")}
+                    </p>
+                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+                      {mainServiceCities.map((cityKey) => (
+                        <Badge
+                          key={cityKey}
+                          variant="secondary"
+                          className="py-2 px-4 text-sm font-semibold bg-emerald-100 text-emerald-700 dark:bg-slate-700 dark:text-slate-200 dark:border-slate-600"
+                        >
+                          <StarIcon className="h-4 w-4 mr-1.5 text-yellow-500 dark:text-yellow-400" />
+                          {t(cityKey)}
+                        </Badge>
                       ))}
                     </div>
                     <div className="mt-4 p-3 bg-emerald-50 rounded-lg">
                       <p className="text-sm text-emerald-800">
-                        <strong>Obsługujemy też inne miasta!</strong> Skontaktuj się z nami, aby uzgodnić warunki transportu.
+                        <strong>{t("contactPage.serviceAreaNote")}</strong>
                       </p>
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Additional Contact Info */}
                 <Card>
+                  {" "}
                   <CardHeader>
                     <CardTitle className="text-slate-800">
-                      Dodatkowe Informacje
+                      {t("contactPage.additionalInfoTitle")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-sky-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-slate-800">Oględziny sprzętu</h4>
-                        <p className="text-sm text-slate-600">Możliwość obejrzenia atrakcji przed wynajmem</p>
+                    {[
+                      {
+                        titleKey: "contactPage.infoViewingTitle",
+                        descKey: "contactPage.infoViewingDesc",
+                        color: "bg-sky-500",
+                      },
+                      {
+                        titleKey: "contactPage.infoFreeQuoteTitle",
+                        descKey: "contactPage.infoFreeQuoteDesc",
+                        color: "bg-emerald-500",
+                      },
+                      {
+                        titleKey: "contactPage.infoConsultationsTitle",
+                        descKey: "contactPage.infoConsultationsDesc",
+                        color: "bg-amber-500",
+                      },
+                      {
+                        titleKey: "contactPage.infoOnlineBookingTitle",
+                        descKey: "contactPage.infoOnlineBookingDesc",
+                        color: "bg-purple-500",
+                      },
+                    ].map((info) => (
+                      <div
+                        key={info.titleKey}
+                        className="flex items-start space-x-3"
+                      >
+                        <div
+                          className={`w-2 h-2 ${info.color} rounded-full mt-1.5 flex-shrink-0`}
+                        ></div>
+                        <div>
+                          <h4 className="font-semibold text-slate-800">
+                            {t(info.titleKey)}
+                          </h4>
+                          <p className="text-sm text-slate-600">
+                            {t(info.descKey)}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-slate-800">Darmowa wycena</h4>
-                        <p className="text-sm text-slate-600">Przygotujemy bezpłatną ofertę dostosowaną do Twoich potrzeb</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-amber-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-slate-800">Konsultacje</h4>
-                        <p className="text-sm text-slate-600">Pomożemy w planowaniu całego eventu</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                      <div>
-                        <h4 className="font-semibold text-slate-800">Rezerwacja online</h4>
-                        <p className="text-sm text-slate-600">Możliwość rezerwacji przez formularz lub telefon</p>
-                      </div>
-                    </div>
+                    ))}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -302,7 +380,6 @@ export default function Kontakt() {
           </div>
         </section>
 
-        {/* FAQ Section */}
         <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -313,36 +390,15 @@ export default function Kontakt() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-bold text-slate-800 mb-4">
-                Najczęściej Zadawane Pytania
+                {t("contactPage.faqTitle")}
               </h2>
               <p className="text-xl text-slate-600">
-                Odpowiedzi na pytania, które najczęściej otrzymujemy od naszych klientów
+                {t("contactPage.faqDescription")}
               </p>
             </motion.div>
 
             <div className="space-y-6">
-              {[
-                {
-                  question: "Jak wcześnie należy dokonać rezerwacji?",
-                  answer: "Zalecamy rezerwację co najmniej 2 tygodnie przed planowanym eventem, szczególnie w sezonie letnim i okresie świątecznym."
-                },
-                {
-                  question: "Czy ceny zawierają montaż i transport?",
-                  answer: "Tak, wszystkie nasze ceny zawierają montaż, demontaż oraz transport w promieniu 15km od Radomia. Za większe odległości pobieramy dodatkową opłatę."
-                },
-                {
-                  question: "Co jeśli pogoda będzie niesprzyjająca?",
-                  answer: "Nasze namioty są odporne na warunki atmosferyczne. Dmuchańce można używać przy lekkim deszczu, ale nie podczas burzy ze względów bezpieczeństwa."
-                },
-                {
-                  question: "Czy atrakcje są ubezpieczone?",
-                  answer: "Tak, wszystkie nasze atrakcje posiadają pełne ubezpieczenie OC. Dodatkowo regularnie przeprowadzamy przeglądy techniczne sprzętu."
-                },
-                {
-                  question: "Jak wygląda proces rezerwacji?",
-                  answer: "Po kontakcie przygotowujemy wycenę, następnie wymagamy wpłaty zadatku 30%. Resztę kwoty można uregulować przy odbiorze sprzętu."
-                }
-              ].map((faq, index) => (
+              {faqItems.map((faq, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -351,12 +407,13 @@ export default function Kontakt() {
                   viewport={{ once: true }}
                 >
                   <Card className="hover:shadow-md transition-shadow">
+                    {" "}
                     <CardContent className="p-6">
                       <h3 className="text-lg font-semibold text-slate-800 mb-3">
-                        {faq.question}
+                        {t(faq.questionKey)}
                       </h3>
                       <p className="text-slate-600 leading-relaxed">
-                        {faq.answer}
+                        {t(faq.answerKey)}
                       </p>
                     </CardContent>
                   </Card>

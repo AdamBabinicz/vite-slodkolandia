@@ -1,0 +1,3331 @@
+// import { stockPhotos } from "./stockPhotos"; // Odkomentuj, jeśli używasz
+
+export interface Attraction {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  shortDescription: string;
+  images: string[];
+  icon: string;
+  features: string[];
+  specifications: {
+    [key: string]: string;
+  };
+  pricing: {
+    base: number;
+    currency: string;
+    period: string; // np. "dzień", "impreza", "event"
+  };
+}
+
+export const attractions: Attraction[] = [
+  {
+    id: "namioty-imprezowe",
+    name: "Namioty Imprezowe",
+    category: "namioty",
+    description:
+      "Profesjonalne namioty imprezowe w różnych rozmiarach, idealne na wesela, urodziny, eventy firmowe i inne okazje. Nasze namioty są wykonane z wysokiej jakości materiałów, odpornych na warunki atmosferyczne. Zapewniamy pełny serwis montażu i demontażu.",
+    shortDescription:
+      "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
+    images: ["/img/d/1.jpg", "/img/d/2.jpg", "/img/d/3.jpg"],
+    icon: "fas fa-campground",
+    features: [
+      "Różne rozmiary dostępne",
+      "Odporne na warunki atmosferyczne",
+      "Profesjonalny montaż i demontaż",
+      "Możliwość dodania podłogi",
+      "Oświetlenie LED",
+      "Dekoracje ślubne i eventowe",
+    ],
+    specifications: {
+      Rozmiary: "5x10m, 6x12m, 8x15m, 10x20m",
+      Materiał: "PVC 650g/m²",
+      Wysokość: "2.5m - 3.5m",
+      Montaż: "2-4 godziny",
+      Pojemność: "50-200 osób",
+    },
+    pricing: {
+      base: 350,
+      currency: "zł",
+      period: "dzień", // Zmienione dla namiotów
+    },
+  },
+  {
+    id: "dmuchane-atrakcje",
+    name: "Dmuchane Atrakcje",
+    category: "dmuchance",
+    description:
+      "Kolorowe zjeżdżalnie, zamki dmuchane dla dzieci. Nasze atrakcje są bezpieczne, regularnie serwisowane i posiadają wszystkie wymagane certyfikaty. Gwarantujemy radość i bezpieczną zabawę dla dzieci w każdym wieku.",
+    shortDescription:
+      "Zjeżdżalnie, zamki dmuchane. Gwarantowana radość dla dzieci w każdym wieku!",
+    images: ["/img/d/4.jpg", "/img/d/5.jpg", "/img/d/6.jpg"],
+    icon: "fas fa-castle",
+    features: [
+      "Certyfikowane i bezpieczne",
+      "Różne motywy i rozmiary",
+      "Obsługa podczas eventu",
+      "Ubezpieczenie OC",
+      "Agregat prądotwórczy w zestawie",
+      "Maty ochronne",
+    ],
+    specifications: {
+      "Wiek dzieci": "3-12 lat",
+      Wymiary: "4x4m - 8x6m",
+      Wysokość: "3-5 metrów",
+      Pojemność: "8-15 dzieci jednocześnie",
+      Zasilanie: "230V/16A",
+    },
+    pricing: {
+      base: 250,
+      currency: "zł",
+      period: "impreza", // Zmienione
+    },
+  },
+  {
+    id: "wata-cukrowa",
+    name: "Wata Cukrowa",
+    category: "cukiernicze",
+    description:
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami i aromatami. Nasza wata cukrowa to nie tylko słodka przekąska, ale także atrakcja wizualna, która zachwyci gości w każdym wieku. Oferujemy różne smaki i kolory.",
+    shortDescription:
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
+    images: ["/img/d/7.jpg", "/img/d/8.jpg", "/img/d/9.jpg"],
+    icon: "fas fa-candy-cane",
+    features: [
+      "Różne smaki i kolory",
+      "Profesjonalna obsługa",
+      "Higieniczne opakowania",
+      "Atrakcja wizualna",
+      "Szybka produkcja",
+      "Ekologiczne cukry",
+    ],
+    specifications: {
+      Smaki: "Truskawka, wanilia, malina, jabłko",
+      Kolory: "Różowy, niebieski, żółty, zielony",
+      Wydajność: "100-150 porcji/godzinę",
+      Zasilanie: "230V",
+      Obsługa: "Operator w zestawie",
+    },
+    pricing: {
+      base: 150,
+      currency: "zł",
+      period: "impreza", // Zmienione
+    },
+  },
+  {
+    id: "popcorn",
+    name: "Popcorn",
+    category: "cukiernicze",
+    description:
+      "Maszyny do popcornu, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
+    shortDescription:
+      "Maszyny do popcornu. Świeży, aromatyczny popcorn na Twoim evencie.",
+    images: ["/img/d/10.jpg", "/img/d/11.jpg", "/img/d/12.jpg"],
+    icon: "fas fa-seedling",
+    features: [
+      "Maszyny do popcornu",
+      "Świeży popcorn na żywo",
+      "Różne smaki dostępne",
+      "Atrakcyjne opakowania",
+      "Profesjonalna obsługa",
+      "Higiena i jakość",
+    ],
+    specifications: {
+      Smaki: "Słony, słodki, karmelowy, serowy",
+      Wydajność: "200 porcji/godzinę",
+      "Typ maszyny": "Do popcornu",
+      Zasilanie: "230V",
+      Opakowania: "Papierowe torby i pudełka",
+    },
+    pricing: {
+      base: 180,
+      currency: "zł",
+      period: "impreza", // Zmienione
+    },
+  },
+  {
+    id: "fontanna-czekoladowa",
+    name: "Fontanna Czekoladowa",
+    category: "cukiernicze",
+    description:
+      "Elegancka fontanna czekoladowa z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
+    shortDescription:
+      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+    images: ["/img/d/13.jpg", "/img/d/14.jpg", "/img/d/15.jpg"],
+    icon: "fas fa-birthday-cake",
+    features: [
+      "Różne rodzaje czekolady",
+      "Świeże owoce w zestawie",
+      "Elegancka prezentacja",
+      "Profesjonalna obsługa",
+      "Higiena i bezpieczeństwo",
+      "Dodatki do maczania",
+    ],
+    specifications: {
+      "Rodzaje czekolady": "Mleczna, gorzka, biała",
+      "Wysokość fontanny": "60-80 cm",
+      Pojemność: "3-5 kg czekolady",
+      Dodatki: "Owoce, ciasteczka, marshmallows",
+      Obsługa: "Kelner w zestawie",
+    },
+    pricing: {
+      base: 200,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "kompleksowa-obsluga",
+    name: "Kompleksowa Obsługa Eventów",
+    category: "kompleksowa",
+    description:
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania i projektowania, przez organizację przestrzeni, aż po pełną obsługę podczas imprezy. Zajmujemy się wszystkim, abyś mógł cieszyć się swoim eventem.",
+    shortDescription:
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
+    images: ["/img/d/16.jpg", "/img/d/17.jpg", "/img/d/18.jpg"],
+    icon: "fas fa-users",
+    features: [
+      "Konsultacja i planowanie",
+      "Projekt aranżacji przestrzeni",
+      "Koordynacja dostaw",
+      "Montaż i demontaż",
+      "Obsługa podczas eventu",
+      "Ubezpieczenie kompleksowe",
+    ],
+    specifications: {
+      Doświadczenie: "Ponad 5 lat",
+      Zespół: "Profesjonalni organizatorzy",
+      Obszar: "Radom i okolice 50km",
+      "Rodzaje eventów": "Wesela, urodziny, eventy firmowe",
+      "Czas realizacji": "2-8 godzin",
+    },
+    pricing: {
+      base: 500,
+      currency: "zł",
+      period: "event", // Zostawione jako "event" lub zmień na "impreza" jeśli wolisz
+    },
+  },
+];
+
+export const getAttractionsByCategory = (category: string): Attraction[] => {
+  return attractions.filter((attraction) => attraction.category === category);
+};
+
+export const getAttractionById = (id: string): Attraction | undefined => {
+  return attractions.find((attraction) => attraction.id === id);
+};
+
+
+----------------------------
+
+// client/src/hooks/useLanguage.tsx
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import {
+  Language,
+  PageKey,
+  HashKey,
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+} from "@/config/paths";
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (
+    lang: Language,
+    options?: { preventNavigation?: boolean }
+  ) => void;
+  t: (key: string, replacements?: Record<string, string | number>) => string;
+}
+
+const translations: Record<Language, Record<string, string>> = {
+  pl: {
+    "nav.home": "Start",
+    "nav.about": "O Nas",
+    "nav.offer": "Oferta",
+    "nav.photo": "Foto",
+    "nav.pricing": "Cennik",
+    "nav.contact": "Kontakt",
+    "nav.allAttractions": "Wszystkie Atrakcje",
+    "nav.tents": "Namioty Imprezowe",
+    "nav.inflatables": "Dmuchańce",
+    "nav.popcorn": "Popcorn",
+    "nav.cottonCandy": "Wata Cukrowa",
+    "nav.chocolateFountain": "Fontanna Czekoladowa",
+    "nav.allPhotos": "Wszystkie Zdjęcia",
+    "nav.photoTents": "Namioty",
+    "nav.photoInflatables": "Dmuchańce",
+    "nav.photoCottonCandy": "Wata Cukrowa",
+    "nav.photoPopcorn": "Popcorn",
+    "nav.photoFountains": "Fontanny Czekoladowe",
+    "nav.review": "Dodaj opinię",
+    "hero.title": "SŁODKOLANDIA wita:",
+    "hero.subtitle": "Niezapomniane Atrakcje na Twoją Imprezę!",
+    "hero.description":
+      "Gwarantujemy świetną zabawę i profesjonalną obsługę na każdym evencie!",
+    "hero.seeOffer": "Zobacz naszą ofertę",
+    "hero.askDate": "Zapytaj o termin",
+    "services.title": "Nasze Główne Atrakcje",
+    "services.description":
+      "Oferujemy kompleksowy wynajem sprzętu eventowego i atrakcji, które sprawią, że Twoja impreza będzie niezapomniana",
+    "services.seeAll": "Zobacz wszystkie atrakcje",
+    "category.namioty": "namioty",
+    "category.dmuchance": "dmuchańce",
+    "category.cukiernicze": "cukiernicze",
+    "category.kompleksowa": "kompleksowa",
+    "category.gastro": "gastro",
+    "category.inflatables": "dmuchańce",
+    "category.confectionery": "cukiernicze",
+    "whyUs.title": "Dlaczego SŁODKOLANDIA wita:?",
+    "whyUs.description":
+      "Łączymy pasję do tworzenia niezapomnianych chwil z profesjonalnym podejściem do każdego eventu",
+    "whyUs.experience": "Doświadczenie",
+    "whyUs.experienceDesc":
+      "Lata doświadczenia w organizacji eventów różnej skali",
+    "whyUs.safety": "Bezpieczeństwo",
+    "whyUs.safetyDesc":
+      "Certyfikowany sprzęt i pełne ubezpieczenie każdej atrakcji",
+    "whyUs.punctuality": "Punktualność",
+    "whyUs.punctualityDesc":
+      "Zawsze na czasie - dotrzymujemy terminów dostaw i montażu",
+    "whyUs.individual": "Indywidualne Podejście",
+    "whyUs.individualDesc":
+      "Każdy event jest wyjątkowy - dostosowujemy się do Twoich potrzeb",
+    "cta.mainTitle": "Zorganizujmy razem Twoją wymarzą imprezę!",
+    "cta.mainDescription":
+      "Skontaktuj się z nami już dziś i sprawdź dostępność na Twój termin. Gwarantujemy profesjonalną obsługę i niezapomnianych wrażeń!",
+    "cta.contactForm": "Formularz kontaktowy",
+    "cta.secondaryTitle": "Gotowy na niezapomnianą imprezę?",
+    "cta.secondaryDescription":
+      "Skontaktuj się z nami już dziś i zarezerwuj termin!",
+    "cta.callNow": "Zadzwoń teraz",
+    "cta.askForDate": "Zapytaj o termin",
+    "home.stats.eventsOrganized": "Eventów zorganizowanych",
+    "home.stats.happyClientsMonthly": "Zadowolonych klientów miesięcznie",
+    "home.stats.yearsExperience": "lat doświadczenia",
+    "home.stats.serviceRadius": "promień obsługi",
+    "footer.companyName": "SŁODKOLANDIA wita:",
+    "footer.companyDescription":
+      "Profesjonalny wynajem atrakcji eventowych w Radomiu i okolicach. Tworzymy niezapomniane chwile dla Twoich gości!",
+    "footer.quickLinks": "Szybkie Linki",
+    "footer.servicesTitle": "Nasze Usługi",
+    "footer.serviceTents": "Namioty Imprezowe",
+    "footer.serviceInflatables": "Dmuchańce",
+    "footer.serviceCottonCandy": "Wata Cukrowa",
+    "footer.servicePopcorn": "Maszyny do Popcornu",
+    "footer.serviceFountains": "Fontanna Czekoladowa",
+    "footer.serviceComprehensive": "Kompleksowa Obsługa",
+    "footer.contactTitle": "Kontakt",
+    "footer.address": "Radom i okolice",
+    "footer.addressDetail": "(promień 100km)",
+    "footer.copyright": "Radom {year} SŁODKOLANDIA wita:. ",
+    "footer.privacyPolicy": "Polityka Prywatności",
+    "footer.terms": "Regulamin",
+    "attractionCard.details": "Szczegóły",
+    "attractionCard.priceFrom": "od",
+    "currencyUnit.zł": "zł",
+    "pricing.perPeriod.dzień": "/ dzień",
+    "pricing.perPeriod.impreza": "/ impreza",
+    "pricing.perPeriod.event": "/ event",
+    "cookieConsent.message":
+      "Ta strona używa plików cookies w celu zapewnienia najlepszej jakości usług. Kontynuując przeglądanie zgadzasz się na ich użycie.",
+    "cookieConsent.accept": "Akceptuję",
+    "cookieConsent.reject": "Odrzuć",
+    "inquiryForm.title": "Formularz Zapytania",
+    "inquiryForm.nameLabel": "Imię i nazwisko *",
+    "inquiryForm.namePlaceholder": "Twoje imię i nazwisko",
+    "inquiryForm.nameError": "Imię i nazwisko musi mieć co najmniej 2 znaki",
+    "inquiryForm.emailLabel": "Email *",
+    "inquiryForm.emailPlaceholder": "twoj@email.pl",
+    "inquiryForm.emailError": "Nieprawidłowy adres email",
+    "inquiryForm.phoneLabel": "Telefon",
+    "inquiryForm.phonePlaceholder": "+48 123 456 789",
+    "inquiryForm.eventDateLabel": "Data eventu",
+    "inquiryForm.attractionsLabel": "Interesujące atrakcje",
+    "inquiryForm.messageLabel": "Wiadomość *",
+    "inquiryForm.messagePlaceholder":
+      "Opisz swój event, liczbę gości, dodatkowe wymagania...",
+    "inquiryForm.messageError": "Wiadomość musi mieć co najmniej 10 znaków",
+    "inquiryForm.submitButton": "Wyślij Zapytanie",
+    "inquiryForm.submittingButton": "Wysyłanie...",
+    "inquiryForm.successTitle": "Zapytanie wysłane!",
+    "inquiryForm.successDescription":
+      "Dziękujemy za kontakt. Odpowiemy w ciągu 24 godzin.",
+    "inquiryForm.errorTitle": "Błąd wysyłania",
+    "inquiryForm.errorDescription":
+      "Przepraszamy, wystąpił problem. Spróbuj ponownie lub zadzwoń.",
+    "inquiryForm.attractionOptionTents": "Namioty Imprezowe",
+    "inquiryForm.attractionOptionInflatables": "Dmuchane Atrakcje",
+    "inquiryForm.attractionOptionCottonCandy": "Wata Cukrowa",
+    "inquiryForm.attractionOptionPopcorn": "Maszyny do Popcornu",
+    "inquiryForm.attractionOptionFountains": "Fontanny Czekoladowe",
+    "inquiryForm.attractionOptionComprehensive": "Kompleksowa Obsługa",
+    "pricingPage.heroTitle": "Cennik Naszych Usług",
+    "pricingPage.heroDescription":
+      "Oferujemy konkurencyjne ceny i indywidualne wyceny dostosowane do Twojego budżetu i potrzeb. Wszystkie ceny zawierają transport w promieniu 15km od Radomia.",
+    "pricingPage.badgeTransportFree15km": "🚚 Darmowy transport do 15km",
+    "pricingPage.badgeSetupIncluded": "🛠️ Montaż i demontaż w cenie",
+    "pricingPage.badgeInsuranceOC": "🛡️ Ubezpieczenie OC",
+    "pricingPage.packagesTitle": "Pakiety Promocyjne",
+    "pricingPage.packagesDescription":
+      "Oszczędź wynajmując pakiety atrakcji! Im więcej wynajmujesz, tym więcej oszczędzasz.",
+    "pricingPage.popularPackage": "Najpopularniejszy",
+    "pricingPage.packageNormally": "Normalnie",
+    "pricingPage.packageSave": "Oszczędzasz {amount} zł",
+    "pricingPage.packageIncludes": "W pakiecie:",
+    "pricingPage.packageAsk": "Zapytaj o pakiet",
+    "pricingPage.individualTitle": "Cennik Indywidualny",
+    "pricingPage.individualDescription": "Ceny wynajmu pojedynczych atrakcji",
+    "pricingPage.categoryAll": "Wszystkie",
+    "pricingPage.categoryGastro": "Gastro",
+    "pricingPage.additionalServicesTitle": "Usługi Dodatkowe",
+    "pricingPage.discountsTitle": "Rabaty i Promocje",
+    "pricingPage.discountPackages": "Pakiety Eventowe",
+    "pricingPage.discountPackagesDesc":
+      "Wynajmij 3 lub więcej atrakcji i otrzymaj 15% rabatu!",
+    "pricingPage.discountLongTerm": "Długoterminowy Wynajem",
+    "pricingPage.discountLongTermDesc":
+      "Eventy powyżej 2 dni - specjalne ceny!",
+    "pricingPage.discountLoyal": "Klienci Stali",
+    "pricingPage.discountLoyalDesc":
+      "Program lojalnościowy dla regularnych klientów",
+    "pricingPage.askForDiscount": "Zapytaj o Rabat",
+    "pricingPage.importantInfoTitle": "Ważne Informacje",
+    "pricingPage.rentalConditionsTitle": "📋 Warunki Wynajmu",
+    "pricingPage.rentalCondition1":
+      "• Rezerwacja wymaga wpłaty zadatku 30% wartości zamówienia",
+    "pricingPage.rentalCondition2":
+      "• Minimalna doba wynajmu - 1 dzień (24 godziny) dla namiotów, pozostałe atrakcje na czas trwania imprezy",
+    "pricingPage.rentalCondition3":
+      "• Możliwość anulowania do 48h przed eventem",
+    "pricingPage.rentalCondition4": "• Ceny brutto",
+    "pricingPage.rentalCondition5":
+      "• Dla eventów w dni świąteczne - dopłata 20%",
+    "pricingPage.transportSetupTitle": "🚚 Transport i Montaż",
+    "pricingPage.transportSetup1": "• Darmowy transport do 15km od Radomia",
+    "pricingPage.transportSetup2":
+      "• Montaż i demontaż w standardowych godzinach (8:00-20:00)",
+    "pricingPage.transportSetup3":
+      "• Czas montażu: 1-4 godziny w zależności od atrakcji",
+    "pricingPage.transportSetup4":
+      "• Wymagane jest zapewnienie dostępu do prądu 230V",
+    "pricingPage.transportSetup5":
+      "• Dla dmuchańców - płaska powierzchnia min. 4x4m",
+    "pricingPage.packageChildName": "Pakiet Dziecięcy",
+    "pricingPage.packageChildDesc": "Idealny na urodziny dziecka",
+    "pricingPage.packageChildItem1": "Zamek dmuchany",
+    "pricingPage.packageChildItem2": "Wata cukrowa",
+    "pricingPage.packageChildItem3": "Popcorn",
+    "pricingPage.packageFamilyName": "Pakiet Rodzinny",
+    "pricingPage.packageFamilyDesc": "Dla większych rodzinnych spotkań",
+    "pricingPage.packageFamilyItem1": "Namiot 6x12m",
+    "pricingPage.packageFamilyItem2": "Dmuchana zjeżdżalnia",
+    "pricingPage.packageFamilyItem3": "Wata cukrowa",
+    "pricingPage.packageFamilyItem4": "Fontanna czekoladowa",
+    "pricingPage.packageEventName": "Pakiet Eventowy",
+    "pricingPage.packageEventDesc": "Kompleksowa obsługa większych eventów",
+    "pricingPage.packageEventItem1": "Namiot 10x20m",
+    "pricingPage.packageEventItem2": "2x Dmuchańce",
+    "pricingPage.packageEventItem3": "Wata cukrowa",
+    "pricingPage.packageEventItem4": "Popcorn",
+    "pricingPage.packageEventItem5": "Fontanna czekoladowa",
+    "pricingPage.packageEventItem6": "Obsługa",
+    "pricingPage.additionalServiceTransport15": "Transport (do 15km)",
+    "pricingPage.additionalServiceTransport30": "Transport (15-30km)",
+    "pricingPage.additionalServiceTransportOver30": "Transport (powyżej 30km)",
+    "pricingPage.additionalServiceNightSetup": "Montaż w godzinach nocnych",
+    "pricingPage.additionalServiceExtendRental":
+      "Przedłużenie wynajmu (+1 dzień)",
+    "pricingPage.additionalServiceOperator": "Obsługa dodatkowa (operator)",
+    "pricingPage.unitPriceDefault": "zł",
+    "pricingPage.unitPriceKm": "zł/km",
+    "pricingPage.unitPricePercent": "% ceny bazowej",
+    "galleryPage.heroTitle": "Zobacz Nasze Atrakcje w Akcji!",
+    "galleryPage.heroDescription":
+      "Galeria zdjęć z naszych realizacji eventowych. Odkryj, jak wyglądają nasze atrakcje na prawdziwych imprezach i eventach w Radomiu i okolicach.",
+    "galleryPage.badgeEventsDone": "Ponad 500 zrealizowanych eventów",
+    "galleryPage.filterLabel": "Kategorie:",
+    "galleryPage.categoryAll": "Wszystkie",
+    "galleryPage.categoryTents": "Namioty Imprezowe",
+    "galleryPage.categoryInflatables": "Dmuchane Atrakcje",
+    "galleryPage.categoryCottonCandy": "Wata Cukrowa",
+    "galleryPage.categoryPopcorn": "Popcorn",
+    "galleryPage.categoryFountains": "Fontanny Czekoladowe",
+    "galleryPage.categoryEventSetups": "Realizacje Eventów",
+    "galleryPage.sectionTentsTitle": "🏕️ Namioty Imprezowe",
+    "galleryPage.sectionTentsDesc":
+      "Profesjonalne namioty w różnych konfiguracjach - od kameralnych przyjęć po duże eventy firmowe.",
+    "galleryPage.sectionInflatablesTitle": "🏰 Dmuchane Atrakcje",
+    "galleryPage.sectionInflatablesDesc":
+      "Bezpieczna zabawa dla dzieci - zjeżdżalnie, zamki dmuchane.",
+    "galleryPage.sectionCottonCandyTitle": "🍭 Wata Cukrowa",
+    "galleryPage.sectionCottonCandyDesc":
+      "Kolorowa wata cukrowa w różnych smakach - słodka atrakcja dla gości w każdym wieku.",
+    "galleryPage.sectionPopcornTitle": "🍿 Popcorn",
+    "galleryPage.sectionPopcornDesc":
+      "Aromatyczny popcorn przygotowywany na żywo.",
+    "galleryPage.sectionFountainsTitle": "🍫 Fontanna Czekoladowa",
+    "galleryPage.sectionFountainsDesc":
+      "Elegancka fontanna czekoladowa z dodatkami - wykwintna atrakcja dla smakoszy.",
+    "galleryPage.sectionEventSetupsTitle": "🎉 Realizacje Eventów",
+    "galleryPage.sectionEventSetupsDesc":
+      "Zobacz jak wyglądają nasze kompleksowe realizacje - od małych przyjęć po duże eventy.",
+    "galleryPage.currentCategoryInfo": "{count} zdjęć w tej kategorii",
+    "galleryPage.statsTitle": "Nasze Doświadczenie w Liczbach",
+    "galleryPage.statEvents": "Zrealizowanych eventów",
+    "galleryPage.statKids": "Zadowolonych dzieci",
+    "galleryPage.statAttractions": "Rodzajów atrakcji",
+    "galleryPage.statRadius": "Promień obsługi",
+    "contactPage.heroTitle": "Skontaktuj się z Nami",
+    "contactPage.heroDescription":
+      "Zorganizujmy razem Twoją niezapomnianą imprezę! Skontaktuj się z nami już dziś i sprawdź dostępność na Twój termin.",
+    "contactPage.badgeQuickResponse": "⚡ Szybka odpowiedź",
+    "contactPage.badgeFreeConsultation": "💬 Darmowa konsultacja",
+    "contactPage.badgeIndividualQuotes": "📋 Indywidualne wyceny",
+    "contactPage.quickContactTitle": "Wybierz Najwygodniejszy Sposób Kontaktu",
+    "contactPage.quickContactDescription":
+      "Jesteśmy dostępni przez cały tydzień. Odpowiadamy szybko na wszystkie zapytania!",
+    "contactPage.phoneTitle": "Telefon",
+    "contactPage.phoneDescription": "Najszybszy kontakt",
+    "contactPage.emailTitle": "Email",
+    "contactPage.emailDescription": "Napisz do nas",
+    "contactPage.whatsappTitle": "WhatsApp",
+    "contactPage.whatsappDescription": "Szybka wiadomość",
+    "contactPage.meetingTitle": "Spotkanie",
+    "contactPage.meetingDescription": "Umów się na prezentację",
+    "contactPage.meetingDetails": "Po wcześniejszym kontakcie",
+    "contactPage.callToActionTitle": "Zadzwoń już teraz!",
+    "contactPage.callToActionDescription":
+      "Sprawdzimy dostępność terminu i przygotujemy indywidualną wycenę",
+    "contactPage.workingHoursTitle": "Godziny Pracy",
+    "contactPage.workingHoursNote":
+      "Uwaga: W przypadku pilnych spraw jesteśmy dostępni również poza godzinami pracy.",
+    "contactPage.workingHoursMonFri": "Poniedziałek - Piątek",
+    "contactPage.workingHoursSat": "Sobota",
+    "contactPage.workingHoursSun": "Niedziela",
+    "contactPage.workingHoursHoliday": "Dni świąteczne",
+    "contactPage.workingHoursMonFriTime": "8:00 - 20:00",
+    "contactPage.workingHoursSatTime": "9:00 - 18:00",
+    "contactPage.workingHoursSunTime": "10:00 - 16:00",
+    "contactPage.workingHoursHolidayTime": "Na umowę",
+    "contactPage.serviceAreaTitle": "Obszar Obsługi",
+    "contactPage.serviceAreaNote":
+      "Obsługujemy też inne miasta! Skontaktuj się z nami, aby uzgodnić warunki transportu.",
+    "contactPage.serviceAreaRadom": "Radom",
+    "contactPage.serviceAreaRadomDist": "0km",
+    "contactPage.serviceAreaRadomNote": "Siedziba firmy",
+    "contactPage.serviceAreaBialobrzegi": "Białobrzegi",
+    "contactPage.serviceAreaBialobrzegiDist": "25km",
+    "contactPage.serviceAreaBialobrzegiNote": "Darmowy transport",
+    "contactPage.serviceAreaSzydlowiec": "Szydłowiec",
+    "contactPage.serviceAreaSzydlowiecDist": "30km",
+    "contactPage.serviceAreaSzydlowiecNote": "Darmowy transport",
+    "contactPage.serviceAreaKozienice": "Kozienice",
+    "contactPage.serviceAreaKozieniceDist": "35km",
+    "contactPage.serviceAreaKozieniceNote": "Dodatkowa opłata",
+    "contactPage.serviceAreaOstrowiec": "Ostrowiec Św.",
+    "contactPage.serviceAreaOstrowiecDist": "40km",
+    "contactPage.serviceAreaOstrowiecNote": "Dodatkowa opłata",
+    "contactPage.serviceAreaSkarzysko": "Skarżysko-Kamienna",
+    "contactPage.serviceAreaSkarzyskoDist": "45km",
+    "contactPage.serviceAreaSkarzyskoNote": "Dodatkowa opłata",
+    "contactPage.additionalInfoTitle": "Dodatkowe Informacje",
+    "contactPage.infoViewingTitle": "Oględziny sprzętu",
+    "contactPage.infoViewingDesc":
+      "Możliwość obejrzenia atrakcji przed wynajmem",
+    "contactPage.infoFreeQuoteTitle": "Darmowa wycena",
+    "contactPage.infoFreeQuoteDesc":
+      "Przygotujemy bezpłatną ofertę dostosowaną do Twoich potrzeb",
+    "contactPage.infoConsultationsTitle": "Konsultacje",
+    "contactPage.infoConsultationsDesc": "Pomożemy w planowaniu całego eventu",
+    "contactPage.infoOnlineBookingTitle": "Rezerwacja online",
+    "contactPage.infoOnlineBookingDesc":
+      "Możliwość rezerwacji przez formularz lub telefon",
+    "contactPage.faqTitle": "Najczęściej Zadawane Pytania",
+    "contactPage.faqDescription":
+      "Odpowiedzi na pytania, które najczęściej otrzymujemy od naszych klientów",
+    "contactPage.faq1Question": "Jak wcześnie należy dokonać rezerwacji?",
+    "contactPage.faq1Answer":
+      "Zalecamy rezerwację co najmniej 2 tygodnie przed planowanym eventem, szczególnie w sezonie letnim i okresie świątecznym.",
+    "contactPage.faq2Question": "Czy ceny zawierają montaż i transport?",
+    "contactPage.faq2Answer":
+      "Tak, wszystkie nasze ceny zawierają montaż, demontaż oraz transport w promieniu 15km od Radomia. Za większe odległości pobieramy dodatkową opłatę.",
+    "contactPage.faq3Question": "Co jeśli pogoda będzie niesprzyjająca?",
+    "contactPage.faq3Answer":
+      "Nasze namioty są odporne na warunki atmosferyczne. Dmuchańce można używać przy lekkim deszczu, ale nie podczas burzy ze względów bezpieczeństwa.",
+    "contactPage.faq4Question": "Czy atrakcje są ubezpieczone?",
+    "contactPage.faq4Answer":
+      "Tak, wszystkie nasze atrakcje posiadają pełne ubezpieczenie OC. Dodatkowo regularnie przeprowadzamy przeglądy techniczne sprzętu.",
+    "contactPage.faq5Question": "Jak wygląda proces rezerwacji?",
+    "contactPage.faq5Answer":
+      "Po kontakcie przygotowujemy wycenę, następnie wymagamy wpłaty zadatku 30%. Resztę kwoty można uregulować przy odbiorze sprzętu.",
+    "aboutUsPage.heroTitle": "O Naszej Firmie",
+    "aboutUsPage.heroDescription":
+      "Jesteśmy firmą z pasją do tworzenia niezapomnianych chwil. Specializujemy się w wynajmie atrakcji eventowych, które sprawiają, że każda impreza staje się wyjątkowa.",
+    "aboutUsPage.badgeFounded": "Radom i okolice od 2019 roku",
+    "aboutUsPage.storyTitle": "Nasza Historia",
+    "aboutUsPage.storyPara1":
+      "'SŁODKOLANDIA wita:' powstała z prostego przekonania, że każde wydarzenie zasługuje na to, aby być niezapomnianym. Rozpoczęliśmy działalność w 2019 roku z jedną dmuchańcą i wielką pasją do organizacji eventów.",
+    "aboutUsPage.storyPara2":
+      "Dziś jesteśmy rozpoznawalną marką w Radomiu i okolicach, oferującą kompleksowy wynajem atrakcji eventowych. Nasze doświadczenie obejmuje eventy dla firm, wesela, urodziny dzieci, festyny miejskie i wiele innych okazji.",
+    "aboutUsPage.storyPara3":
+      "To, co nas wyróżnia, to indywidualne podejście do każdego klienta oraz nieustanna troska o bezpieczeństwo i jakość naszych usług.",
+    "aboutUsPage.missionTitle": "🎯 Nasza Misja",
+    "aboutUsPage.missionDescription":
+      "Tworzymy niezapomniane momenty radości i zabawy, dostarczając najwyższej jakości atrakcje eventowe z pełną obsługą profesjonalną.",
+    "aboutUsPage.visionTitle": "🔮 Nasza Wizja",
+    "aboutUsPage.visionDescription":
+      "Być pierwszym wyborem w regionie dla osób poszukujących profesjonalnych atrakcji eventowych i kompleksowej obsługi wydarzeń.",
+    "aboutUsPage.valuesTitle": "Nasze Wartości",
+    "aboutUsPage.valuesDescription":
+      "Wartości, które wyznaczają nasz sposób działania i podejście do każdego klienta",
+    "aboutUsPage.valuePassionTitle": "Pasja",
+    "aboutUsPage.valuePassionDesc":
+      "Każdy event traktujemy jako wyjątkowe wydarzenie. Wkładamy serce w to, co robimy.",
+    "aboutUsPage.valueSafetyTitle": "Bezpieczeństwo",
+    "aboutUsPage.valueSafetyDesc":
+      "Priorytetem jest bezpieczeństwo naszych gości. Cały sprzęt jest certyfikowany i ubezpieczony.",
+    "aboutUsPage.valueProfessionalismTitle": "Profesjonalizm",
+    "aboutUsPage.valueProfessionalismDesc":
+      "Punktualność, rzetelność i wysoka jakość usług to nasze znaki rozpoznawcze.",
+    "aboutUsPage.valueQualityTitle": "Jakość",
+    "aboutUsPage.valueQualityDesc":
+      "Używamy tylko sprawdzonego sprzętu najwyższej jakości od renomowanych producentów.",
+    "aboutUsPage.achievementsTitle": "Nasze Osiągnięcia",
+    "aboutUsPage.achievementsDescription":
+      "Liczby, które najlepiej opisują nasze doświadczenie i zaangażowanie",
+    "aboutUsPage.achievementEvents": "Zrealizowanych eventów",
+    "aboutUsPage.achievementExperience": "lat doświadczenia",
+    "aboutUsPage.achievementAttractions": "rodzajów atrakcji",
+    "aboutUsPage.achievementRadius": "promień obsługi",
+    "aboutUsPage.achievementSatisfaction": "zadowolonych klientów",
+    "aboutUsPage.achievementAvailability": "dostępność telefoniczna",
+    "aboutUsPage.teamTitle": "Nasz Zespół",
+    "aboutUsPage.teamDescription":
+      "Grupa pasjonatów, którzy dbają o to, aby każdy event był perfekcyjny",
+    "aboutUsPage.teamOwnerName": "Właściciel firmy",
+    "aboutUsPage.teamOwnerRole": "Założyciel i kierownik projektów",
+    "aboutUsPage.teamOwnerDesc":
+      "5 lat doświadczenia w branży eventowej. Pasjonat tworzenia niezapomnianych chwil.",
+    "aboutUsPage.teamAssemblyName": "Zespół montażowy",
+    "aboutUsPage.teamAssemblyRole": "Specjaliści od montażu",
+    "aboutUsPage.teamAssemblyDesc":
+      "Doświadczeni technicy zapewniający szybki i bezpieczny montaż wszystkich atrakcji.",
+    "aboutUsPage.teamSupportName": "Obsługa klienta",
+    "aboutUsPage.teamSupportRole": "Konsultanci eventowi",
+    "aboutUsPage.teamSupportDesc":
+      "Pomożemy Ci w wyborze idealnych atrakcji i zaplanowaniu całego eventu.",
+    "aboutUsPage.certsTitle": "Certyfikaty i Jakość",
+    "aboutUsPage.certsDescription":
+      "Bezpieczeństwo i jakość to podstawa naszej działalności. Wszystkie nasze atrakcje są regularnie kontrolowane i posiadają wymagane certyfikaty.",
+    "aboutUsPage.certInsurance": "Ubezpieczenie OC",
+    "aboutUsPage.certInsuranceDesc":
+      "Pełne pokrycie odpowiedzialności cywilnej",
+    "aboutUsPage.certEquipment": "Certyfikaty sprzętu",
+    "aboutUsPage.certEquipmentDesc":
+      "Wszystkie atrakcje posiadają wymagane certyfikaty",
+    "aboutUsPage.certReviews": "Przeglądy techniczne",
+    "aboutUsPage.certReviewsDesc": "Regularne kontrole bezpieczeństwa sprzętu",
+    "aboutUsPage.certTraining": "Szkolenia zespołu",
+    "aboutUsPage.certTrainingDesc":
+      "Ciągłe podnoszenie kwalifikacji pracowników",
+    "aboutUsPage.whyChooseUsTitle": "Dlaczego Klienci Nas Wybierają?",
+    "aboutUsPage.whyChooseExperience": "Doświadczenie",
+    "aboutUsPage.whyChooseExperienceDesc":
+      "5 lat na rynku i setki udanych eventów",
+    "aboutUsPage.whyChooseSafety": "Bezpieczeństwo",
+    "aboutUsPage.whyChooseSafetyDesc":
+      "Pełne ubezpieczenie i certyfikowany sprzęt",
+    "aboutUsPage.whyChooseProfessionalism": "Profesjonalizm",
+    "aboutUsPage.whyChooseProfessionalismDesc":
+      "Punktualna dostawa i profesjonalna obsługa",
+    "aboutUsPage.whyChooseIndividual": "Indywidualne podejście",
+    "aboutUsPage.whyChooseIndividualDesc":
+      "Każdy event traktujemy jako wyjątkowy",
+    "offerPage.heroTitle": "Nasza Oferta Atrakcji Eventowych",
+    "offerPage.heroDescription":
+      "Odkryj pełną gamę profesjonalnych atrakcji i usług eventowych. Od namiotów imprezowych po kompleksową obsługę wydarzeń.",
+    "offerPage.badgeLocation": "Radom i okolice (30km)",
+    "offerPage.filterLabel": "Kategorie:",
+    "offerPage.allAttractionsCount": "Wszystkie atrakcje ({count})",
+    "offerPage.categoryAttractionsCount": "{categoryName} ({count})",
+    "offerPage.noAttractionsTitle": "Brak atrakcji w tej kategorii",
+    "offerPage.noAttractionsDescription":
+      "Wybierz inną kategorię lub skontaktuj się z nami w sprawie indywidualnych rozwiązań.",
+    "offerPage.sectionTentsTitle": "🏕️ Namioty Imprezowe",
+    "offerPage.sectionTentsDescription":
+      "Profesjonalne namioty w różnych rozmiarach, idealne na wesela, urodziny i eventy firmowe. Oferujemy pełny serwis montażu i demontażu z możliwością dodania podłogi i oświetlenia.",
+    "offerPage.sectionInflatablesTitle": "🏰 Dmuchane Atrakcje",
+    "offerPage.sectionInflatablesDescription":
+      "Bezpieczne i certyfikowane dmuchańce dla dzieci. Zjeżdżalnie, zamki z profesjonalną obsługą i ubezpieczeniem OC.",
+    "offerPage.sectionEquipmentTitle": "🍭 Sprzęt Cukierniczy",
+    "offerPage.sectionEquipmentDescription":
+      "Maszyny do waty cukrowej, popcornu i elegancka fontanna czekoladowa. Wszystko z profesjonalną obsługą i świeżymi produktami.",
+    "offerPage.servicesIncludeTitle": "Co zawierają nasze usługi?",
+    "offerPage.serviceTransport": "Transport i montaż",
+    "offerPage.serviceTransportDesc": "Pełny serwis dostawy i ustawienia",
+    "offerPage.serviceProfessional": "Profesjonalna obsługa",
+    "offerPage.serviceProfessionalDesc": "Doświadczony personel podczas eventu",
+    "offerPage.serviceInsurance": "Ubezpieczenie OC",
+    "offerPage.serviceInsuranceDesc": "Pełne pokrycie ubezpieczeniowe",
+    "offerPage.serviceCertified": "Certyfikowany sprzęt",
+    "offerPage.serviceCertifiedDesc": "Bezpieczne i sprawne urządzenia",
+    "offerPage.serviceFlexible": "Elastyczne terminy",
+    "offerPage.serviceFlexibleDesc": "Dostosowane do Twoich potrzeb",
+    "offerPage.serviceConsultations": "Konsultacje",
+    "offerPage.serviceConsultationsDesc": "Pomoc w planowaniu eventu",
+    "offerPage.sectionDescriptionTitle": "Opis Atrakcji",
+    "pricingPage.title": "Cennik", // Ten klucz już może istnieć, sprawdź
+    "modal.pricingIncludes":
+      "Cena zawiera transport, montaż i obsługę w promieniu 30km od Radomia.",
+    "modal.featuresTitle": "Główne Cechy",
+    "modal.specificationsTitle": "Specyfikacja Techniczna",
+    "galleryPage.title": "Galeria", // Ten klucz już może istnieć, sprawdź
+    "modal.ctaTitle": "Zainteresowany/a?",
+    "modal.ctaDescription":
+      "Skontaktuj się z nami już dziś, aby sprawdzić dostępność i otrzymać indywidualną wycenę.",
+    "contact.phoneValue": "+48531890827",
+
+    "seo.homeTitle": "'SŁODKOLANDIA wita:' - Event Attraction Rental Radom",
+    "seo.homeDescription":
+      "Professional rental of party tents, inflatables, cotton candy, and popcorn in Radom and surroundings. Organize an unforgettable party!",
+    "seo.offerTitle": "Offer - Event Attraction Rental | 'SŁODKOLANDIA wita:'",
+    "seo.offerDescription":
+      "Discover our full range of event attractions: party tents, inflatables, cotton candy, popcorn, chocolate fountains. Professional rental in Radom.",
+    "seo.galleryTitle":
+      "Photo Gallery - See Our Attractions in Action | 'SŁODKOLANDIA wita:'",
+    "seo.galleryDescription":
+      "View the photo gallery from our event productions. Party tents, inflatables, cotton candy, popcorn, and chocolate fountains in action.",
+    "seo.pricingTitle":
+      "Pricing for Event Attraction Rental | 'SŁODKOLANDIA wita:' Radom",
+    "seo.pricingDescription":
+      "Check current rental prices for party tents, inflatables, and catering equipment. Promotional packages and individual quotes.",
+    "seo.contactTitle":
+      "Contact - Event Attraction Rental Radom | 'SŁODKOLANDIA wita:'",
+    "seo.contactDescription":
+      "Contact us today! Phone: +48 531 890 827. Professional event attraction rental in Radom and surroundings.",
+    "seo.aboutUsTitle":
+      "About Us - 'SŁODKOLANDIA wita:' | Professional Event Attraction Rental Radom",
+    "seo.aboutUsDescription":
+      "Learn our history, values, and experience. 'SŁODKOLANDIA wita:' is a passion for creating unforgettable events in Radom and surroundings.",
+    "attractionsData.namioty-imprezowe.name": "Namioty Imprezowe",
+    "attractionsData.namioty-imprezowe.description":
+      "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
+    "attractionsData.dmuchane-atrakcje.name": "Dmuchane Atrakcje",
+    "attractionsData.dmuchane-atrakcje.description":
+      "Zjeżdżalnie, zamki dmuchane. Gwarantowana radość dla dzieci w każdym wieku!",
+    "attractionsData.wata-cukrowa.name": "Wata Cukrowa",
+    "attractionsData.wata-cukrowa.description":
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
+    "attractionsData.popcorn.name": "Popcorn",
+    "attractionsData.popcorn.description":
+      "Maszyny do popcornu. Świeży, aromatyczny popcorn na Twoim evencie.",
+    "attractionsData.fontanna-czekoladowa.name": "Fontanna Czekoladowa",
+    "attractionsData.fontanna-czekoladowa.description":
+      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+    "attractionsData.kompleksowa-obsluga.name": "Kompleksowa Obsługa Eventów",
+    "attractionsData.kompleksowa-obsluga.description":
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
+  },
+  en: {
+    "nav.home": "Home",
+    "nav.about": "About Us",
+    "nav.offer": "Offer",
+    "nav.photo": "Photos",
+    "nav.pricing": "Pricing",
+    "nav.contact": "Contact",
+    "nav.allAttractions": "All Attractions",
+    "nav.tents": "Party Tents",
+    "nav.inflatables": "Inflatables",
+    "nav.popcorn": "Popcorn",
+    "nav.cottonCandy": "Cotton Candy",
+    "nav.chocolateFountain": "Chocolate Fountain",
+    "nav.allPhotos": "All Photos",
+    "nav.photoTents": "Tents",
+    "nav.photoInflatables": "Inflatables",
+    "nav.photoCottonCandy": "Cotton Candy",
+    "nav.photoPopcorn": "Popcorn",
+    "nav.photoFountains": "Chocolate Fountains",
+    "nav.review": "Add Review",
+    "hero.title": "SŁODKOLANDIA wita:",
+    "hero.subtitle": "Unforgettable Attractions for Your Event!",
+    "hero.description":
+      "We guarantee great fun and professional service at every event!",
+    "hero.seeOffer": "See our offer",
+    "hero.askDate": "Ask about availability",
+    "services.title": "Our Main Attractions",
+    "services.description":
+      "We offer comprehensive rental of event equipment and attractions that will make your party unforgettable",
+    "services.seeAll": "See all attractions",
+    "category.namioty": "tents",
+    "category.dmuchance": "inflatables",
+    "category.cukiernicze": "confectionery",
+    "category.kompleksowa": "comprehensive",
+    "category.gastro": "gastro",
+    "category.inflatables": "inflatables",
+    "category.confectionery": "confectionery",
+    "whyUs.title": "Why 'SŁODKOLANDIA wita:'?",
+    "whyUs.description":
+      "We combine passion for creating unforgettable moments with a professional approach to every event",
+    "whyUs.experience": "Experience",
+    "whyUs.experienceDesc":
+      "Years of experience in organizing events of various scales",
+    "whyUs.safety": "Safety",
+    "whyUs.safetyDesc":
+      "Certified equipment and full insurance for every attraction",
+    "whyUs.punctuality": "Punctuality",
+    "whyUs.punctualityDesc":
+      "Always on time - we meet delivery and assembly deadlines",
+    "whyUs.individual": "Individual Approach",
+    "whyUs.individualDesc": "Every event is unique - we adapt to your needs",
+    "cta.mainTitle": "Let's organize your dream event together!",
+    "cta.mainDescription":
+      "Contact us today and check availability for your date. We guarantee professional service and unforgettable experiences!",
+    "cta.contactForm": "Contact Form",
+    "cta.secondaryTitle": "Ready for an unforgettable party?",
+    "cta.secondaryDescription": "Contact us today and book your date!",
+    "cta.callNow": "Call now",
+    "cta.askForDate": "Ask for date",
+    "home.stats.eventsOrganized": "Events organized",
+    "home.stats.happyClientsMonthly": "Satisfied clients monthly",
+    "home.stats.yearsExperience": "years of experience",
+    "home.stats.serviceRadius": "service radius",
+    "footer.companyName": "'SŁODKOLANDIA wita:'",
+    "footer.companyDescription":
+      "Professional rental of event attractions in Radom and surroundings. We create unforgettable moments for your guests!",
+    "footer.quickLinks": "Quick Links",
+    "footer.servicesTitle": "Our Services",
+    "footer.serviceTents": "Party Tents",
+    "footer.serviceInflatables": "Inflatables",
+    "footer.serviceCottonCandy": "Cotton Candy",
+    "footer.servicePopcorn": "Popcorn Machines",
+    "footer.serviceFountains": "Chocolate Fountains",
+    "footer.serviceComprehensive": "Comprehensive Service",
+    "footer.contactTitle": "Contact",
+    "footer.address": "Radom and surroundings",
+    "footer.addressDetail": "(100km radius)",
+    "footer.copyright": "© {year} SŁODKOLANDIA wita:. All rights reserved.",
+    "footer.privacyPolicy": "Privacy Policy",
+    "footer.terms": "Terms of Service",
+    "attractionCard.details": "Details",
+    "attractionCard.priceFrom": "from",
+    "currencyUnit.zł": "PLN",
+    "pricing.perPeriod.dzień": "/ day",
+    "pricing.perPeriod.impreza": "/ party",
+    "pricing.perPeriod.event": "/ event",
+    "cookieConsent.message":
+      "This site uses cookies to ensure the best quality of service. By continuing to browse, you agree to their use.",
+    "cookieConsent.accept": "Accept",
+    "cookieConsent.reject": "Reject",
+    "inquiryForm.title": "Inquiry Form",
+    "inquiryForm.nameLabel": "Name and surname *",
+    "inquiryForm.namePlaceholder": "Your name and surname",
+    "inquiryForm.nameError":
+      "Name and surname must be at least 2 characters long",
+    "inquiryForm.emailLabel": "Email *",
+    "inquiryForm.emailPlaceholder": "your@email.com",
+    "inquiryForm.emailError": "Invalid email address",
+    "inquiryForm.phoneLabel": "Phone",
+    "inquiryForm.phonePlaceholder": "+48 123 456 789",
+    "inquiryForm.eventDateLabel": "Event date",
+    "inquiryForm.attractionsLabel": "Interesting attractions",
+    "inquiryForm.messageLabel": "Message *",
+    "inquiryForm.messagePlaceholder":
+      "Describe your event, number of guests, additional requirements...",
+    "inquiryForm.messageError": "Message must be at least 10 characters long",
+    "inquiryForm.submitButton": "Send Inquiry",
+    "inquiryForm.submittingButton": "Sending...",
+    "inquiryForm.successTitle": "Inquiry sent!",
+    "inquiryForm.successDescription":
+      "Thank you for your contact. We will reply within 24 hours.",
+    "inquiryForm.errorTitle": "Sending error",
+    "inquiryForm.errorDescription":
+      "Sorry, there was a problem. Please try again or call us.",
+    "inquiryForm.attractionOptionTents": "Party Tents",
+    "inquiryForm.attractionOptionInflatables": "Inflatable Attractions",
+    "inquiryForm.attractionOptionCottonCandy": "Cotton Candy",
+    "inquiryForm.attractionOptionPopcorn": "Popcorn Machines",
+    "inquiryForm.attractionOptionFountains": "Chocolate Fountains",
+    "inquiryForm.attractionOptionComprehensive": "Comprehensive Service",
+    "pricingPage.heroTitle": "Our Service Pricing",
+    "pricingPage.heroDescription":
+      "We offer competitive prices and individual quotes tailored to your budget and needs. All prices include transport within a 15km radius of Radom.",
+    "pricingPage.badgeTransportFree15km": "🚚 Free transport up to 15km",
+    "pricingPage.badgeSetupIncluded": "🛠️ Setup and dismantling included",
+    "pricingPage.badgeInsuranceOC": "🛡️ Liability insurance",
+    "pricingPage.packagesTitle": "Promotional Packages",
+    "pricingPage.packagesDescription":
+      "Save by renting attraction packages! The more you rent, the more you save.",
+    "pricingPage.popularPackage": "Most Popular",
+    "pricingPage.packageNormally": "Normally",
+    "pricingPage.packageSave": "You save {amount} PLN",
+    "pricingPage.packageIncludes": "Included in package:",
+    "pricingPage.packageAsk": "Ask about package",
+    "pricingPage.individualTitle": "Individual Pricing",
+    "pricingPage.individualDescription":
+      "Rental prices for individual attractions",
+    "pricingPage.categoryAll": "All",
+    "pricingPage.categoryGastro": "Gastro",
+    "pricingPage.additionalServicesTitle": "Additional Services",
+    "pricingPage.discountsTitle": "Discounts and Promotions",
+    "pricingPage.discountPackages": "Event Packages",
+    "pricingPage.discountPackagesDesc":
+      "Rent 3 or more attractions and get a 15% discount!",
+    "pricingPage.discountLongTerm": "Long-term Rental",
+    "pricingPage.discountLongTermDesc":
+      "Events longer than 2 days - special prices!",
+    "pricingPage.discountLoyal": "Loyal Customers",
+    "pricingPage.discountLoyalDesc": "Loyalty program for regular customers",
+    "pricingPage.askForDiscount": "Ask for Discount",
+    "pricingPage.importantInfoTitle": "Important Information",
+    "pricingPage.rentalConditionsTitle": "📋 Rental Conditions",
+    "pricingPage.rentalCondition1":
+      "• Reservation requires a 30% deposit of the order value",
+    "pricingPage.rentalCondition2":
+      "• Minimum rental period - 1 day (24 hours) for tents, other attractions for the duration of the party",
+    "pricingPage.rentalCondition3":
+      "• Cancellation possible up to 48h before the event",
+    "pricingPage.rentalCondition4": "• Gross prices (VAT included)",
+    "pricingPage.rentalCondition5":
+      "• For events on public holidays - 20% surcharge",
+    "pricingPage.transportSetupTitle": "🚚 Transport and Setup",
+    "pricingPage.transportSetup1": "• Free transport up to 15km from Radom",
+    "pricingPage.transportSetup2":
+      "• Setup and dismantling during standard hours (8:00 AM - 8:00 PM)",
+    "pricingPage.transportSetup3":
+      "• Setup time: 1-4 hours depending on the attraction",
+    "pricingPage.transportSetup4": "• Access to 230V power supply required",
+    "pricingPage.transportSetup5": "• For inflatables - flat surface min. 4x4m",
+    "pricingPage.packageChildName": "Kids Package",
+    "pricingPage.packageChildDesc": "Perfect for a child's birthday",
+    "pricingPage.packageChildItem1": "Bouncy castle",
+    "pricingPage.packageChildItem2": "Cotton candy",
+    "pricingPage.packageChildItem3": "Popcorn",
+    "pricingPage.packageFamilyName": "Family Package",
+    "pricingPage.packageFamilyDesc": "For larger family gatherings",
+    "pricingPage.packageFamilyItem1": "Tent 6x12m",
+    "pricingPage.packageFamilyItem2": "Inflatable slide",
+    "pricingPage.packageFamilyItem3": "Cotton candy",
+    "pricingPage.packageFamilyItem4": "Chocolate fountain",
+    "pricingPage.packageEventName": "Event Package",
+    "pricingPage.packageEventDesc": "Comprehensive service for larger events",
+    "pricingPage.packageEventItem1": "Tent 10x20m",
+    "pricingPage.packageEventItem2": "2x Inflatables",
+    "pricingPage.packageEventItem3": "Cotton candy",
+    "pricingPage.packageEventItem4": "Popcorn",
+    "pricingPage.packageEventItem5": "Chocolate fountain",
+    "pricingPage.packageEventItem6": "Service staff",
+    "pricingPage.additionalServiceTransport15": "Transport (up to 15km)",
+    "pricingPage.additionalServiceTransport30": "Transport (15-30km)",
+    "pricingPage.additionalServiceTransportOver30": "Transport (over 30km)",
+    "pricingPage.additionalServiceNightSetup": "Night-time setup",
+    "pricingPage.additionalServiceExtendRental": "Extend rental (+1 day)",
+    "pricingPage.additionalServiceOperator": "Additional operator",
+    "pricingPage.unitPriceDefault": "PLN",
+    "pricingPage.unitPriceKm": "PLN/km",
+    "pricingPage.unitPricePercent": "% of base price",
+    "galleryPage.heroTitle": "See Our Attractions in Action!",
+    "galleryPage.heroDescription":
+      "Photo gallery from our event productions. Discover how our attractions look at real parties and events in Radom and the surrounding area.",
+    "galleryPage.badgeEventsDone": "Over 500 events completed",
+    "galleryPage.filterLabel": "Categories:",
+    "galleryPage.categoryAll": "All",
+    "galleryPage.categoryTents": "Party Tents",
+    "galleryPage.categoryInflatables": "Inflatable Attractions",
+    "galleryPage.categoryCottonCandy": "Cotton Candy",
+    "galleryPage.categoryPopcorn": "Popcorn",
+    "galleryPage.categoryFountains": "Chocolate Fountains",
+    "galleryPage.categoryEventSetups": "Event Productions",
+    "galleryPage.sectionTentsTitle": "🏕️ Party Tents",
+    "galleryPage.sectionTentsDesc":
+      "Professional tents in various configurations - from intimate parties to large corporate events.",
+    "galleryPage.sectionInflatablesTitle": "🏰 Inflatable Attractions",
+    "galleryPage.sectionInflatablesDesc":
+      "Safe fun for children - slides, bouncy castles, and playgrounds.",
+    "galleryPage.sectionCottonCandyTitle": "🍭 Cotton Candy",
+    "galleryPage.sectionCottonCandyDesc":
+      "Colorful cotton candy in various flavors - a sweet attraction for guests of all ages.",
+    "galleryPage.sectionPopcornTitle": "🍿 Popcorn",
+    "galleryPage.sectionPopcornDesc":
+      "Aromatic popcorn prepared live in machines.",
+    "galleryPage.sectionFountainsTitle": "🍫 Chocolate Fountains",
+    "galleryPage.sectionFountainsDesc":
+      "Elegant chocolate fountains with toppings - an exquisite attraction for connoisseurs.",
+    "galleryPage.sectionEventSetupsTitle": "🎉 Event Productions",
+    "galleryPage.sectionEventSetupsDesc":
+      "See what our comprehensive productions look like - from small parties to large events.",
+    "galleryPage.currentCategoryInfo": "{count} photos in this category",
+    "galleryPage.statsTitle": "Our Experience in Numbers",
+    "galleryPage.statEvents": "Events completed",
+    "galleryPage.statKids": "Happy children",
+    "galleryPage.statAttractions": "Types of attractions",
+    "galleryPage.statRadius": "Service radius",
+    "contactPage.heroTitle": "Contact Us",
+    "contactPage.heroDescription":
+      "Let's organize your unforgettable party together! Contact us today and check availability for your date.",
+    "contactPage.badgeQuickResponse": "⚡ Quick response",
+    "contactPage.badgeFreeConsultation": "💬 Free consultation",
+    "contactPage.badgeIndividualQuotes": "📋 Individual quotes",
+    "contactPage.quickContactTitle":
+      "Choose the Most Convenient Way to Contact Us",
+    "contactPage.quickContactDescription":
+      "We are available all week. We respond quickly to all inquiries!",
+    "contactPage.phoneTitle": "Phone",
+    "contactPage.phoneDescription": "Fastest contact",
+    "contactPage.emailTitle": "Email",
+    "contactPage.emailDescription": "Write to us",
+    "contactPage.whatsappTitle": "WhatsApp",
+    "contactPage.whatsappDescription": "Quick message",
+    "contactPage.meetingTitle": "Meeting",
+    "contactPage.meetingDescription": "Arrange a presentation",
+    "contactPage.meetingDetails": "By prior contact",
+    "contactPage.callToActionTitle": "Call us now!",
+    "contactPage.callToActionDescription":
+      "We will check date availability and prepare an individual quote",
+    "contactPage.workingHoursTitle": "Working Hours",
+    "contactPage.workingHoursNote":
+      "Note: For urgent matters, we are also available outside working hours.",
+    "contactPage.workingHoursMonFri": "Monday - Friday",
+    "contactPage.workingHoursSat": "Saturday",
+    "contactPage.workingHoursSun": "Sunday",
+    "contactPage.workingHoursHoliday": "Public holidays",
+    "contactPage.workingHoursMonFriTime": "8:00 AM - 8:00 PM",
+    "contactPage.workingHoursSatTime": "9:00 AM - 6:00 PM",
+    "contactPage.workingHoursSunTime": "10:00 AM - 4:00 PM",
+    "contactPage.workingHoursHolidayTime": "By appointment",
+    "contactPage.serviceAreaTitle": "Service Area",
+    "contactPage.serviceAreaNote":
+      "We also serve other cities! Contact us to arrange transport conditions.",
+    "contactPage.serviceAreaRadom": "Radom",
+    "contactPage.serviceAreaRadomDist": "0km",
+    "contactPage.serviceAreaRadomNote": "Company headquarters",
+    "contactPage.serviceAreaBialobrzegi": "Białobrzegi",
+    "contactPage.serviceAreaBialobrzegiDist": "25km",
+    "contactPage.serviceAreaBialobrzegiNote": "Free transport",
+    "contactPage.serviceAreaSzydlowiec": "Szydłowiec",
+    "contactPage.serviceAreaSzydlowiecDist": "30km",
+    "contactPage.serviceAreaSzydlowiecNote": "Free transport",
+    "contactPage.serviceAreaKozienice": "Kozienice",
+    "contactPage.serviceAreaKozieniceDist": "35km",
+    "contactPage.serviceAreaKozieniceNote": "Additional fee",
+    "contactPage.serviceAreaOstrowiec": "Ostrowiec Św.",
+    "contactPage.serviceAreaOstrowiecDist": "40km",
+    "contactPage.serviceAreaOstrowiecNote": "Additional fee",
+    "contactPage.serviceAreaSkarzysko": "Skarżysko-Kamienna",
+    "contactPage.serviceAreaSkarzyskoDist": "45km",
+    "contactPage.serviceAreaSkarzyskoNote": "Additional fee",
+    "contactPage.additionalInfoTitle": "Additional Information",
+    "contactPage.infoViewingTitle": "Equipment viewing",
+    "contactPage.infoViewingDesc":
+      "Possibility to view attractions before renting",
+    "contactPage.infoFreeQuoteTitle": "Free quote",
+    "contactPage.infoFreeQuoteDesc":
+      "We will prepare a free offer tailored to your needs",
+    "contactPage.infoConsultationsTitle": "Consultations",
+    "contactPage.infoConsultationsDesc":
+      "We will help in planning the entire event",
+    "contactPage.infoOnlineBookingTitle": "Online booking",
+    "contactPage.infoOnlineBookingDesc":
+      "Possibility to book via form or phone",
+    "contactPage.faqTitle": "Frequently Asked Questions",
+    "contactPage.faqDescription":
+      "Answers to questions we most often receive from our clients",
+    "contactPage.faq1Question": "How early should I make a reservation?",
+    "contactPage.faq1Answer":
+      "We recommend booking at least 2 weeks before the planned event, especially during the summer season and holidays.",
+    "contactPage.faq2Question": "Do prices include setup and transport?",
+    "contactPage.faq2Answer":
+      "Yes, all our prices include setup, dismantling, and transport within a 15km radius of Radom. We charge an additional fee for longer distances.",
+    "contactPage.faq3Question": "What if the weather is unfavorable?",
+    "contactPage.faq3Answer":
+      "Our tents are weather-resistant. Inflatables can be used in light rain, but not during a storm for safety reasons.",
+    "contactPage.faq4Question": "Are the attractions insured?",
+    "contactPage.faq4Answer":
+      "Yes, all our attractions have full liability insurance. Additionally, we regularly conduct technical inspections of the equipment.",
+    "contactPage.faq5Question": "What is the reservation process?",
+    "contactPage.faq5Answer":
+      "After contact, we prepare a quote, then we require a 30% deposit. The remaining amount can be settled upon equipment pickup.",
+    "aboutUsPage.heroTitle": "About Our Company",
+    "aboutUsPage.heroDescription":
+      "We are a company with a passion for creating unforgettable moments. We specialize in renting event attractions that make every party unique.",
+    "aboutUsPage.badgeFounded": "Radom and surroundings since 2019",
+    "aboutUsPage.storyTitle": "Our Story",
+    "aboutUsPage.storyPara1":
+      "SŁODKOLANDIA wita: was founded on the simple belief that every event deserves to be unforgettable. We started in 2019 with one inflatable and a great passion for organizing events.",
+    "aboutUsPage.storyPara2":
+      "Today, we are a recognizable brand in Radom and the surrounding areas, offering comprehensive rental of event attractions. Our experience includes corporate events, weddings, children's birthdays, city festivals, and many other occasions.",
+    "aboutUsPage.storyPara3":
+      "What sets us apart is our individual approach to each client and our constant concern for the safety and quality of our services.",
+    "aboutUsPage.missionTitle": "🎯 Our Mission",
+    "aboutUsPage.missionDescription":
+      "We create unforgettable moments of joy and fun by providing the highest quality event attractions with full professional service.",
+    "aboutUsPage.visionTitle": "🔮 Our Vision",
+    "aboutUsPage.visionDescription":
+      "To be the first choice in the region for people looking for professional event attractions and comprehensive event management.",
+    "aboutUsPage.valuesTitle": "Our Values",
+    "aboutUsPage.valuesDescription":
+      "The values that guide our way of working and our approach to every client",
+    "aboutUsPage.valuePassionTitle": "Passion",
+    "aboutUsPage.valuePassionDesc":
+      "We treat every event as a unique occasion. We put our heart into what we do.",
+    "aboutUsPage.valueSafetyTitle": "Safety",
+    "aboutUsPage.valueSafetyDesc":
+      "The safety of our guests is a priority. All equipment is certified and insured.",
+    "aboutUsPage.valueProfessionalismTitle": "Professionalism",
+    "aboutUsPage.valueProfessionalismDesc":
+      "Punctuality, reliability, and high-quality services are our hallmarks.",
+    "aboutUsPage.valueQualityTitle": "Quality",
+    "aboutUsPage.valueQualityDesc":
+      "We use only proven, top-quality equipment from reputable manufacturers.",
+    "aboutUsPage.achievementsTitle": "Our Achievements",
+    "aboutUsPage.achievementsDescription":
+      "Numbers that best describe our experience and commitment",
+    "aboutUsPage.achievementEvents": "Events completed",
+    "aboutUsPage.achievementExperience": "years of experience",
+    "aboutUsPage.achievementAttractions": "types of attractions",
+    "aboutUsPage.achievementRadius": "service radius",
+    "aboutUsPage.achievementSatisfaction": "satisfied clients",
+    "aboutUsPage.achievementAvailability": "phone availability",
+    "aboutUsPage.teamTitle": "Our Team",
+    "aboutUsPage.teamDescription":
+      "A group of enthusiasts who ensure every event is perfect",
+    "aboutUsPage.teamOwnerName": "Company Owner",
+    "aboutUsPage.teamOwnerRole": "Founder and Project Manager",
+    "aboutUsPage.teamOwnerDesc":
+      "5 years of experience in the event industry. Passionate about creating unforgettable moments.",
+    "aboutUsPage.teamAssemblyName": "Assembly Team",
+    "aboutUsPage.teamAssemblyRole": "Assembly Specialists",
+    "aboutUsPage.teamAssemblyDesc":
+      "Experienced technicians ensuring quick and safe assembly of all attractions.",
+    "aboutUsPage.teamSupportName": "Customer Support",
+    "aboutUsPage.teamSupportRole": "Event Consultants",
+    "aboutUsPage.teamSupportDesc":
+      "We will help you choose the ideal attractions and plan the entire event.",
+    "aboutUsPage.certsTitle": "Certificates and Quality",
+    "aboutUsPage.certsDescription":
+      "Safety and quality are the foundation of our business. All our attractions are regularly inspected and have the required certificates.",
+    "aboutUsPage.certInsurance": "Liability Insurance",
+    "aboutUsPage.certInsuranceDesc": "Full civil liability coverage",
+    "aboutUsPage.certEquipment": "Equipment Certificates",
+    "aboutUsPage.certEquipmentDesc":
+      "All attractions have the required certificates",
+    "aboutUsPage.certReviews": "Technical Inspections",
+    "aboutUsPage.certReviewsDesc": "Regular safety checks of equipment",
+    "aboutUsPage.certTraining": "Team Training",
+    "aboutUsPage.certTrainingDesc":
+      "Continuous improvement of employee qualifications",
+    "aboutUsPage.whyChooseUsTitle": "Why Clients Choose Us?",
+    "aboutUsPage.whyChooseExperience": "Experience",
+    "aboutUsPage.whyChooseExperienceDesc":
+      "5 years on the market and hundreds of successful events",
+    "aboutUsPage.whyChooseSafety": "Safety",
+    "aboutUsPage.whyChooseSafetyDesc": "Full insurance and certified equipment",
+    "aboutUsPage.whyChooseProfessionalism": "Professionalism",
+    "aboutUsPage.whyChooseProfessionalismDesc":
+      "Punctual delivery and professional service",
+    "aboutUsPage.whyChooseIndividual": "Individual Approach",
+    "aboutUsPage.whyChooseIndividualDesc": "We treat every event as unique",
+    "offerPage.heroTitle": "Our Event Attraction Offer",
+    "offerPage.heroDescription":
+      "Discover our full range of professional event attractions and services. From party tents to comprehensive event management.",
+    "offerPage.badgeLocation": "Radom and surroundings (30km)",
+    "offerPage.filterLabel": "Categories:",
+    "offerPage.allAttractionsCount": "All attractions ({count})",
+    "offerPage.categoryAttractionsCount": "{categoryName} ({count})",
+    "offerPage.noAttractionsTitle": "No attractions in this category",
+    "offerPage.noAttractionsDescription":
+      "Choose another category or contact us for individual solutions.",
+    "offerPage.sectionTentsTitle": "🏕️ Party Tents",
+    "offerPage.sectionTentsDescription":
+      "Professional tents in various sizes, ideal for weddings, birthdays, and corporate events. We offer full assembly and dismantling service with options for flooring and lighting.",
+    "offerPage.sectionInflatablesTitle": "🏰 Inflatable Attractions",
+    "offerPage.sectionInflatablesDescription":
+      "Safe and certified inflatables for children. Slides, castles, and playgrounds with professional service and liability insurance.",
+    "offerPage.sectionEquipmentTitle": "🍭 Confectionery Equipment",
+    "offerPage.sectionEquipmentDescription":
+      "Cotton candy and popcorn machines, and elegant chocolate fountains. All with professional service and fresh products.",
+    "offerPage.servicesIncludeTitle": "What do our services include?",
+    "offerPage.serviceTransport": "Transport and assembly",
+    "offerPage.serviceTransportDesc": "Full delivery and setup service",
+    "offerPage.serviceProfessional": "Professional service",
+    "offerPage.serviceProfessionalDesc": "Experienced staff during the event",
+    "offerPage.serviceInsurance": "Liability insurance",
+    "offerPage.serviceInsuranceDesc": "Full insurance coverage",
+    "offerPage.serviceCertified": "Certified equipment",
+    "offerPage.serviceCertifiedDesc": "Safe and functional devices",
+    "offerPage.serviceFlexible": "Flexible dates",
+    "offerPage.serviceFlexibleDesc": "Tailored to your needs",
+    "offerPage.serviceConsultations": "Consultations",
+    "offerPage.serviceConsultationsDesc": "Help in planning the event",
+    "seo.homeTitle": "'SŁODKOLANDIA wita:' - Event Attraction Rental Radom",
+    "seo.homeDescription":
+      "Professional rental of party tents, inflatables, cotton candy, and popcorn in Radom and surroundings. Organize an unforgettable party!",
+    "seo.offerTitle": "Offer - Event Attraction Rental | 'SŁODKOLANDIA wita:'",
+    "seo.offerDescription":
+      "Discover our full range of event attractions: party tents, inflatables, cotton candy, popcorn, chocolate fountains. Professional rental in Radom.",
+    "seo.galleryTitle":
+      "Photo Gallery - See Our Attractions in Action | 'SŁODKOLANDIA wita:'",
+    "seo.galleryDescription":
+      "View the photo gallery from our event productions. Party tents, inflatables, cotton candy, popcorn, and chocolate fountains in action.",
+    "seo.pricingTitle":
+      "Pricing for Event Attraction Rental | 'SŁODKOLANDIA wita:' Radom",
+    "seo.pricingDescription":
+      "Check current rental prices for party tents, inflatables, and catering equipment. Promotional packages and individual quotes.",
+    "seo.contactTitle":
+      "Contact - Event Attraction Rental Radom | 'SŁODKOLANDIA wita:'",
+    "seo.contactDescription":
+      "Contact us today! Phone: +48 531 890 827. Professional event attraction rental in Radom and surroundings.",
+    "seo.aboutUsTitle":
+      "About Us - 'SŁODKOLANDIA wita:' | Professional Event Attraction Rental Radom",
+    "seo.aboutUsDescription":
+      "Learn our history, values, and experience. 'SŁODKOLANDIA wita:' is a passion for creating unforgettable events in Radom and surroundings.",
+    "attractionsData.namioty-imprezowe.name": "Party Tents",
+    "attractionsData.namioty-imprezowe.description":
+      "Professional party tents in various sizes. Perfect for weddings, birthdays, and corporate events.",
+    "attractionsData.dmuchane-atrakcje.name": "Inflatable Attractions",
+    "attractionsData.dmuchane-atrakcje.description":
+      "Slides, bouncy castles, and playgrounds. Guaranteed fun for children of all ages!",
+    "attractionsData.wata-cukrowa.name": "Cotton Candy",
+    "attractionsData.wata-cukrowa.description":
+      "Professional cotton candy machines with colorful flavors. A sweet treat for guests!",
+    "attractionsData.popcorn.name": "Popcorn",
+    "attractionsData.popcorn.description":
+      "Popcorn machines. Fresh, aromatic popcorn at your event.",
+    "attractionsData.fontanna-czekoladowa.name": "Chocolate Fountains",
+    "attractionsData.fontanna-czekoladowa.description":
+      "Elegant chocolate fountains with toppings. An exquisite attraction for true connoisseurs.",
+    "attractionsData.kompleksowa-obsluga.name": "Comprehensive Event Service",
+    "attractionsData.kompleksowa-obsluga.description":
+      "Full event organization with our experienced team. From planning to execution.",
+    "offerPage.sectionDescriptionTitle": "Attraction Description",
+    "pricingPage.title": "Pricing", // Check if this key exists
+    "modal.pricingIncludes":
+      "Price includes transport, setup, and service within a 30km radius of Radom.",
+    "modal.featuresTitle": "Main Features",
+    "modal.specificationsTitle": "Technical Specifications",
+    "galleryPage.title": "Gallery",
+    "modal.ctaTitle": "Interested?",
+    "modal.ctaDescription":
+      "Contact us today to check availability and get an individual quote.",
+    "contact.phoneValue": "+48531890827",
+  },
+};
+
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
+
+export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [language, setLanguageState] = useState<Language>("pl");
+
+  const setLanguage = (
+    newLang: Language,
+    options?: { preventNavigation?: boolean }
+  ) => {
+    setLanguageState(newLang);
+  };
+
+  const t = (
+    key: string,
+    replacements?: Record<string, string | number>
+  ): string => {
+    let translation = translations[language]?.[key] || key;
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder) => {
+        const regex = new RegExp(`{${placeholder}}`, "g");
+        translation = translation.replace(
+          regex,
+          String(replacements[placeholder])
+        );
+      });
+    }
+    return translation;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = (): LanguageContextType => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+};
+
+
+-------------------------
+
+export interface Attraction {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  shortDescription: string;
+  images: string[];
+  icon: string;
+  features: string[];
+  specifications: {
+    [key: string]: string;
+  };
+  pricing: {
+    base: number;
+    currency: string;
+    period: string;
+  };
+}
+
+export const attractions: Attraction[] = [
+  {
+    id: "namioty-imprezowe",
+    name: "Namioty Imprezowe",
+    category: "namioty",
+    description:
+      "Profesjonalne namioty imprezowe w różnych rozmiarach, idealne na wesela, urodziny, eventy firmowe i inne okazje. Nasze namioty są wykonane z wysokiej jakości materiałów, odpornych na warunki atmosferyczne. Zapewniamy pełny serwis montażu i demontażu.",
+    shortDescription:
+      "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
+    images: ["/img/n/1.jpg", "/img/n/2.jpg", "/img/n/3.jpg"],
+    icon: "fas fa-campground",
+    features: [
+      "Różne rozmiary dostępne",
+      "Odporne na warunki atmosferyczne",
+      "Profesjonalny montaż i demontaż",
+      "Możliwość dodania podłogi",
+      "Oświetlenie LED",
+      "Dekoracje ślubne i eventowe",
+    ],
+    specifications: {
+      Rozmiary: "5x10m, 6x12m, 8x15m, 10x20m",
+      Materiał: "PVC 650g/m²",
+      Wysokość: "2.5m - 3.5m",
+      Montaż: "2-4 godziny",
+      Pojemność: "50-200 osób",
+    },
+    pricing: {
+      base: 350,
+      currency: "zł",
+      period: "dzień",
+    },
+  },
+  {
+    id: "dmuchane-atrakcje",
+    name: "Dmuchane Atrakcje",
+    category: "dmuchance",
+    description:
+      "Kolorowe zjeżdżalnie, zamki dmuchane dla dzieci. Nasze atrakcje są bezpieczne, regularnie serwisowane i posiadają wszystkie wymagane certyfikaty. Gwarantujemy radość i bezpieczną zabawę dla dzieci w każdym wieku.",
+    shortDescription:
+      "Zjeżdżalnie, zamki dmuchane. Gwarantowana radość dla dzieci w każdym wieku!",
+    images: [
+      "/img/d/1.jpg",
+      "/img/d/2.jpg",
+      "/img/d/3.jpg",
+      "/img/d/4.jpg",
+      "/img/d/5.jpg",
+      "/img/d/6.jpg",
+    ],
+    icon: "fas fa-castle",
+    features: [
+      "Certyfikowane i bezpieczne",
+      "Różne motywy i rozmiary",
+      "Obsługa podczas eventu",
+      "Ubezpieczenie OC",
+      "Agregat prądotwórczy w zestawie",
+      "Maty ochronne",
+    ],
+    specifications: {
+      "Wiek dzieci": "3-12 lat",
+      Wymiary: "4x4m - 8x6m",
+      Wysokość: "3-5 metrów",
+      Pojemność: "8-15 dzieci jednocześnie",
+      Zasilanie: "230V/16A",
+    },
+    pricing: {
+      base: 250,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "wata-cukrowa",
+    name: "Wata Cukrowa",
+    category: "cukiernicze",
+    description:
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami i aromatami. Nasza wata cukrowa to nie tylko słodka przekąska, ale także atrakcja wizualna, która zachwyci gości w każdym wieku. Oferujemy różne smaki i kolory.",
+    shortDescription:
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
+    images: [
+      "/img/w/1.jpg",
+      "/img/w/2.jpg",
+      "/img/w/3.jpg",
+      "/img/w/7.jpg",
+      "/img/w/8.jpg",
+      "/img/w/9.jpg",
+    ],
+    icon: "fas fa-candy-cane",
+    features: [
+      "Różne smaki i kolory",
+      "Profesjonalna obsługa",
+      "Higieniczne opakowania",
+      "Atrakcja wizualna",
+      "Szybka produkcja",
+      "Ekologiczne cukry",
+    ],
+    specifications: {
+      Smaki: "Truskawka, wanilia, malina, jabłko",
+      Kolory: "Różowy, niebieski, żółty, zielony",
+      Wydajność: "100-150 porcji/godzinę",
+      Zasilanie: "230V",
+      Obsługa: "Operator w zestawie",
+    },
+    pricing: {
+      base: 150,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "popcorn",
+    name: "Popcorn",
+    category: "cukiernicze",
+    description:
+      "Maszyny do popcornu, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
+    shortDescription:
+      "Maszyny do popcornu. Świeży, aromatyczny popcorn na Twoim evencie.",
+    images: [
+      "/img/p/1.jpg",
+      "/img/p/2.jpg",
+      "/img/p/3.jpg",
+      "/img/p/10.jpg",
+      "/img/p/11.jpg",
+      "/img/p/12.jpg",
+    ],
+    icon: "fas fa-seedling",
+    features: [
+      "Maszyny do popcornu",
+      "Świeży popcorn na żywo",
+      "Różne smaki dostępne",
+      "Atrakcyjne opakowania",
+      "Profesjonalna obsługa",
+      "Higiena i jakość",
+    ],
+    specifications: {
+      Smaki: "Słony, słodki, karmelowy, serowy",
+      Wydajność: "200 porcji/godzinę",
+      "Typ maszyny": "Do popcornu",
+      Zasilanie: "230V",
+      Opakowania: "Papierowe torby i pudełka",
+    },
+    pricing: {
+      base: 180,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "fontanna-czekoladowa",
+    name: "Fontanna Czekoladowa",
+    category: "cukiernicze",
+    description:
+      "Elegancka fontanna czekoladowa z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
+    shortDescription:
+      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+    images: [
+      "/img/f/1.jpg",
+      "/img/f/2.jpg",
+      "/img/f/3.jpg",
+      "/img/f/13.jpg",
+      "/img/f/14.jpg",
+      "/img/f/15.jpg",
+    ],
+    icon: "fas fa-birthday-cake",
+    features: [
+      "Różne rodzaje czekolady",
+      "Świeże owoce w zestawie",
+      "Elegancka prezentacja",
+      "Profesjonalna obsługa",
+      "Higiena i bezpieczeństwo",
+      "Dodatki do maczania",
+    ],
+    specifications: {
+      "Rodzaje czekolady": "Mleczna, gorzka, biała",
+      "Wysokość fontanny": "60-80 cm",
+      Pojemność: "3-5 kg czekolady",
+      Dodatki: "Owoce, ciasteczka, marshmallows",
+      Obsługa: "Kelner w zestawie",
+    },
+    pricing: {
+      base: 200,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "kompleksowa-obsluga",
+    name: "Kompleksowa Obsługa Eventów",
+    category: "kompleksowa",
+    description:
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania i projektowania, przez organizację przestrzeni, aż po pełną obsługę podczas imprezy. Zajmujemy się wszystkim, abyś mógł cieszyć się swoim eventem.",
+    shortDescription:
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
+    images: [
+      "/img/k/1.jpg",
+      "/img/k/2.jpg",
+      "/img/k/3.jpg",
+      "/img/k/16.jpg",
+      "/img/k/17.jpg",
+      "/img/k/18.jpg",
+    ], // Założenie katalogu /img/k/ dla kompleksowej obsługi
+    icon: "fas fa-users",
+    features: [
+      "Konsultacja i planowanie",
+      "Projekt aranżacji przestrzeni",
+      "Koordynacja dostaw",
+      "Montaż i demontaż",
+      "Obsługa podczas eventu",
+      "Ubezpieczenie kompleksowe",
+    ],
+    specifications: {
+      Doświadczenie: "Ponad 5 lat",
+      Zespół: "Profesjonalni organizatorzy",
+      Obszar: "Radom i okolice 50km",
+      "Rodzaje eventów": "Wesela, urodziny, eventy firmowe",
+      "Czas realizacji": "2-8 godzin",
+    },
+    pricing: {
+      base: 500,
+      currency: "zł",
+      period: "event",
+    },
+  },
+];
+
+export const getAttractionsByCategory = (category: string): Attraction[] => {
+  return attractions.filter((attraction) => attraction.category === category);
+};
+
+export const getAttractionById = (id: string): Attraction | undefined => {
+  return attractions.find((attraction) => attraction.id === id);
+};
+
+
+----------------------
+
+import React, { createContext, useContext, useState, ReactNode } from "react";
+import {
+  Language,
+  PageKey,
+  HashKey,
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+} from "@/config/paths";
+
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (
+    lang: Language,
+    options?: { preventNavigation?: boolean }
+  ) => void;
+  t: (key: string, replacements?: Record<string, string | number>) => string;
+}
+
+const translations: Record<Language, Record<string, string>> = {
+  pl: {
+    "nav.home": "Start",
+    "nav.about": "O Nas",
+    "nav.offer": "Oferta",
+    "nav.photo": "Foto",
+    "nav.pricing": "Cennik",
+    "nav.contact": "Kontakt",
+    "nav.allAttractions": "Wszystkie Atrakcje",
+    "nav.tents": "Namioty Imprezowe",
+    "nav.inflatables": "Dmuchańce",
+    "nav.popcorn": "Popcorn",
+    "nav.cottonCandy": "Wata Cukrowa",
+    "nav.chocolateFountain": "Fontanna Czekoladowa",
+    "nav.allPhotos": "Wszystkie Zdjęcia",
+    "nav.photoTents": "Namioty",
+    "nav.photoInflatables": "Dmuchańce",
+    "nav.photoCottonCandy": "Wata Cukrowa",
+    "nav.photoPopcorn": "Popcorn",
+    "nav.photoFountains": "Fontanny Czekoladowe",
+    "nav.review": "Dodaj opinię",
+    "hero.title": "SŁODKOLANDIA wita:",
+    "hero.subtitle": "Niezapomniane Atrakcje na Twoją Imprezę!",
+    "hero.description":
+      "Gwarantujemy świetną zabawę i profesjonalną obsługę na każdym evencie!",
+    "hero.seeOffer": "Zobacz naszą ofertę",
+    "hero.askDate": "Zapytaj o termin",
+    "services.title": "Nasze Główne Atrakcje",
+    "services.description":
+      "Oferujemy kompleksowy wynajem sprzętu eventowego i atrakcji, które sprawią, że Twoja impreza będzie niezapomniana",
+    "services.seeAll": "Zobacz wszystkie atrakcje",
+    "category.namioty": "namioty",
+    "category.dmuchance": "dmuchańce",
+    "category.cukiernicze": "cukiernicze",
+    "category.kompleksowa": "kompleksowa",
+    "category.gastro": "gastro",
+    "category.inflatables": "dmuchańce",
+    "category.confectionery": "cukiernicze",
+    "whyUs.title": "Dlaczego SŁODKOLANDIA wita:?",
+    "whyUs.description":
+      "Łączymy pasję do tworzenia niezapomnianych chwil z profesjonalnym podejściem do każdego eventu",
+    "whyUs.experience": "Doświadczenie",
+    "whyUs.experienceDesc":
+      "Lata doświadczenia w organizacji eventów różnej skali",
+    "whyUs.safety": "Bezpieczeństwo",
+    "whyUs.safetyDesc":
+      "Certyfikowany sprzęt i pełne ubezpieczenie każdej atrakcji",
+    "whyUs.punctuality": "Punktualność",
+    "whyUs.punctualityDesc":
+      "Zawsze na czasie - dotrzymujemy terminów dostaw i montażu",
+    "whyUs.individual": "Indywidualne Podejście",
+    "whyUs.individualDesc":
+      "Każdy event jest wyjątkowy - dostosowujemy się do Twoich potrzeb",
+    "cta.mainTitle": "Zorganizujmy razem Twoją wymarzą imprezę!",
+    "cta.mainDescription":
+      "Skontaktuj się z nami już dziś i sprawdź dostępność na Twój termin. Gwarantujemy profesjonalną obsługę i niezapomnianych wrażeń!",
+    "cta.contactForm": "Formularz kontaktowy",
+    "cta.secondaryTitle": "Gotowy na niezapomnianą imprezę?",
+    "cta.secondaryDescription":
+      "Skontaktuj się z nami już dziś i zarezerwuj termin!",
+    "cta.callNow": "Zadzwoń teraz",
+    "cta.askForDate": "Zapytaj o termin",
+    "home.stats.eventsOrganized": "Eventów zorganizowanych",
+    "home.stats.happyClientsMonthly": "Zadowolonych klientów miesięcznie",
+    "home.stats.yearsExperience": "lat doświadczenia",
+    "home.stats.serviceRadius": "promień obsługi",
+    "footer.companyName": "SŁODKOLANDIA wita:",
+    "footer.companyDescription":
+      "Profesjonalny wynajem atrakcji eventowych w Radomiu i okolicach. Tworzymy niezapomniane chwile dla Twoich gości!",
+    "footer.quickLinks": "Szybkie Linki",
+    "footer.servicesTitle": "Nasze Usługi",
+    "footer.serviceTents": "Namioty Imprezowe",
+    "footer.serviceInflatables": "Dmuchańce",
+    "footer.serviceCottonCandy": "Wata Cukrowa",
+    "footer.servicePopcorn": "Maszyny do Popcornu",
+    "footer.serviceFountains": "Fontanna Czekoladowa",
+    "footer.serviceComprehensive": "Kompleksowa Obsługa",
+    "footer.contactTitle": "Kontakt",
+    "footer.address": "Radom i okolice",
+    "footer.addressDetail": "(promień 100km)",
+    "footer.copyright": "Radom {year} SŁODKOLANDIA wita:. ",
+    "footer.privacyPolicy": "Polityka Prywatności",
+    "footer.terms": "Regulamin",
+    "attractionCard.details": "Szczegóły",
+    "attractionCard.priceFrom": "od ",
+    "currencyUnit.zł": "zł",
+    "pricing.perPeriod.dzień": "/ dzień",
+    "pricing.perPeriod.impreza": "/ impreza",
+    "pricing.perPeriod.event": "/ event",
+    "cookieConsent.message":
+      "Ta strona używa plików cookies w celu zapewnienia najlepszej jakości usług. Kontynuując przeglądanie zgadzasz się na ich użycie.",
+    "cookieConsent.accept": "Akceptuję",
+    "cookieConsent.reject": "Odrzuć",
+    "inquiryForm.title": "Formularz Zapytania",
+    "inquiryForm.nameLabel": "Imię i nazwisko *",
+    "inquiryForm.namePlaceholder": "Twoje imię i nazwisko",
+    "inquiryForm.nameError": "Imię i nazwisko musi mieć co najmniej 2 znaki",
+    "inquiryForm.emailLabel": "Email *",
+    "inquiryForm.emailPlaceholder": "twoj@email.pl",
+    "inquiryForm.emailError": "Nieprawidłowy adres email",
+    "inquiryForm.phoneLabel": "Telefon",
+    "inquiryForm.phonePlaceholder": "+48 123 456 789",
+    "inquiryForm.eventDateLabel": "Data eventu",
+    "inquiryForm.attractionsLabel": "Interesujące atrakcje",
+    "inquiryForm.messageLabel": "Wiadomość *",
+    "inquiryForm.messagePlaceholder":
+      "Opisz swój event, liczbę gości, dodatkowe wymagania...",
+    "inquiryForm.messageError": "Wiadomość musi mieć co najmniej 10 znaków",
+    "inquiryForm.submitButton": "Wyślij Zapytanie",
+    "inquiryForm.submittingButton": "Wysyłanie...",
+    "inquiryForm.successTitle": "Zapytanie wysłane!",
+    "inquiryForm.successDescription":
+      "Dziękujemy za kontakt. Odpowiemy w ciągu 24 godzin.",
+    "inquiryForm.errorTitle": "Błąd wysyłania",
+    "inquiryForm.errorDescription":
+      "Przepraszamy, wystąpił problem. Spróbuj ponownie lub zadzwoń.",
+    "inquiryForm.attractionOptionTents": "Namioty Imprezowe",
+    "inquiryForm.attractionOptionInflatables": "Dmuchane Atrakcje",
+    "inquiryForm.attractionOptionCottonCandy": "Wata Cukrowa",
+    "inquiryForm.attractionOptionPopcorn": "Maszyny do Popcornu",
+    "inquiryForm.attractionOptionFountains": "Fontanny Czekoladowe",
+    "inquiryForm.attractionOptionComprehensive": "Kompleksowa Obsługa",
+    "pricingPage.heroTitle": "Cennik Naszych Usług",
+    "pricingPage.heroDescription":
+      "Oferujemy konkurencyjne ceny i indywidualne wyceny dostosowane do Twojego budżetu i potrzeb. Wszystkie ceny zawierają transport w promieniu 15km od Radomia.",
+    "pricingPage.badgeTransportFree15km": "🚚 Darmowy transport do 15km",
+    "pricingPage.badgeSetupIncluded": "🛠️ Montaż i demontaż w cenie",
+    "pricingPage.badgeInsuranceOC": "🛡️ Ubezpieczenie OC",
+    "pricingPage.packagesTitle": "Pakiety Promocyjne",
+    "pricingPage.packagesDescription":
+      "Oszczędź wynajmując pakiety atrakcji! Im więcej wynajmujesz, tym więcej oszczędzasz.",
+    "pricingPage.popularPackage": "Najpopularniejszy",
+    "pricingPage.packageNormally": "Normalnie",
+    "pricingPage.packageSave": "Oszczędzasz {amount} zł",
+    "pricingPage.packageIncludes": "W pakiecie:",
+    "pricingPage.packageAsk": "Zapytaj o pakiet",
+    "pricingPage.individualTitle": "Cennik Indywidualny",
+    "pricingPage.individualDescription": "Ceny wynajmu pojedynczych atrakcji",
+    "pricingPage.categoryAll": "Wszystkie",
+    "pricingPage.categoryGastro": "Gastro",
+    "pricingPage.additionalServicesTitle": "Usługi Dodatkowe",
+    "pricingPage.discountsTitle": "Rabaty i Promocje",
+    "pricingPage.discountPackages": "Pakiety Eventowe",
+    "pricingPage.discountPackagesDesc":
+      "Wynajmij 3 lub więcej atrakcji i otrzymaj 15% rabatu!",
+    "pricingPage.discountLongTerm": "Długoterminowy Wynajem",
+    "pricingPage.discountLongTermDesc":
+      "Eventy powyżej 2 dni - specjalne ceny!",
+    "pricingPage.discountLoyal": "Klienci Stali",
+    "pricingPage.discountLoyalDesc":
+      "Program lojalnościowy dla regularnych klientów",
+    "pricingPage.askForDiscount": "Zapytaj o Rabat",
+    "pricingPage.importantInfoTitle": "Ważne Informacje",
+    "pricingPage.rentalConditionsTitle": "📋 Warunki Wynajmu",
+    "pricingPage.rentalCondition1":
+      "• Rezerwacja wymaga wpłaty zadatku 30% wartości zamówienia",
+    "pricingPage.rentalCondition2":
+      "• Minimalna doba wynajmu - 1 dzień (24 godziny) dla namiotów, pozostałe atrakcje na czas trwania imprezy",
+    "pricingPage.rentalCondition3":
+      "• Możliwość anulowania do 48h przed eventem",
+    "pricingPage.rentalCondition4": "• Ceny brutto",
+    "pricingPage.rentalCondition5":
+      "• Dla eventów w dni świąteczne - dopłata 20%",
+    "pricingPage.transportSetupTitle": "🚚 Transport i Montaż",
+    "pricingPage.transportSetup1": "• Darmowy transport do 15km od Radomia",
+    "pricingPage.transportSetup2":
+      "• Montaż i demontaż w standardowych godzinach (8:00-20:00)",
+    "pricingPage.transportSetup3":
+      "• Czas montażu: 1-4 godziny w zależności od atrakcji",
+    "pricingPage.transportSetup4":
+      "• Wymagane jest zapewnienie dostępu do prądu 230V",
+    "pricingPage.transportSetup5":
+      "• Dla dmuchańców - płaska powierzchnia min. 4x4m",
+    "pricingPage.packageChildName": "Pakiet Dziecięcy",
+    "pricingPage.packageChildDesc": "Idealny na urodziny dziecka",
+    "pricingPage.packageChildItem1": "Zamek dmuchany",
+    "pricingPage.packageChildItem2": "Wata cukrowa",
+    "pricingPage.packageChildItem3": "Popcorn",
+    "pricingPage.packageFamilyName": "Pakiet Rodzinny",
+    "pricingPage.packageFamilyDesc": "Dla większych rodzinnych spotkań",
+    "pricingPage.packageFamilyItem1": "Namiot 6x12m",
+    "pricingPage.packageFamilyItem2": "Dmuchana zjeżdżalnia",
+    "pricingPage.packageFamilyItem3": "Wata cukrowa",
+    "pricingPage.packageFamilyItem4": "Fontanna czekoladowa",
+    "pricingPage.packageEventName": "Pakiet Eventowy",
+    "pricingPage.packageEventDesc": "Kompleksowa obsługa większych eventów",
+    "pricingPage.packageEventItem1": "Namiot 10x20m",
+    "pricingPage.packageEventItem2": "2x Dmuchańce",
+    "pricingPage.packageEventItem3": "Wata cukrowa",
+    "pricingPage.packageEventItem4": "Popcorn",
+    "pricingPage.packageEventItem5": "Fontanna czekoladowa",
+    "pricingPage.packageEventItem6": "Obsługa",
+    "pricingPage.additionalServiceTransport15": "Transport (do 15km)",
+    "pricingPage.additionalServiceTransport30": "Transport (15-30km)",
+    "pricingPage.additionalServiceTransportOver30": "Transport (powyżej 30km)",
+    "pricingPage.additionalServiceNightSetup": "Montaż w godzinach nocnych",
+    "pricingPage.additionalServiceExtendRental":
+      "Przedłużenie wynajmu (+1 dzień)",
+    "pricingPage.additionalServiceOperator": "Obsługa dodatkowa (operator)",
+    "pricingPage.unitPriceDefault": "zł",
+    "pricingPage.unitPriceKm": "zł/km",
+    "pricingPage.unitPricePercent": "% ceny bazowej",
+    "galleryPage.heroTitle": "Zobacz Nasze Atrakcje w Akcji!",
+    "galleryPage.heroDescription":
+      "Galeria zdjęć z naszych realizacji eventowych. Odkryj, jak wyglądają nasze atrakcje na prawdziwych imprezach i eventach w Radomiu i okolicach.",
+    "galleryPage.badgeEventsDone": "Ponad 500 zrealizowanych eventów",
+    "galleryPage.filterLabel": "Kategorie:",
+    "galleryPage.categoryAll": "Wszystkie",
+    "galleryPage.categoryTents": "Namioty Imprezowe",
+    "galleryPage.categoryInflatables": "Dmuchane Atrakcje",
+    "galleryPage.categoryCottonCandy": "Wata Cukrowa",
+    "galleryPage.categoryPopcorn": "Popcorn",
+    "galleryPage.categoryFountains": "Fontanny Czekoladowe",
+    "galleryPage.categoryEventSetups": "Realizacje Eventów",
+    "galleryPage.sectionTentsTitle": "🏕️ Namioty Imprezowe",
+    "galleryPage.sectionTentsDesc":
+      "Profesjonalne namioty w różnych konfiguracjach - od kameralnych przyjęć po duże eventy firmowe.",
+    "galleryPage.sectionInflatablesTitle": "🏰 Dmuchane Atrakcje",
+    "galleryPage.sectionInflatablesDesc":
+      "Bezpieczna zabawa dla dzieci - zjeżdżalnie, zamki dmuchane.",
+    "galleryPage.sectionCottonCandyTitle": "🍭 Wata Cukrowa",
+    "galleryPage.sectionCottonCandyDesc":
+      "Kolorowa wata cukrowa w różnych smakach - słodka atrakcja dla gości w każdym wieku.",
+    "galleryPage.sectionPopcornTitle": "🍿 Popcorn",
+    "galleryPage.sectionPopcornDesc":
+      "Aromatyczny popcorn przygotowywany na żywo.",
+    "galleryPage.sectionFountainsTitle": "🍫 Fontanna Czekoladowa",
+    "galleryPage.sectionFountainsDesc":
+      "Elegancka fontanna czekoladowa z dodatkami - wykwintna atrakcja dla smakoszy.",
+    "galleryPage.sectionEventSetupsTitle": "🎉 Realizacje Eventów",
+    "galleryPage.sectionEventSetupsDesc":
+      "Zobacz jak wyglądają nasze kompleksowe realizacje - od małych przyjęć po duże eventy.",
+    "galleryPage.currentCategoryInfo": "{count} zdjęć w tej kategorii",
+    "galleryPage.statsTitle": "Nasze Doświadczenie w Liczbach",
+    "galleryPage.statEvents": "Zrealizowanych eventów",
+    "galleryPage.statKids": "Zadowolonych dzieci",
+    "galleryPage.statAttractions": "Rodzajów atrakcji",
+    "galleryPage.statRadius": "Promień obsługi",
+    "contactPage.heroTitle": "Skontaktuj się z Nami",
+    "contactPage.heroDescription":
+      "Zorganizujmy razem Twoją niezapomnianą imprezę! Skontaktuj się z nami już dziś i sprawdź dostępność na Twój termin.",
+    "contactPage.badgeQuickResponse": "⚡ Szybka odpowiedź",
+    "contactPage.badgeFreeConsultation": "💬 Darmowa konsultacja",
+    "contactPage.badgeIndividualQuotes": "📋 Indywidualne wyceny",
+    "contactPage.quickContactTitle": "Wybierz Najwygodniejszy Sposób Kontaktu",
+    "contactPage.quickContactDescription":
+      "Jesteśmy dostępni przez cały tydzień. Odpowiadamy szybko na wszystkie zapytania!",
+    "contactPage.phoneTitle": "Telefon",
+    "contactPage.phoneDescription": "Najszybszy kontakt",
+    "contactPage.emailTitle": "Email",
+    "contactPage.emailDescription": "Napisz do nas",
+    "contactPage.whatsappTitle": "WhatsApp",
+    "contactPage.whatsappDescription": "Szybka wiadomość",
+    "contactPage.meetingTitle": "Spotkanie",
+    "contactPage.meetingDescription": "Umów się na prezentację",
+    "contactPage.meetingDetails": "Po wcześniejszym kontakcie",
+    "contactPage.callToActionTitle": "Zadzwoń już teraz!",
+    "contactPage.callToActionDescription":
+      "Sprawdzimy dostępność terminu i przygotujemy indywidualną wycenę",
+    "contactPage.workingHoursTitle": "Godziny Pracy",
+    "contactPage.workingHoursNote":
+      "Uwaga: W przypadku pilnych spraw jesteśmy dostępni również poza godzinami pracy.",
+    "contactPage.workingHoursMonFri": "Poniedziałek - Piątek",
+    "contactPage.workingHoursSat": "Sobota",
+    "contactPage.workingHoursSun": "Niedziela",
+    "contactPage.workingHoursHoliday": "Dni świąteczne",
+    "contactPage.workingHoursMonFriTime": "8:00 - 20:00",
+    "contactPage.workingHoursSatTime": "9:00 - 18:00",
+    "contactPage.workingHoursSunTime": "10:00 - 16:00",
+    "contactPage.workingHoursHolidayTime": "Na umowę",
+    "contactPage.serviceAreaTitle": "Obszar Obsługi",
+    "contactPage.serviceAreaNote":
+      "Obsługujemy też inne miasta! Skontaktuj się z nami, aby uzgodnić warunki transportu.",
+    "contactPage.serviceAreaRadom": "Radom",
+    "contactPage.serviceAreaRadomDist": "0km",
+    "contactPage.serviceAreaRadomNote": "Siedziba firmy",
+    "contactPage.serviceAreaBialobrzegi": "Białobrzegi",
+    "contactPage.serviceAreaBialobrzegiDist": "25km",
+    "contactPage.serviceAreaBialobrzegiNote": "Darmowy transport",
+    "contactPage.serviceAreaSzydlowiec": "Szydłowiec",
+    "contactPage.serviceAreaSzydlowiecDist": "30km",
+    "contactPage.serviceAreaSzydlowiecNote": "Darmowy transport",
+    "contactPage.serviceAreaKozienice": "Kozienice",
+    "contactPage.serviceAreaKozieniceDist": "35km",
+    "contactPage.serviceAreaKozieniceNote": "Dodatkowa opłata",
+    "contactPage.serviceAreaOstrowiec": "Ostrowiec Św.",
+    "contactPage.serviceAreaOstrowiecDist": "40km",
+    "contactPage.serviceAreaOstrowiecNote": "Dodatkowa opłata",
+    "contactPage.serviceAreaSkarzysko": "Skarżysko-Kamienna",
+    "contactPage.serviceAreaSkarzyskoDist": "45km",
+    "contactPage.serviceAreaSkarzyskoNote": "Dodatkowa opłata",
+    "contactPage.additionalInfoTitle": "Dodatkowe Informacje",
+    "contactPage.infoViewingTitle": "Oględziny sprzętu",
+    "contactPage.infoViewingDesc":
+      "Możliwość obejrzenia atrakcji przed wynajmem",
+    "contactPage.infoFreeQuoteTitle": "Darmowa wycena",
+    "contactPage.infoFreeQuoteDesc":
+      "Przygotujemy bezpłatną ofertę dostosowaną do Twoich potrzeb",
+    "contactPage.infoConsultationsTitle": "Konsultacje",
+    "contactPage.infoConsultationsDesc": "Pomożemy w planowaniu całego eventu",
+    "contactPage.infoOnlineBookingTitle": "Rezerwacja online",
+    "contactPage.infoOnlineBookingDesc":
+      "Możliwość rezerwacji przez formularz lub telefon",
+    "contactPage.faqTitle": "Najczęściej Zadawane Pytania",
+    "contactPage.faqDescription":
+      "Odpowiedzi na pytania, które najczęściej otrzymujemy od naszych klientów",
+    "contactPage.faq1Question": "Jak wcześnie należy dokonać rezerwacji?",
+    "contactPage.faq1Answer":
+      "Zalecamy rezerwację co najmniej 2 tygodnie przed planowanym eventem, szczególnie w sezonie letnim i okresie świątecznym.",
+    "contactPage.faq2Question": "Czy ceny zawierają montaż i transport?",
+    "contactPage.faq2Answer":
+      "Tak, wszystkie nasze ceny zawierają montaż, demontaż oraz transport w promieniu 15km od Radomia. Za większe odległości pobieramy dodatkową opłatę.",
+    "contactPage.faq3Question": "Co jeśli pogoda będzie niesprzyjająca?",
+    "contactPage.faq3Answer":
+      "Nasze namioty są odporne na warunki atmosferyczne. Dmuchańce można używać przy lekkim deszczu, ale nie podczas burzy ze względów bezpieczeństwa.",
+    "contactPage.faq4Question": "Czy atrakcje są ubezpieczone?",
+    "contactPage.faq4Answer":
+      "Tak, wszystkie nasze atrakcje posiadają pełne ubezpieczenie OC. Dodatkowo regularnie przeprowadzamy przeglądy techniczne sprzętu.",
+    "contactPage.faq5Question": "Jak wygląda proces rezerwacji?",
+    "contactPage.faq5Answer":
+      "Po kontakcie przygotowujemy wycenę, następnie wymagamy wpłaty zadatku 30%. Resztę kwoty można uregulować przy odbiorze sprzętu.",
+    "aboutUsPage.heroTitle": "O Naszej Firmie",
+    "aboutUsPage.heroDescription":
+      "Jesteśmy firmą z pasją do tworzenia niezapomnianych chwil. Specializujemy się w wynajmie atrakcji eventowych, które sprawiają, że każda impreza staje się wyjątkowa.",
+    "aboutUsPage.badgeFounded": "Radom i okolice od 2019 roku",
+    "aboutUsPage.storyTitle": "Nasza Historia",
+    "aboutUsPage.storyPara1":
+      "'SŁODKOLANDIA wita:' powstała z prostego przekonania, że każde wydarzenie zasługuje na to, aby być niezapomnianym. Rozpoczęliśmy działalność w 2019 roku z jedną dmuchańcą i wielką pasją do organizacji eventów.",
+    "aboutUsPage.storyPara2":
+      "Dziś jesteśmy rozpoznawalną marką w Radomiu i okolicach, oferującą kompleksowy wynajem atrakcji eventowych. Nasze doświadczenie obejmuje eventy dla firm, wesela, urodziny dzieci, festyny miejskie i wiele innych okazji.",
+    "aboutUsPage.storyPara3":
+      "To, co nas wyróżnia, to indywidualne podejście do każdego klienta oraz nieustanna troska o bezpieczeństwo i jakość naszych usług.",
+    "aboutUsPage.missionTitle": "🎯 Nasza Misja",
+    "aboutUsPage.missionDescription":
+      "Tworzymy niezapomniane momenty radości i zabawy, dostarczając najwyższej jakości atrakcje eventowe z pełną obsługą profesjonalną.",
+    "aboutUsPage.visionTitle": "🔮 Nasza Wizja",
+    "aboutUsPage.visionDescription":
+      "Być pierwszym wyborem w regionie dla osób poszukujących profesjonalnych atrakcji eventowych i kompleksowej obsługi wydarzeń.",
+    "aboutUsPage.valuesTitle": "Nasze Wartości",
+    "aboutUsPage.valuesDescription":
+      "Wartości, które wyznaczają nasz sposób działania i podejście do każdego klienta",
+    "aboutUsPage.valuePassionTitle": "Pasja",
+    "aboutUsPage.valuePassionDesc":
+      "Każdy event traktujemy jako wyjątkowe wydarzenie. Wkładamy serce w to, co robimy.",
+    "aboutUsPage.valueSafetyTitle": "Bezpieczeństwo",
+    "aboutUsPage.valueSafetyDesc":
+      "Priorytetem jest bezpieczeństwo naszych gości. Cały sprzęt jest certyfikowany i ubezpieczony.",
+    "aboutUsPage.valueProfessionalismTitle": "Profesjonalizm",
+    "aboutUsPage.valueProfessionalismDesc":
+      "Punktualność, rzetelność i wysoka jakość usług to nasze znaki rozpoznawcze.",
+    "aboutUsPage.valueQualityTitle": "Jakość",
+    "aboutUsPage.valueQualityDesc":
+      "Używamy tylko sprawdzonego sprzętu najwyższej jakości od renomowanych producentów.",
+    "aboutUsPage.achievementsTitle": "Nasze Osiągnięcia",
+    "aboutUsPage.achievementsDescription":
+      "Liczby, które najlepiej opisują nasze doświadczenie i zaangażowanie",
+    "aboutUsPage.achievementEvents": "Zrealizowanych eventów",
+    "aboutUsPage.achievementExperience": "lat doświadczenia",
+    "aboutUsPage.achievementAttractions": "rodzajów atrakcji",
+    "aboutUsPage.achievementRadius": "promień obsługi",
+    "aboutUsPage.achievementSatisfaction": "zadowolonych klientów",
+    "aboutUsPage.achievementAvailability": "dostępność telefoniczna",
+    "aboutUsPage.teamTitle": "Nasz Zespół",
+    "aboutUsPage.teamDescription":
+      "Grupa pasjonatów, którzy dbają o to, aby każdy event był perfekcyjny",
+    "aboutUsPage.teamOwnerName": "Właściciel firmy",
+    "aboutUsPage.teamOwnerRole": "Założyciel i kierownik projektów",
+    "aboutUsPage.teamOwnerDesc":
+      "5 lat doświadczenia w branży eventowej. Pasjonat tworzenia niezapomnianych chwil.",
+    "aboutUsPage.teamAssemblyName": "Zespół montażowy",
+    "aboutUsPage.teamAssemblyRole": "Specjaliści od montażu",
+    "aboutUsPage.teamAssemblyDesc":
+      "Doświadczeni technicy zapewniający szybki i bezpieczny montaż wszystkich atrakcji.",
+    "aboutUsPage.teamSupportName": "Obsługa klienta",
+    "aboutUsPage.teamSupportRole": "Konsultanci eventowi",
+    "aboutUsPage.teamSupportDesc":
+      "Pomożemy Ci w wyborze idealnych atrakcji i zaplanowaniu całego eventu.",
+    "aboutUsPage.certsTitle": "Certyfikaty i Jakość",
+    "aboutUsPage.certsDescription":
+      "Bezpieczeństwo i jakość to podstawa naszej działalności. Wszystkie nasze atrakcje są regularnie kontrolowane i posiadają wymagane certyfikaty.",
+    "aboutUsPage.certInsurance": "Ubezpieczenie OC",
+    "aboutUsPage.certInsuranceDesc":
+      "Pełne pokrycie odpowiedzialności cywilnej",
+    "aboutUsPage.certEquipment": "Certyfikaty sprzętu",
+    "aboutUsPage.certEquipmentDesc":
+      "Wszystkie atrakcje posiadają wymagane certyfikaty",
+    "aboutUsPage.certReviews": "Przeglądy techniczne",
+    "aboutUsPage.certReviewsDesc": "Regularne kontrole bezpieczeństwa sprzętu",
+    "aboutUsPage.certTraining": "Szkolenia zespołu",
+    "aboutUsPage.certTrainingDesc":
+      "Ciągłe podnoszenie kwalifikacji pracowników",
+    "aboutUsPage.whyChooseUsTitle": "Dlaczego Klienci Nas Wybierają?",
+    "aboutUsPage.whyChooseExperience": "Doświadczenie",
+    "aboutUsPage.whyChooseExperienceDesc":
+      "5 lat na rynku i setki udanych eventów",
+    "aboutUsPage.whyChooseSafety": "Bezpieczeństwo",
+    "aboutUsPage.whyChooseSafetyDesc":
+      "Pełne ubezpieczenie i certyfikowany sprzęt",
+    "aboutUsPage.whyChooseProfessionalism": "Profesjonalizm",
+    "aboutUsPage.whyChooseProfessionalismDesc":
+      "Punktualna dostawa i profesjonalna obsługa",
+    "aboutUsPage.whyChooseIndividual": "Indywidualne podejście",
+    "aboutUsPage.whyChooseIndividualDesc":
+      "Każdy event traktujemy jako wyjątkowy",
+    "offerPage.heroTitle": "Nasza Oferta Atrakcji Eventowych",
+    "offerPage.heroDescription":
+      "Odkryj pełną gamę profesjonalnych atrakcji i usług eventowych. Od namiotów imprezowych po kompleksową obsługę wydarzeń.",
+    "offerPage.badgeLocation": "Radom i okolice (30km)",
+    "offerPage.filterLabel": "Kategorie:",
+    "offerPage.allAttractionsCount": "Wszystkie atrakcje ({count})",
+    "offerPage.categoryAttractionsCount": "{categoryName} ({count})",
+    "offerPage.noAttractionsTitle": "Brak atrakcji w tej kategorii",
+    "offerPage.noAttractionsDescription":
+      "Wybierz inną kategorię lub skontaktuj się z nami w sprawie indywidualnych rozwiązań.",
+    "offerPage.sectionTentsTitle": "🏕️ Namioty Imprezowe",
+    "offerPage.sectionTentsDescription":
+      "Profesjonalne namioty w różnych rozmiarach, idealne na wesela, urodziny i eventy firmowe. Oferujemy pełny serwis montażu i demontażu z możliwością dodania podłogi i oświetlenia.",
+    "offerPage.sectionInflatablesTitle": "🏰 Dmuchane Atrakcje",
+    "offerPage.sectionInflatablesDescription":
+      "Bezpieczne i certyfikowane dmuchańce dla dzieci. Zjeżdżalnie, zamki z profesjonalną obsługą i ubezpieczeniem OC.",
+    "offerPage.sectionEquipmentTitle": "🍭 Sprzęt Cukierniczy",
+    "offerPage.sectionEquipmentDescription":
+      "Maszyny do waty cukrowej, popcornu i elegancka fontanna czekoladowa. Wszystko z profesjonalną obsługą i świeżymi produktami.",
+    "offerPage.servicesIncludeTitle": "Co zawierają nasze usługi?",
+    "offerPage.serviceTransport": "Transport i montaż",
+    "offerPage.serviceTransportDesc": "Pełny serwis dostawy i ustawienia",
+    "offerPage.serviceProfessional": "Profesjonalna obsługa",
+    "offerPage.serviceProfessionalDesc": "Doświadczony personel podczas eventu",
+    "offerPage.serviceInsurance": "Ubezpieczenie OC",
+    "offerPage.serviceInsuranceDesc": "Pełne pokrycie ubezpieczeniowe",
+    "offerPage.serviceCertified": "Certyfikowany sprzęt",
+    "offerPage.serviceCertifiedDesc": "Bezpieczne i sprawne urządzenia",
+    "offerPage.serviceFlexible": "Elastyczne terminy",
+    "offerPage.serviceFlexibleDesc": "Dostosowane do Twoich potrzeb",
+    "offerPage.serviceConsultations": "Konsultacje",
+    "offerPage.serviceConsultationsDesc": "Pomoc w planowaniu eventu",
+    "offerPage.sectionDescriptionTitle": "Opis Atrakcji",
+    "pricingPage.title": "Cennik",
+    "modal.pricingIncludes":
+      "Cena zawiera transport, montaż i obsługę w promieniu 30km od Radomia.",
+    "modal.featuresTitle": "Główne Cechy",
+    "modal.specificationsTitle": "Specyfikacja Techniczna",
+    "galleryPage.title": "Galeria",
+    "modal.ctaTitle": "Zainteresowany/a?",
+    "modal.ctaDescription":
+      "Skontaktuj się z nami już dziś, aby sprawdzić dostępność i otrzymać indywidualną wycenę.",
+    "contact.phoneValue": "+48531890827",
+    "seo.homeTitle": "'SŁODKOLANDIA wita:' - Event Attraction Rental Radom",
+    "seo.homeDescription":
+      "Professional rental of party tents, inflatables, cotton candy, and popcorn in Radom and surroundings. Organize an unforgettable party!",
+    "seo.offerTitle": "Offer - Event Attraction Rental | 'SŁODKOLANDIA wita:'",
+    "seo.offerDescription":
+      "Discover our full range of event attractions: party tents, inflatables, cotton candy, popcorn, chocolate fountains. Professional rental in Radom.",
+    "seo.galleryTitle":
+      "Photo Gallery - See Our Attractions in Action | 'SŁODKOLANDIA wita:'",
+    "seo.galleryDescription":
+      "View the photo gallery from our event productions. Party tents, inflatables, cotton candy, popcorn, and chocolate fountains in action.",
+    "seo.pricingTitle":
+      "Pricing for Event Attraction Rental | 'SŁODKOLANDIA wita:' Radom",
+    "seo.pricingDescription":
+      "Check current rental prices for party tents, inflatables, and catering equipment. Promotional packages and individual quotes.",
+    "seo.contactTitle":
+      "Contact - Event Attraction Rental Radom | 'SŁODKOLANDIA wita:'",
+    "seo.contactDescription":
+      "Contact us today! Phone: +48 531 890 827. Professional event attraction rental in Radom and surroundings.",
+    "seo.aboutUsTitle":
+      "About Us - 'SŁODKOLANDIA wita:' | Professional Event Attraction Rental Radom",
+    "seo.aboutUsDescription":
+      "Learn our history, values, and experience. 'SŁODKOLANDIA wita:' is a passion for creating unforgettable events in Radom and surroundings.",
+    "attractionsData.namioty-imprezowe.name": "Namioty Imprezowe",
+    "attractionsData.namioty-imprezowe.description":
+      "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
+    "attractionsData.dmuchane-atrakcje.name": "Dmuchane Atrakcje",
+    "attractionsData.dmuchane-atrakcje.description":
+      "Zjeżdżalnie, zamki dmuchane. Gwarantowana radość dla dzieci w każdym wieku!",
+    "attractionsData.wata-cukrowa.name": "Wata Cukrowa",
+    "attractionsData.wata-cukrowa.description":
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
+    "attractionsData.popcorn.name": "Popcorn",
+    "attractionsData.popcorn.description":
+      "Maszyny do popcornu. Świeży, aromatyczny popcorn na Twoim evencie.",
+    "attractionsData.fontanna-czekoladowa.name": "Fontanna Czekoladowa",
+    "attractionsData.fontanna-czekoladowa.description":
+      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+    "attractionsData.kompleksowa-obsluga.name": "Kompleksowa Obsługa Eventów",
+    "attractionsData.kompleksowa-obsluga.description":
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
+    "feature.variousSizes": "Różne rozmiary dostępne",
+    "feature.weatherResistant": "Odporne na warunki atmosferyczne",
+    "feature.professionalSetup": "Profesjonalny montaż i demontaż",
+    "feature.optionalFloor": "Możliwość dodania podłogi",
+    "feature.ledLighting": "Oświetlenie LED",
+    "feature.weddingDecorations": "Dekoracje ślubne i eventowe",
+    "feature.certifiedSafe": "Certyfikowane i bezpieczne",
+    "feature.variousThemes": "Różne motywy i rozmiary",
+    "feature.eventSupport": "Obsługa podczas eventu",
+    "feature.liabilityInsurance": "Ubezpieczenie OC",
+    "feature.generatorIncluded": "Agregat prądotwórczy w zestawie",
+    "feature.protectiveMats": "Maty ochronne",
+    "feature.variousFlavorsColors": "Różne smaki i kolory",
+    "feature.hygienicPackaging": "Higieniczne opakowania",
+    "feature.visualAttraction": "Atrakcja wizualna",
+    "feature.fastProduction": "Szybka produkcja",
+    "feature.ecoSugars": "Ekologiczne cukry",
+    "feature.popcornMachines": "Maszyny do popcornu",
+    "feature.freshPopcornLive": "Świeży popcorn na żywo",
+    "feature.variousFlavors": "Różne smaki dostępne",
+    "feature.attractivePackaging": "Atrakcyjne opakowania",
+    "feature.hygieneQuality": "Higiena i jakość",
+    "feature.variousChocolateTypes": "Różne rodzaje czekolady",
+    "feature.freshFruitIncluded": "Świeże owoce w zestawie",
+    "feature.elegantPresentation": "Elegancka prezentacja",
+    "feature.toppings": "Dodatki do maczania",
+    "feature.consultationPlanning": "Konsultacja i planowanie",
+    "feature.spaceDesign": "Projekt aranżacji przestrzeni",
+    "feature.deliveryCoordination": "Koordynacja dostaw",
+    "feature.comprehensiveInsurance": "Ubezpieczenie kompleksowe",
+    "feature.professionalService": "Profesjonalna obsługa",
+    "feature.hygieneSafety": "Higiena i bezpieczeństwo",
+    "specification.sizes": "Rozmiary",
+    "specification.material": "Materiał",
+    "specification.height": "Wysokość",
+    "specification.assemblyTime": "Montaż",
+    "specification.capacity": "Pojemność",
+    "specification.age": "Wiek dzieci",
+    "specification.dimensions": "Wymiary",
+    "specification.power": "Zasilanie",
+    "specification.flavors": "Smaki",
+    "specification.colors": "Kolory",
+    "specification.efficiency": "Wydajność",
+    "specification.operator": "Obsługa",
+    "specification.machineType": "Typ maszyny",
+    "specification.packaging": "Opakowania",
+    "specification.chocolateTypes": "Rodzaje czekolady",
+    "specification.fountainHeight": "Wysokość fontanny",
+    "specification.chocolateCapacity": "Pojemność",
+    "specification.toppings": "Dodatki",
+    "specification.waiter": "Kelner",
+    "specification.experience": "Doświadczenie",
+    "specification.team": "Zespół",
+    "specification.area": "Obszar",
+    "specification.eventTypes": "Rodzaje eventów",
+    "specification.realizationTime": "Czas realizacji",
+  },
+  en: {
+    "nav.home": "Home",
+    "nav.about": "About Us",
+    "nav.offer": "Offer",
+    "nav.photo": "Photos",
+    "nav.pricing": "Pricing",
+    "nav.contact": "Contact",
+    "nav.allAttractions": "All Attractions",
+    "nav.tents": "Party Tents",
+    "nav.inflatables": "Inflatables",
+    "nav.popcorn": "Popcorn",
+    "nav.cottonCandy": "Cotton Candy",
+    "nav.chocolateFountain": "Chocolate Fountain",
+    "nav.allPhotos": "All Photos",
+    "nav.photoTents": "Tents",
+    "nav.photoInflatables": "Inflatables",
+    "nav.photoCottonCandy": "Cotton Candy",
+    "nav.photoPopcorn": "Popcorn",
+    "nav.photoFountains": "Chocolate Fountains",
+    "nav.review": "Add Review",
+    "hero.title": "SŁODKOLANDIA wita:",
+    "hero.subtitle": "Unforgettable Attractions for Your Event!",
+    "hero.description":
+      "We guarantee great fun and professional service at every event!",
+    "hero.seeOffer": "See our offer",
+    "hero.askDate": "Ask about availability",
+    "services.title": "Our Main Attractions",
+    "services.description":
+      "We offer comprehensive rental of event equipment and attractions that will make your party unforgettable",
+    "services.seeAll": "See all attractions",
+    "category.namioty": "tents",
+    "category.dmuchance": "inflatables",
+    "category.cukiernicze": "confectionery",
+    "category.kompleksowa": "comprehensive",
+    "category.gastro": "gastro",
+    "whyUs.title": "Why 'SŁODKOLANDIA wita:'?",
+    "whyUs.description":
+      "We combine passion for creating unforgettable moments with a professional approach to every event",
+    "whyUs.experience": "Experience",
+    "whyUs.experienceDesc":
+      "Years of experience in organizing events of various scales",
+    "whyUs.safety": "Safety",
+    "whyUs.safetyDesc":
+      "Certified equipment and full insurance for every attraction",
+    "whyUs.punctuality": "Punctuality",
+    "whyUs.punctualityDesc":
+      "Always on time - we meet delivery and assembly deadlines",
+    "whyUs.individual": "Individual Approach",
+    "whyUs.individualDesc": "Every event is unique - we adapt to your needs",
+    "cta.mainTitle": "Let's organize your dream event together!",
+    "cta.mainDescription":
+      "Contact us today and check availability for your date. We guarantee professional service and unforgettable experiences!",
+    "cta.contactForm": "Contact Form",
+    "cta.secondaryTitle": "Ready for an unforgettable party?",
+    "cta.secondaryDescription": "Contact us today and book your date!",
+    "cta.callNow": "Call now",
+    "cta.askForDate": "Ask for date",
+    "home.stats.eventsOrganized": "Events organized",
+    "home.stats.happyClientsMonthly": "Satisfied clients monthly",
+    "home.stats.yearsExperience": "years of experience",
+    "home.stats.serviceRadius": "service radius",
+    "footer.companyName": "'SŁODKOLANDIA wita:'",
+    "footer.companyDescription":
+      "Professional rental of event attractions in Radom and surroundings. We create unforgettable moments for your guests!",
+    "footer.quickLinks": "Quick Links",
+    "footer.servicesTitle": "Our Services",
+    "footer.serviceTents": "Party Tents",
+    "footer.serviceInflatables": "Inflatables",
+    "footer.serviceCottonCandy": "Cotton Candy",
+    "footer.servicePopcorn": "Popcorn Machines",
+    "footer.serviceFountains": "Chocolate Fountains",
+    "footer.serviceComprehensive": "Comprehensive Service",
+    "footer.contactTitle": "Contact",
+    "footer.address": "Radom and surroundings",
+    "footer.addressDetail": "(100km radius)",
+    "footer.copyright": "© {year} SŁODKOLANDIA wita:. All rights reserved.",
+    "footer.privacyPolicy": "Privacy Policy",
+    "footer.terms": "Terms of Service",
+    "attractionCard.priceFrom": "from ",
+    "attractionCard.details": "Details",
+    "currencyUnit.zł": "PLN",
+    "pricing.perPeriod.dzień": "/ day",
+    "pricing.perPeriod.impreza": "/ party",
+    "pricing.perPeriod.event": "/ event",
+    "cookieConsent.message":
+      "This site uses cookies to ensure the best quality of service. By continuing to browse, you agree to their use.",
+    "cookieConsent.accept": "Accept",
+    "cookieConsent.reject": "Reject",
+    "inquiryForm.title": "Inquiry Form",
+    "inquiryForm.nameLabel": "Name and surname *",
+    "inquiryForm.namePlaceholder": "Your name and surname",
+    "inquiryForm.nameError":
+      "Name and surname must be at least 2 characters long",
+    "inquiryForm.emailLabel": "Email *",
+    "inquiryForm.emailPlaceholder": "your@email.com",
+    "inquiryForm.emailError": "Invalid email address",
+    "inquiryForm.phoneLabel": "Phone",
+    "inquiryForm.phonePlaceholder": "+48 123 456 789",
+    "inquiryForm.eventDateLabel": "Event date",
+    "inquiryForm.attractionsLabel": "Interesting attractions",
+    "inquiryForm.messageLabel": "Message *",
+    "inquiryForm.messagePlaceholder":
+      "Describe your event, number of guests, additional requirements...",
+    "inquiryForm.messageError": "Message must be at least 10 characters long",
+    "inquiryForm.submitButton": "Send Inquiry",
+    "inquiryForm.submittingButton": "Sending...",
+    "inquiryForm.successTitle": "Inquiry sent!",
+    "inquiryForm.successDescription":
+      "Thank you for your contact. We will reply within 24 hours.",
+    "inquiryForm.errorTitle": "Sending error",
+    "inquiryForm.errorDescription":
+      "Sorry, there was a problem. Please try again or call us.",
+    "inquiryForm.attractionOptionTents": "Party Tents",
+    "inquiryForm.attractionOptionInflatables": "Inflatable Attractions",
+    "inquiryForm.attractionOptionCottonCandy": "Cotton Candy",
+    "inquiryForm.attractionOptionPopcorn": "Popcorn Machines",
+    "inquiryForm.attractionOptionFountains": "Chocolate Fountains",
+    "inquiryForm.attractionOptionComprehensive": "Comprehensive Service",
+    "pricingPage.heroTitle": "Our Service Pricing",
+    "pricingPage.heroDescription":
+      "We offer competitive prices and individual quotes tailored to your budget and needs. All prices include transport within a 15km radius of Radom.",
+    "pricingPage.badgeTransportFree15km": "🚚 Free transport up to 15km",
+    "pricingPage.badgeSetupIncluded": "🛠️ Setup and dismantling included",
+    "pricingPage.badgeInsuranceOC": "🛡️ Liability insurance",
+    "pricingPage.packagesTitle": "Promotional Packages",
+    "pricingPage.packagesDescription":
+      "Save by renting attraction packages! The more you rent, the more you save.",
+    "pricingPage.popularPackage": "Most Popular",
+    "pricingPage.packageNormally": "Normally",
+    "pricingPage.packageSave": "You save {amount} PLN",
+    "pricingPage.packageIncludes": "Included in package:",
+    "pricingPage.packageAsk": "Ask about package",
+    "pricingPage.individualTitle": "Individual Pricing",
+    "pricingPage.individualDescription":
+      "Rental prices for individual attractions",
+    "pricingPage.categoryAll": "All",
+    "pricingPage.categoryGastro": "Gastro",
+    "pricingPage.additionalServicesTitle": "Additional Services",
+    "pricingPage.discountsTitle": "Discounts and Promotions",
+    "pricingPage.discountPackages": "Event Packages",
+    "pricingPage.discountPackagesDesc":
+      "Rent 3 or more attractions and get a 15% discount!",
+    "pricingPage.discountLongTerm": "Long-term Rental",
+    "pricingPage.discountLongTermDesc":
+      "Events longer than 2 days - special prices!",
+    "pricingPage.discountLoyal": "Loyal Customers",
+    "pricingPage.discountLoyalDesc": "Loyalty program for regular customers",
+    "pricingPage.askForDiscount": "Ask for Discount",
+    "pricingPage.importantInfoTitle": "Important Information",
+    "pricingPage.rentalConditionsTitle": "📋 Rental Conditions",
+    "pricingPage.rentalCondition1":
+      "• Reservation requires a 30% deposit of the order value",
+    "pricingPage.rentalCondition2":
+      "• Minimum rental period - 1 day (24 hours) for tents, other attractions for the duration of the party",
+    "pricingPage.rentalCondition3":
+      "• Cancellation possible up to 48h before the event",
+    "pricingPage.rentalCondition4": "• Gross prices (VAT included)",
+    "pricingPage.rentalCondition5":
+      "• For events on public holidays - 20% surcharge",
+    "pricingPage.transportSetupTitle": "🚚 Transport and Setup",
+    "pricingPage.transportSetup1": "• Free transport up to 15km from Radom",
+    "pricingPage.transportSetup2":
+      "• Setup and dismantling during standard hours (8:00 AM - 8:00 PM)",
+    "pricingPage.transportSetup3":
+      "• Setup time: 1-4 hours depending on the attraction",
+    "pricingPage.transportSetup4": "• Access to 230V power supply required",
+    "pricingPage.transportSetup5": "• For inflatables - flat surface min. 4x4m",
+    "pricingPage.packageChildName": "Kids Package",
+    "pricingPage.packageChildDesc": "Perfect for a child's birthday",
+    "pricingPage.packageChildItem1": "Bouncy castle",
+    "pricingPage.packageChildItem2": "Cotton candy",
+    "pricingPage.packageChildItem3": "Popcorn",
+    "pricingPage.packageFamilyName": "Family Package",
+    "pricingPage.packageFamilyDesc": "For larger family gatherings",
+    "pricingPage.packageFamilyItem1": "Tent 6x12m",
+    "pricingPage.packageFamilyItem2": "Inflatable slide",
+    "pricingPage.packageFamilyItem3": "Cotton candy",
+    "pricingPage.packageFamilyItem4": "Chocolate fountain",
+    "pricingPage.packageEventName": "Event Package",
+    "pricingPage.packageEventDesc": "Comprehensive service for larger events",
+    "pricingPage.packageEventItem1": "Tent 10x20m",
+    "pricingPage.packageEventItem2": "2x Inflatables",
+    "pricingPage.packageEventItem3": "Cotton candy",
+    "pricingPage.packageEventItem4": "Popcorn",
+    "pricingPage.packageEventItem5": "Chocolate fountain",
+    "pricingPage.packageEventItem6": "Service staff",
+    "pricingPage.additionalServiceTransport15": "Transport (up to 15km)",
+    "pricingPage.additionalServiceTransport30": "Transport (15-30km)",
+    "pricingPage.additionalServiceTransportOver30": "Transport (over 30km)",
+    "pricingPage.additionalServiceNightSetup": "Night-time setup",
+    "pricingPage.additionalServiceExtendRental": "Extend rental (+1 day)",
+    "pricingPage.additionalServiceOperator": "Additional operator",
+    "pricingPage.unitPriceDefault": "PLN",
+    "pricingPage.unitPriceKm": "PLN/km",
+    "pricingPage.unitPricePercent": "% of base price",
+    "galleryPage.heroTitle": "See Our Attractions in Action!",
+    "galleryPage.heroDescription":
+      "Photo gallery from our event productions. Discover how our attractions look at real parties and events in Radom and the surrounding area.",
+    "galleryPage.badgeEventsDone": "Over 500 events completed",
+    "galleryPage.filterLabel": "Categories:",
+    "galleryPage.categoryAll": "All",
+    "galleryPage.categoryTents": "Party Tents",
+    "galleryPage.categoryInflatables": "Inflatable Attractions",
+    "galleryPage.categoryCottonCandy": "Cotton Candy",
+    "galleryPage.categoryPopcorn": "Popcorn",
+    "galleryPage.categoryFountains": "Chocolate Fountains",
+    "galleryPage.categoryEventSetups": "Event Productions",
+    "galleryPage.sectionTentsTitle": "🏕️ Party Tents",
+    "galleryPage.sectionTentsDesc":
+      "Professional tents in various configurations - from intimate parties to large corporate events.",
+    "galleryPage.sectionInflatablesTitle": "🏰 Inflatable Attractions",
+    "galleryPage.sectionInflatablesDesc":
+      "Safe fun for children - slides, bouncy castles, and playgrounds.",
+    "galleryPage.sectionCottonCandyTitle": "🍭 Cotton Candy",
+    "galleryPage.sectionCottonCandyDesc":
+      "Colorful cotton candy in various flavors - a sweet attraction for guests of all ages.",
+    "galleryPage.sectionPopcornTitle": "🍿 Popcorn",
+    "galleryPage.sectionPopcornDesc":
+      "Aromatic popcorn prepared live in machines.",
+    "galleryPage.sectionFountainsTitle": "🍫 Chocolate Fountains",
+    "galleryPage.sectionFountainsDesc":
+      "Elegant chocolate fountains with toppings - an exquisite attraction for connoisseurs.",
+    "galleryPage.sectionEventSetupsTitle": "🎉 Event Productions",
+    "galleryPage.sectionEventSetupsDesc":
+      "See what our comprehensive productions look like - from small parties to large events.",
+    "galleryPage.currentCategoryInfo": "{count} photos in this category",
+    "galleryPage.statsTitle": "Our Experience in Numbers",
+    "galleryPage.statEvents": "Events completed",
+    "galleryPage.statKids": "Happy children",
+    "galleryPage.statAttractions": "Types of attractions",
+    "galleryPage.statRadius": "Service radius",
+    "contactPage.heroTitle": "Contact Us",
+    "contactPage.heroDescription":
+      "Let's organize your unforgettable party together! Contact us today and check availability for your date.",
+    "contactPage.badgeQuickResponse": "⚡ Quick response",
+    "contactPage.badgeFreeConsultation": "💬 Free consultation",
+    "contactPage.badgeIndividualQuotes": "📋 Individual quotes",
+    "contactPage.quickContactTitle":
+      "Choose the Most Convenient Way to Contact Us",
+    "contactPage.quickContactDescription":
+      "We are available all week. We respond quickly to all inquiries!",
+    "contactPage.phoneTitle": "Phone",
+    "contactPage.phoneDescription": "Fastest contact",
+    "contactPage.emailTitle": "Email",
+    "contactPage.emailDescription": "Write to us",
+    "contactPage.whatsappTitle": "WhatsApp",
+    "contactPage.whatsappDescription": "Quick message",
+    "contactPage.meetingTitle": "Meeting",
+    "contactPage.meetingDescription": "Arrange a presentation",
+    "contactPage.meetingDetails": "By prior contact",
+    "contactPage.callToActionTitle": "Call us now!",
+    "contactPage.callToActionDescription":
+      "We will check date availability and prepare an individual quote",
+    "contactPage.workingHoursTitle": "Working Hours",
+    "contactPage.workingHoursNote":
+      "Note: For urgent matters, we are also available outside working hours.",
+    "contactPage.workingHoursMonFri": "Monday - Friday",
+    "contactPage.workingHoursSat": "Saturday",
+    "contactPage.workingHoursSun": "Sunday",
+    "contactPage.workingHoursHoliday": "Public holidays",
+    "contactPage.workingHoursMonFriTime": "8:00 AM - 8:00 PM",
+    "contactPage.workingHoursSatTime": "9:00 AM - 6:00 PM",
+    "contactPage.workingHoursSunTime": "10:00 AM - 4:00 PM",
+    "contactPage.workingHoursHolidayTime": "By appointment",
+    "contactPage.serviceAreaTitle": "Service Area",
+    "contactPage.serviceAreaNote":
+      "We also serve other cities! Contact us to arrange transport conditions.",
+    "contactPage.serviceAreaRadom": "Radom",
+    "contactPage.serviceAreaRadomDist": "0km",
+    "contactPage.serviceAreaRadomNote": "Company headquarters",
+    "contactPage.serviceAreaBialobrzegi": "Białobrzegi",
+    "contactPage.serviceAreaBialobrzegiDist": "25km",
+    "contactPage.serviceAreaBialobrzegiNote": "Free transport",
+    "contactPage.serviceAreaSzydlowiec": "Szydłowiec",
+    "contactPage.serviceAreaSzydlowiecDist": "30km",
+    "contactPage.serviceAreaSzydlowiecNote": "Free transport",
+    "contactPage.serviceAreaKozienice": "Kozienice",
+    "contactPage.serviceAreaKozieniceDist": "35km",
+    "contactPage.serviceAreaKozieniceNote": "Additional fee",
+    "contactPage.serviceAreaOstrowiec": "Ostrowiec Św.",
+    "contactPage.serviceAreaOstrowiecDist": "40km",
+    "contactPage.serviceAreaOstrowiecNote": "Additional fee",
+    "contactPage.serviceAreaSkarzysko": "Skarżysko-Kamienna",
+    "contactPage.serviceAreaSkarzyskoDist": "45km",
+    "contactPage.serviceAreaSkarzyskoNote": "Additional fee",
+    "contactPage.additionalInfoTitle": "Additional Information",
+    "contactPage.infoViewingTitle": "Equipment viewing",
+    "contactPage.infoViewingDesc":
+      "Possibility to view attractions before renting",
+    "contactPage.infoFreeQuoteTitle": "Free quote",
+    "contactPage.infoFreeQuoteDesc":
+      "We will prepare a free offer tailored to your needs",
+    "contactPage.infoConsultationsTitle": "Consultations",
+    "contactPage.infoConsultationsDesc":
+      "We will help in planning the entire event",
+    "contactPage.infoOnlineBookingTitle": "Online booking",
+    "contactPage.infoOnlineBookingDesc":
+      "Possibility to book via form or phone",
+    "contactPage.faqTitle": "Frequently Asked Questions",
+    "contactPage.faqDescription":
+      "Answers to questions we most often receive from our clients",
+    "contactPage.faq1Question": "How early should I make a reservation?",
+    "contactPage.faq1Answer":
+      "We recommend booking at least 2 weeks before the planned event, especially during the summer season and holidays.",
+    "contactPage.faq2Question": "Do prices include setup and transport?",
+    "contactPage.faq2Answer":
+      "Yes, all our prices include setup, dismantling, and transport within a 15km radius of Radom. We charge an additional fee for longer distances.",
+    "contactPage.faq3Question": "What if the weather is unfavorable?",
+    "contactPage.faq3Answer":
+      "Our tents are weather-resistant. Inflatables can be used in light rain, but not during a storm for safety reasons.",
+    "contactPage.faq4Question": "Are the attractions insured?",
+    "contactPage.faq4Answer":
+      "Yes, all our attractions have full liability insurance. Additionally, we regularly conduct technical inspections of the equipment.",
+    "contactPage.faq5Question": "What is the reservation process?",
+    "contactPage.faq5Answer":
+      "After contact, we prepare a quote, then we require a 30% deposit. The remaining amount can be settled upon equipment pickup.",
+    "aboutUsPage.heroTitle": "About Our Company",
+    "aboutUsPage.heroDescription":
+      "We are a company with a passion for creating unforgettable moments. We specialize in renting event attractions that make every party unique.",
+    "aboutUsPage.badgeFounded": "Radom and surroundings since 2019",
+    "aboutUsPage.storyTitle": "Our Story",
+    "aboutUsPage.storyPara1":
+      "SŁODKOLANDIA wita: was founded on the simple belief that every event deserves to be unforgettable. We started in 2019 with one inflatable and a great passion for organizing events.",
+    "aboutUsPage.storyPara2":
+      "Today, we are a recognizable brand in Radom and the surrounding areas, offering comprehensive rental of event attractions. Our experience includes corporate events, weddings, children's birthdays, city festivals, and many other occasions.",
+    "aboutUsPage.storyPara3":
+      "What sets us apart is our individual approach to each client and our constant concern for the safety and quality of our services.",
+    "aboutUsPage.missionTitle": "🎯 Our Mission",
+    "aboutUsPage.missionDescription":
+      "We create unforgettable moments of joy and fun by providing the highest quality event attractions with full professional service.",
+    "aboutUsPage.visionTitle": "🔮 Our Vision",
+    "aboutUsPage.visionDescription":
+      "To be the first choice in the region for people looking for professional event attractions and comprehensive event management.",
+    "aboutUsPage.valuesTitle": "Our Values",
+    "aboutUsPage.valuesDescription":
+      "The values that guide our way of working and our approach to every client",
+    "aboutUsPage.valuePassionTitle": "Passion",
+    "aboutUsPage.valuePassionDesc":
+      "We treat every event as a unique occasion. We put our heart into what we do.",
+    "aboutUsPage.valueSafetyTitle": "Safety",
+    "aboutUsPage.valueSafetyDesc":
+      "The safety of our guests is a priority. All equipment is certified and insured.",
+    "aboutUsPage.valueProfessionalismTitle": "Professionalism",
+    "aboutUsPage.valueProfessionalismDesc":
+      "Punctuality, reliability, and high-quality services are our hallmarks.",
+    "aboutUsPage.valueQualityTitle": "Quality",
+    "aboutUsPage.valueQualityDesc":
+      "We use only proven, top-quality equipment from reputable manufacturers.",
+    "aboutUsPage.achievementsTitle": "Our Achievements",
+    "aboutUsPage.achievementsDescription":
+      "Numbers that best describe our experience and commitment",
+    "aboutUsPage.achievementEvents": "Events completed",
+    "aboutUsPage.achievementExperience": "years of experience",
+    "aboutUsPage.achievementAttractions": "types of attractions",
+    "aboutUsPage.achievementRadius": "service radius",
+    "aboutUsPage.achievementSatisfaction": "satisfied clients",
+    "aboutUsPage.achievementAvailability": "phone availability",
+    "aboutUsPage.teamTitle": "Our Team",
+    "aboutUsPage.teamDescription":
+      "A group of enthusiasts who ensure every event is perfect",
+    "aboutUsPage.teamOwnerName": "Company Owner",
+    "aboutUsPage.teamOwnerRole": "Founder and Project Manager",
+    "aboutUsPage.teamOwnerDesc":
+      "5 years of experience in the event industry. Passionate about creating unforgettable moments.",
+    "aboutUsPage.teamAssemblyName": "Assembly Team",
+    "aboutUsPage.teamAssemblyRole": "Assembly Specialists",
+    "aboutUsPage.teamAssemblyDesc":
+      "Experienced technicians ensuring quick and safe assembly of all attractions.",
+    "aboutUsPage.teamSupportName": "Customer Support",
+    "aboutUsPage.teamSupportRole": "Event Consultants",
+    "aboutUsPage.teamSupportDesc":
+      "We will help you choose the ideal attractions and plan the entire event.",
+    "aboutUsPage.certsTitle": "Certificates and Quality",
+    "aboutUsPage.certsDescription":
+      "Safety and quality are the foundation of our business. All our attractions are regularly inspected and have the required certificates.",
+    "aboutUsPage.certInsurance": "Liability Insurance",
+    "aboutUsPage.certInsuranceDesc": "Full civil liability coverage",
+    "aboutUsPage.certEquipment": "Equipment Certificates",
+    "aboutUsPage.certEquipmentDesc":
+      "All attractions have the required certificates",
+    "aboutUsPage.certReviews": "Technical Inspections",
+    "aboutUsPage.certReviewsDesc": "Regular safety checks of equipment",
+    "aboutUsPage.certTraining": "Team Training",
+    "aboutUsPage.certTrainingDesc":
+      "Continuous improvement of employee qualifications",
+    "aboutUsPage.whyChooseUsTitle": "Why Clients Choose Us?",
+    "aboutUsPage.whyChooseExperience": "Experience",
+    "aboutUsPage.whyChooseExperienceDesc":
+      "5 years on the market and hundreds of successful events",
+    "aboutUsPage.whyChooseSafety": "Safety",
+    "aboutUsPage.whyChooseSafetyDesc": "Full insurance and certified equipment",
+    "aboutUsPage.whyChooseProfessionalism": "Professionalism",
+    "aboutUsPage.whyChooseProfessionalismDesc":
+      "Punctual delivery and professional service",
+    "aboutUsPage.whyChooseIndividual": "Individual Approach",
+    "aboutUsPage.whyChooseIndividualDesc": "We treat every event as unique",
+    "offerPage.heroTitle": "Our Event Attraction Offer",
+    "offerPage.heroDescription":
+      "Discover our full range of professional event attractions and services. From party tents to comprehensive event management.",
+    "offerPage.badgeLocation": "Radom and surroundings (30km)",
+    "offerPage.filterLabel": "Categories:",
+    "offerPage.allAttractionsCount": "All attractions ({count})",
+    "offerPage.categoryAttractionsCount": "{categoryName} ({count})",
+    "offerPage.noAttractionsTitle": "No attractions in this category",
+    "offerPage.noAttractionsDescription":
+      "Choose another category or contact us for individual solutions.",
+    "offerPage.sectionTentsTitle": "🏕️ Party Tents",
+    "offerPage.sectionTentsDescription":
+      "Professional tents in various sizes, ideal for weddings, birthdays, and corporate events. We offer full assembly and dismantling service with options for flooring and lighting.",
+    "offerPage.sectionInflatablesTitle": "🏰 Inflatable Attractions",
+    "offerPage.sectionInflatablesDescription":
+      "Safe and certified inflatables for children. Slides, castles, and playgrounds with professional service and liability insurance.",
+    "offerPage.sectionEquipmentTitle": "🍭 Confectionery Equipment",
+    "offerPage.sectionEquipmentDescription":
+      "Cotton candy and popcorn machines, and elegant chocolate fountains. All with professional service and fresh products.",
+    "offerPage.servicesIncludeTitle": "What do our services include?",
+    "offerPage.serviceTransport": "Transport and assembly",
+    "offerPage.serviceTransportDesc": "Full delivery and setup service",
+    "offerPage.serviceProfessional": "Professional service",
+    "offerPage.serviceProfessionalDesc": "Experienced staff during the event",
+    "offerPage.serviceInsurance": "Liability insurance",
+    "offerPage.serviceInsuranceDesc": "Full insurance coverage",
+    "offerPage.serviceCertified": "Certified equipment",
+    "offerPage.serviceCertifiedDesc": "Safe and functional devices",
+    "offerPage.serviceFlexible": "Flexible dates",
+    "offerPage.serviceFlexibleDesc": "Tailored to your needs",
+    "offerPage.serviceConsultations": "Consultations",
+    "offerPage.serviceConsultationsDesc": "Help in planning the event",
+    "offerPage.sectionDescriptionTitle": "Attraction Description",
+    "pricingPage.title": "Pricing",
+    "modal.pricingIncludes":
+      "Price includes transport, setup, and service within a 30km radius of Radom.",
+    "modal.featuresTitle": "Main Features",
+    "modal.specificationsTitle": "Technical Specifications",
+    "galleryPage.title": "Gallery",
+    "modal.ctaTitle": "Interested?",
+    "modal.ctaDescription":
+      "Contact us today to check availability and get an individual quote.",
+    "contact.phoneValue": "+48531890827",
+    "seo.homeTitle": "'SŁODKOLANDIA wita:' - Event Attraction Rental Radom",
+    "seo.homeDescription":
+      "Professional rental of party tents, inflatables, cotton candy, and popcorn in Radom and surroundings. Organize an unforgettable party!",
+    "seo.offerTitle": "Offer - Event Attraction Rental | 'SŁODKOLANDIA wita:'",
+    "seo.offerDescription":
+      "Discover our full range of event attractions: party tents, inflatables, cotton candy, popcorn, chocolate fountains. Professional rental in Radom.",
+    "seo.galleryTitle":
+      "Photo Gallery - See Our Attractions in Action | 'SŁODKOLANDIA wita:'",
+    "seo.galleryDescription":
+      "View the photo gallery from our event productions. Party tents, inflatables, cotton candy, popcorn, and chocolate fountains in action.",
+    "seo.pricingTitle":
+      "Pricing for Event Attraction Rental | 'SŁODKOLANDIA wita:' Radom",
+    "seo.pricingDescription":
+      "Check current rental prices for party tents, inflatables, and catering equipment. Promotional packages and individual quotes.",
+    "seo.contactTitle":
+      "Contact - Event Attraction Rental Radom | 'SŁODKOLANDIA wita:'",
+    "seo.contactDescription":
+      "Contact us today! Phone: +48 531 890 827. Professional event attraction rental in Radom and surroundings.",
+    "seo.aboutUsTitle":
+      "About Us - 'SŁODKOLANDIA wita:' | Professional Event Attraction Rental Radom",
+    "seo.aboutUsDescription":
+      "Learn our history, values, and experience. 'SŁODKOLANDIA wita:' is a passion for creating unforgettable events in Radom and surroundings.",
+    "attractionsData.namioty-imprezowe.name": "Party Tents",
+    "attractionsData.namioty-imprezowe.description":
+      "Professional party tents in various sizes. Perfect for weddings, birthdays, and corporate events.",
+    "attractionsData.dmuchane-atrakcje.name": "Inflatable Attractions",
+    "attractionsData.dmuchane-atrakcje.description":
+      "Slides, bouncy castles, and playgrounds. Guaranteed fun for children of all ages!",
+    "attractionsData.wata-cukrowa.name": "Cotton Candy",
+    "attractionsData.wata-cukrowa.description":
+      "Professional cotton candy machines with colorful flavors. A sweet treat for guests!",
+    "attractionsData.popcorn.name": "Popcorn",
+    "attractionsData.popcorn.description":
+      "Popcorn machines. Fresh, aromatic popcorn at your event.",
+    "attractionsData.fontanna-czekoladowa.name": "Chocolate Fountains",
+    "attractionsData.fontanna-czekoladowa.description":
+      "Elegant chocolate fountains with toppings. An exquisite attraction for true connoisseurs.",
+    "attractionsData.kompleksowa-obsluga.name": "Comprehensive Event Service",
+    "attractionsData.kompleksowa-obsluga.description":
+      "Full event organization with our experienced team. From planning to execution.",
+    "feature.variousSizes": "Various sizes available",
+    "feature.weatherResistant": "Weather resistant",
+    "feature.professionalSetup": "Professional assembly & disassembly",
+    "feature.optionalFloor": "Optional flooring",
+    "feature.ledLighting": "LED lighting",
+    "feature.weddingDecorations": "Wedding & event decorations",
+    "feature.certifiedSafe": "Certified and safe",
+    "feature.variousThemes": "Various themes and sizes",
+    "feature.eventSupport": "On-site event support",
+    "feature.liabilityInsurance": "Liability insurance (OC)",
+    "feature.generatorIncluded": "Power generator included",
+    "feature.protectiveMats": "Protective mats",
+    "feature.variousFlavorsColors": "Various flavors & colors",
+    "feature.hygienicPackaging": "Hygienic packaging",
+    "feature.visualAttraction": "Visual attraction",
+    "feature.fastProduction": "Fast production",
+    "feature.ecoSugars": "Ecological sugars",
+    "feature.popcornMachines": "Popcorn machines",
+    "feature.freshPopcornLive": "Fresh popcorn made live",
+    "feature.variousFlavors": "Various flavors available",
+    "feature.attractivePackaging": "Attractive packaging",
+    "feature.hygieneQuality": "Hygiene and quality",
+    "feature.variousChocolateTypes": "Various types of chocolate",
+    "feature.freshFruitIncluded": "Fresh fruit included",
+    "feature.elegantPresentation": "Elegant presentation",
+    "feature.toppings": "Dipping extras",
+    "feature.consultationPlanning": "Consultation & planning",
+    "feature.spaceDesign": "Space arrangement design",
+    "feature.deliveryCoordination": "Delivery coordination",
+    "feature.comprehensiveInsurance": "Comprehensive insurance",
+    "feature.professionalService": "Professional service",
+    "feature.hygieneSafety": "Hygiene and safety",
+    "specification.sizes": "Sizes",
+    "specification.material": "Material",
+    "specification.height": "Height",
+    "specification.assemblyTime": "Assembly",
+    "specification.capacity": "Capacity",
+    "specification.age": "Age of children",
+    "specification.dimensions": "Dimensions",
+    "specification.power": "Power supply",
+    "specification.flavors": "Flavors",
+    "specification.colors": "Colors",
+    "specification.efficiency": "Efficiency",
+    "specification.operator": "Operator",
+    "specification.machineType": "Machine type",
+    "specification.packaging": "Packaging",
+    "specification.chocolateTypes": "Chocolate types",
+    "specification.fountainHeight": "Fountain height",
+    "specification.chocolateCapacity": "Capacity",
+    "specification.toppings": "Extras",
+    "specification.waiter": "Waiter",
+    "specification.experience": "Experience",
+    "specification.team": "Team",
+    "specification.area": "Service Area",
+    "specification.eventTypes": "Event Types",
+    "specification.realizationTime": "Realization Time",
+  },
+};
+
+const LanguageContext = createContext<LanguageContextType | undefined>(
+  undefined
+);
+
+export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
+  const [language, setLanguageState] = useState<Language>("pl");
+
+  const setLanguage = (
+    newLang: Language,
+    options?: { preventNavigation?: boolean }
+  ) => {
+    setLanguageState(newLang);
+  };
+
+  const t = (
+    key: string,
+    replacements?: Record<string, string | number>
+  ): string => {
+    let translation = translations[language]?.[key] || key;
+    if (replacements) {
+      Object.keys(replacements).forEach((placeholder) => {
+        const regex = new RegExp(`{${placeholder}}`, "g");
+        translation = translation.replace(
+          regex,
+          String(replacements[placeholder])
+        );
+      });
+    }
+    return translation;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = (): LanguageContextType => {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+};
+
+-------------------------
+
+export interface Attraction {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  shortDescription: string;
+  images: string[];
+  icon: string;
+  features: string[];
+  specifications: {
+    [specificationKey: string]: string;
+  };
+  pricing: {
+    base: number;
+    currency: string;
+    period: string;
+  };
+}
+
+export const attractions: Attraction[] = [
+  {
+    id: "namioty-imprezowe",
+    name: "Namioty Imprezowe",
+    category: "namioty",
+    description:
+      "Profesjonalne namioty imprezowe w różnych rozmiarach, idealne na wesela, urodziny, eventy firmowe i inne okazje. Nasze namioty są wykonane z wysokiej jakości materiałów, odpornych na warunki atmosferyczne. Zapewniamy pełny serwis montażu i demontażu.",
+    shortDescription:
+      "Profesjonalne namioty imprezowe w różnych rozmiarach. Idealne na wesela, urodziny i eventy firmowe.",
+    images: ["/img/n/1.jpg", "/img/n/2.jpg", "/img/n/3.jpg"],
+    icon: "fas fa-campground",
+    features: [
+      "feature.variousSizes",
+      "feature.weatherResistant",
+      "feature.professionalSetup",
+      "feature.optionalFloor",
+      "feature.ledLighting",
+      "feature.weddingDecorations",
+    ],
+    specifications: {
+      sizes: "5x10m, 6x12m, 8x15m, 10x20m",
+      material: "PVC 650g/m²",
+      height: "2.5m - 3.5m",
+      assemblyTime: "2-4 godziny",
+      capacity: "50-200 osób",
+    },
+    pricing: {
+      base: 350,
+      currency: "zł",
+      period: "dzień",
+    },
+  },
+  {
+    id: "dmuchane-atrakcje",
+    name: "Dmuchane Atrakcje",
+    category: "dmuchance",
+    description:
+      "Kolorowe zjeżdżalnie, zamki dmuchane dla dzieci. Nasze atrakcje są bezpieczne, regularnie serwisowane i posiadają wszystkie wymagane certyfikaty. Gwarantujemy radość i bezpieczną zabawę dla dzieci w każdym wieku.",
+    shortDescription:
+      "Zjeżdżalnie, zamki dmuchane. Gwarantowana radość dla dzieci w każdym wieku!",
+    images: [
+      "/img/d/1.jpg",
+      "/img/d/2.jpg",
+      "/img/d/3.jpg",
+      "/img/d/4.jpg",
+      "/img/d/5.jpg",
+      "/img/d/6.jpg",
+    ],
+    icon: "fas fa-castle",
+    features: [
+      "feature.certifiedSafe",
+      "feature.variousThemes",
+      "feature.eventSupport",
+      "feature.liabilityInsurance",
+      "feature.generatorIncluded",
+      "feature.protectiveMats",
+    ],
+    specifications: {
+      age: "3-12 lat",
+      dimensions: "4x4m - 8x6m",
+      height: "3-5 metrów",
+      capacity: "8-15 dzieci jednocześnie",
+      power: "230V/16A",
+    },
+    pricing: {
+      base: 250,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "wata-cukrowa",
+    name: "Wata Cukrowa",
+    category: "cukiernicze",
+    description:
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami i aromatami. Nasza wata cukrowa to nie tylko słodka przekąska, ale także atrakcja wizualna, która zachwyci gości w każdym wieku. Oferujemy różne smaki i kolory.",
+    shortDescription:
+      "Profesjonalne maszyny do waty cukrowej z kolorowymi smakami. Słodka atrakcja dla gości!",
+    images: [
+      "/img/w/1.jpg",
+      "/img/w/2.jpg",
+      "/img/w/3.jpg",
+      "/img/w/7.jpg",
+      "/img/w/8.jpg",
+      "/img/w/9.jpg",
+    ],
+    icon: "fas fa-candy-cane",
+    features: [
+      "feature.variousFlavorsColors",
+      "feature.professionalService",
+      "feature.hygienicPackaging",
+      "feature.visualAttraction",
+      "feature.fastProduction",
+      "feature.ecoSugars",
+    ],
+    specifications: {
+      flavors: "Truskawka, wanilia, malina, jabłko",
+      colors: "Różowy, niebieski, żółty, zielony",
+      efficiency: "100-150 porcji/godzinę",
+      power: "230V",
+      operator: "Operator w zestawie",
+    },
+    pricing: {
+      base: 150,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "popcorn",
+    name: "Popcorn",
+    category: "cukiernicze",
+    description:
+      "Maszyny do popcornu, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
+    shortDescription:
+      "Maszyny do popcornu. Świeży, aromatyczny popcorn na Twoim evencie.",
+    images: [
+      "/img/p/1.jpg",
+      "/img/p/2.jpg",
+      "/img/p/3.jpg",
+      "/img/p/10.jpg",
+      "/img/p/11.jpg",
+      "/img/p/12.jpg",
+    ],
+    icon: "fas fa-seedling",
+    features: [
+      "feature.popcornMachines",
+      "feature.freshPopcornLive",
+      "feature.variousFlavors",
+      "feature.attractivePackaging",
+      "feature.professionalService",
+      "feature.hygieneQuality",
+    ],
+    specifications: {
+      flavors: "Słony, słodki, karmelowy, serowy",
+      efficiency: "200 porcji/godzinę",
+      machineType: "Do popcornu",
+      power: "230V",
+      packaging: "Papierowe torby i pudełka",
+    },
+    pricing: {
+      base: 180,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "fontanna-czekoladowa",
+    name: "Fontanna Czekoladowa",
+    category: "cukiernicze",
+    description:
+      "Elegancka fontanna czekoladowa z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
+    shortDescription:
+      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+    images: [
+      "/img/f/1.jpg",
+      "/img/f/2.jpg",
+      "/img/f/3.jpg",
+      "/img/f/13.jpg",
+      "/img/f/14.jpg",
+      "/img/f/15.jpg",
+    ],
+    icon: "fas fa-birthday-cake",
+    features: [
+      "feature.variousChocolateTypes",
+      "feature.freshFruitIncluded",
+      "feature.elegantPresentation",
+      "feature.professionalService",
+      "feature.hygieneSafety",
+      "feature.toppings",
+    ],
+    specifications: {
+      chocolateTypes: "Mleczna, gorzka, biała",
+      fountainHeight: "60-80 cm",
+      chocolateCapacity: "3-5 kg czekolady",
+      toppings: "Owoce, ciasteczka, marshmallows",
+      waiter: "Kelner w zestawie",
+    },
+    pricing: {
+      base: 200,
+      currency: "zł",
+      period: "impreza",
+    },
+  },
+  {
+    id: "kompleksowa-obsluga",
+    name: "Kompleksowa Obsługa Eventów",
+    category: "kompleksowa",
+    description:
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania i projektowania, przez organizację przestrzeni, aż po pełną obsługę podczas imprezy. Zajmujemy się wszystkim, abyś mógł cieszyć się swoim eventem.",
+    shortDescription:
+      "Pełna organizacja eventów z naszym doświadczonym zespołem. Od planowania po realizację.",
+    images: [
+      "/img/k/1.jpg",
+      "/img/k/2.jpg",
+      "/img/k/3.jpg",
+      "/img/k/16.jpg",
+      "/img/k/17.jpg",
+      "/img/k/18.jpg",
+    ],
+    icon: "fas fa-users",
+    features: [
+      "feature.consultationPlanning",
+      "feature.spaceDesign",
+      "feature.deliveryCoordination",
+      "feature.professionalSetup",
+      "feature.eventSupport",
+      "feature.comprehensiveInsurance",
+    ],
+    specifications: {
+      experience: "Ponad 5 lat",
+      team: "Profesjonalni organizatorzy",
+      area: "Radom i okolice 50km",
+      eventTypes: "Wesela, urodziny, eventy firmowe",
+      realizationTime: "2-8 godzin",
+    },
+    pricing: {
+      base: 500,
+      currency: "zł",
+      period: "event",
+    },
+  },
+];
+
+export const getAttractionsByCategory = (category: string): Attraction[] => {
+  return attractions.filter((attraction) => attraction.category === category);
+};
+
+export const getAttractionById = (id: string): Attraction | undefined => {
+  return attractions.find((attraction) => attraction.id === id);
+};
+
+
+-------------------------
+
+import React, { useEffect } from "react";
+import { X, Phone, MessageCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Attraction } from "@/data/attractions";
+import AttractionGallery from "./AttractionGallery";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "@/hooks/useLanguage";
+import { getLocalizedPath, PageKey, Language } from "@/config/paths";
+import { Link as WouterLink } from "wouter";
+
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  attraction: Attraction;
+}
+
+export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
+  const { t, language } = useLanguage();
+
+  useEffect(() => {
+    const body = document.body;
+    let originalBodyOverflow: string | null = null;
+    let originalBodyPaddingRight: string | null = null;
+    let scrollbarWidth = 0;
+
+    if (isOpen) {
+      originalBodyOverflow = body.style.overflow;
+      originalBodyPaddingRight = body.style.paddingRight;
+      scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+      body.setAttribute("data-custom-modal-scroll-lock", "true");
+    }
+
+    return () => {
+      if (originalBodyOverflow !== null) {
+        body.style.overflow = originalBodyOverflow;
+      }
+      if (originalBodyPaddingRight !== null && scrollbarWidth > 0) {
+        body.style.paddingRight = originalBodyPaddingRight;
+      }
+      body.removeAttribute("data-custom-modal-scroll-lock");
+    };
+  }, [isOpen]);
+
+  const getIconElement = (iconClass: string) => {
+    const iconMap: { [key: string]: string } = {
+      "fas fa-campground": "🏕️",
+      "fas fa-castle": "🏰",
+      "fas fa-candy-cane": "🍭",
+      "fas fa-seedling": "🍿",
+      "fas fa-birthday-cake": "🍫",
+      "fas fa-users": "👥",
+    };
+    return iconMap[iconClass] || "🎉";
+  };
+
+  const attractionNameKey = `attractionsData.${attraction.id}.name`;
+  const attractionDescriptionKey = `attractionsData.${attraction.id}.description`;
+
+  const translatedName =
+    t(attractionNameKey) !== attractionNameKey
+      ? t(attractionNameKey)
+      : attraction.name;
+  const translatedDescription =
+    t(attractionDescriptionKey) !== attractionDescriptionKey
+      ? t(attractionDescriptionKey)
+      : attraction.description;
+
+  const categoryKey = `category.${attraction.category
+    .toLowerCase()
+    .replace(/\s+/g, "")}`;
+  const translatedCategory =
+    t(categoryKey) !== categoryKey ? t(categoryKey) : attraction.category;
+
+  const periodKey = `pricing.perPeriod.${attraction.pricing.period.toLowerCase()}`;
+  const translatedPeriod =
+    t(periodKey) !== periodKey ? t(periodKey) : attraction.pricing.period;
+
+  const pricingBaseText = t("attractionCard.priceFrom");
+  const currencyUnitText = t(
+    `currencyUnit.${attraction.pricing.currency.toLowerCase()}`
+  );
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 bg-black/60 z-[70] flex items-center justify-center p-4 modal-backdrop"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            transition={{
+              type: "spring",
+              damping: 20,
+              stiffness: 250,
+              duration: 0.2,
+            }}
+            className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex-shrink-0 flex items-center justify-between p-5 md:p-6 border-b dark:border-slate-700">
+              <div className="flex items-center space-x-3">
+                <span className="text-3xl md:text-4xl">
+                  {getIconElement(attraction.icon)}
+                </span>
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold">
+                    {translatedName}
+                  </h2>
+                  <Badge
+                    variant="outline"
+                    className="mt-1 text-xs dark:border-slate-600 dark:text-slate-400"
+                  >
+                    {translatedCategory}
+                  </Badge>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="text-muted-foreground hover:bg-muted dark:hover:bg-slate-700 rounded-full"
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </div>
+
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              <div className="p-5 md:p-6 space-y-6 md:space-y-8">
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {t("offerPage.sectionDescriptionTitle", {
+                      defaultValue: "Opis",
+                    })}
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
+                    {translatedDescription}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-semibold mb-2">
+                    {t("pricingPage.title", { defaultValue: "Cennik" })}
+                  </h3>
+                  <div className="bg-primary/10 dark:bg-primary/20 rounded-lg p-4 border border-primary/20 dark:border-primary/30">
+                    <div className="text-xl md:text-2xl font-bold text-primary">
+                      {pricingBaseText} {attraction.pricing.base}{" "}
+                      {currencyUnitText}
+                      <span className="text-base md:text-lg text-muted-foreground ml-1.5">
+                        / {translatedPeriod}
+                      </span>
+                    </div>
+                    <p className="text-xs md:text-sm text-muted-foreground mt-1">
+                      {t("modal.pricingIncludes", {
+                        defaultValue:
+                          "Cena zawiera transport, montaż i obsługę w promieniu 30km od Radomia",
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                {attraction.features && attraction.features.length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">
+                      {t("modal.featuresTitle", { defaultValue: "Cechy" })}
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1.5">
+                      {attraction.features.map((feature, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center space-x-2.5"
+                        >
+                          <div className="w-1.5 h-1.5 bg-accent rounded-full flex-shrink-0"></div>
+                          <span className="text-muted-foreground text-sm md:text-base">
+                            {feature}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {Object.keys(attraction.specifications).length > 0 && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">
+                      {t("modal.specificationsTitle", {
+                        defaultValue: "Specyfikacja",
+                      })}
+                    </h3>
+                    <div className="bg-muted/50 dark:bg-slate-700/30 rounded-lg p-4 border dark:border-slate-700">
+                      <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                        {Object.entries(attraction.specifications).map(
+                          ([key, value]) => (
+                            <div key={key} className="flex flex-col">
+                              <dt className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                                {key}
+                              </dt>
+                              <dd className="text-sm md:text-base font-semibold">
+                                {value}
+                              </dd>
+                            </div>
+                          )
+                        )}
+                      </dl>
+                    </div>
+                  </div>
+                )}
+
+                {attraction.images && attraction.images.length > 0 && (
+                  <>
+                    <Separator className="dark:bg-slate-700" />
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">
+                        {t("galleryPage.title", { defaultValue: "Galeria" })}
+                      </h3>
+                      <AttractionGallery
+                        images={attraction.images}
+                        title={translatedName}
+                        className="gap-2 md:gap-4"
+                      />
+                    </div>
+                  </>
+                )}
+
+                <div className="bg-gradient-to-r from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 rounded-lg p-6 text-center border border-primary/20 dark:border-primary/30">
+                  <h3 className="text-xl font-bold mb-2">
+                    {t("modal.ctaTitle", { defaultValue: "Zainteresowany?" })}
+                  </h3>
+                  <p className="text-muted-foreground mb-4 text-sm md:text-base">
+                    {t("modal.ctaDescription", {
+                      defaultValue:
+                        "Skontaktuj się z nami już dziś, aby sprawdzić dostępność i otrzymać indywidualną wycenę.",
+                    })}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Button asChild size="lg" className="btn-gradient">
+                      <a
+                        href={`tel:${t("contact.phoneValue", {
+                          defaultValue: "+48531890827",
+                        })}`}
+                      >
+                        <Phone className="mr-2 h-4 w-4" /> {t("cta.callNow")}
+                      </a>
+                    </Button>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="lg"
+                      className="border-primary text-primary hover:bg-primary/5 hover:text-primary dark:border-primary dark:text-primary dark:hover:bg-primary/10"
+                    >
+                      <WouterLink
+                        href={getLocalizedPath("CONTACT" as PageKey, language)}
+                        onClick={onClose}
+                      >
+                        <MessageCircle className="mr-2 h-4 w-4" />{" "}
+                        {t("cta.contactForm")}
+                      </WouterLink>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+
+------------------------
+
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Info } from "lucide-react";
+import { Attraction } from "@/data/attractions";
+import Modal from "./Modal";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/hooks/useLanguage";
+
+interface AttractionCardProps {
+  attraction: Attraction;
+  index?: number;
+}
+
+export default function AttractionCard({
+  attraction,
+  index = 0,
+}: AttractionCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useLanguage();
+
+  const getIconElement = (iconClass: string) => {
+    const iconMap: { [key: string]: string } = {
+      "fas fa-campground": "🏕️",
+      "fas fa-castle": "🏰",
+      "fas fa-candy-cane": "🍭",
+      "fas fa-seedling": "🍿",
+      "fas fa-birthday-cake": "🍫",
+      "fas fa-users": "👥",
+    };
+    return iconMap[iconClass] || "🎉";
+  };
+
+  const attractionNameKey = `attractionsData.${attraction.id}.name`;
+  const attractionDescriptionKey = `attractionsData.${attraction.id}.description`;
+
+  const translatedName =
+    t(attractionNameKey) !== attractionNameKey
+      ? t(attractionNameKey)
+      : attraction.name;
+  const translatedDescription =
+    t(attractionDescriptionKey) !== attractionDescriptionKey
+      ? t(attractionDescriptionKey)
+      : attraction.shortDescription;
+
+  const categoryKey = `category.${attraction.category
+    .toLowerCase()
+    .replace(/\s+/g, "")}`;
+  const translatedCategory =
+    t(categoryKey) !== categoryKey ? t(categoryKey) : attraction.category;
+
+  const periodKey = `pricing.perPeriod.${attraction.pricing.period.toLowerCase()}`;
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+      >
+        <Card className="card-hover cursor-pointer group h-full">
+          <CardContent className="p-0">
+            <div className="relative overflow-hidden rounded-t-lg">
+              <img
+                src={attraction.images[0]}
+                alt={translatedName}
+                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="absolute top-4 left-4">
+                <Badge
+                  variant="secondary"
+                  className="bg-white/90 text-slate-800"
+                >
+                  <span className="text-lg mr-2">
+                    {getIconElement(attraction.icon)}
+                  </span>
+                  {translatedCategory}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-slate-800 mb-2">
+                {translatedName}
+              </h3>
+              <p className="text-slate-600 mb-4 text-sm leading-relaxed">
+                {translatedDescription}
+              </p>
+
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-lg font-semibold text-sky-600">
+                  {t("attractionCard.priceFrom")} {attraction.pricing.base}{" "}
+                  {t(
+                    `currencyUnit.${attraction.pricing.currency.toLowerCase()}`
+                  )}{" "}
+                  <span className="text-sm text-slate-500 ml-1">
+                    {t(periodKey)}
+                  </span>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full btn-gradient text-white hover:shadow-lg transition-all"
+              >
+                <Info className="h-4 w-4 mr-2" />
+                {t("attractionCard.details")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        attraction={attraction}
+      />
+    </>
+  );
+}

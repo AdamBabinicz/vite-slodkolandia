@@ -131,7 +131,7 @@ Nagłówek: <h2>Zobacz Nasze Atrakcje w Akcji!</h2>.
 Strona powinna zawierać sekcje odpowiadające linkom z podmenu "Foto" (np. <section id="foto-namioty">, <section id="foto-dmuchance"> itd.).
 W każdej sekcji odpowiednia AttractionGallery.jsx (lub kilka) prezentująca zdjęcia danej kategorii.
 Każde zdjęcie w AttractionGallery.jsx musi być klikalne i otwierać się w powiększonym modalu (lightbox) z możliwością nawigacji między zdjęciami w danej galerii/sekcji.
-Możliwość dodania filtrów w ramach poszczególnych sekcji (np. dla dmuchańców: zjeżdżalnie, zamki, place zabaw).
+Możliwość dodania filtrów w ramach poszczególnych sekcji (np. dla dmuchańców: zjeżdżalnie, zamki).
 Cennik / Wycena (Cennik.jsx)
 Nagłówek: <h2>Cennik Naszych Usług / Zapytaj o Indywidualną Wycenę</h2>
 Informacje o cenach lub zasadach wyceny. CTA do kontaktu/formularza.

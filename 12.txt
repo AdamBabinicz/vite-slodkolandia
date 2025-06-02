@@ -1,0 +1,2207 @@
+import React, { useState, useEffect, useRef } from "react";
+import { Link as WouterLink, useLocation } from "wouter";
+import {
+  Menu,
+  X,
+  Phone,
+  ChevronDown,
+  Globe,
+  MessageCircle,
+  Star,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
+import ThemeToggle from "./ThemeToggle";
+import {
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+  getLocalizedSlug,
+  PAGE_KEYS,
+  PageKey,
+  Language,
+  getInternalRoutePath,
+} from "@/config/paths";
+import { AnimatePresence, motion } from "framer-motion";
+
+export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{
+    oferta?: boolean;
+    foto?: boolean;
+  }>({});
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [, navigateWouter] = useLocation();
+  const { language, setLanguage: setContextLanguage, t } = useLanguage();
+  const navRef = useRef<HTMLElement>(null);
+  const [scrollbarWidth, setScrollbarWidth] = useState(0);
+
+  useEffect(() => {
+    const calculateScrollbarWidth = () => {
+      const width = window.innerWidth - document.documentElement.clientWidth;
+      setScrollbarWidth(width > 0 ? width : 0);
+    };
+    calculateScrollbarWidth();
+    window.addEventListener("resize", calculateScrollbarWidth);
+    return () => window.removeEventListener("resize", calculateScrollbarWidth);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const body = document.body;
+    const navElement = navRef.current;
+    if (!navElement || scrollbarWidth === undefined) return;
+    const initialNavRight = navElement.style.right || "";
+    const initialNavPaddingRight = navElement.style.paddingRight || "";
+
+    const observer = new MutationObserver(() => {
+      const bodyIsLocked = body.style.overflow === "hidden";
+      const bodyHasSufficientPadding =
+        (parseFloat(body.style.paddingRight) || 0) >= scrollbarWidth;
+
+      if (bodyIsLocked && !bodyHasSufficientPadding && scrollbarWidth > 0) {
+        navElement.style.right = `${scrollbarWidth}px`;
+        navElement.style.paddingRight = "0px";
+      } else {
+        navElement.style.right = initialNavRight;
+        navElement.style.paddingRight = initialNavPaddingRight;
+      }
+    });
+    observer.observe(body, { attributes: true, attributeFilter: ["style"] });
+    return () => {
+      observer.disconnect();
+      if (navElement) {
+        navElement.style.right = initialNavRight;
+        navElement.style.paddingRight = initialNavPaddingRight;
+      }
+    };
+  }, [scrollbarWidth]);
+
+  const switchLanguage = (newLang: Language) => {
+    if (newLang === language) return;
+
+    const currentFullBrowserPath =
+      window.location.pathname + window.location.search + window.location.hash;
+    console.log(
+      `[Navbar switchLanguage] Attempting to change from "${language}" to "${newLang}". Current browser path: "${currentFullBrowserPath}"`
+    );
+
+    const { pageKey: currentPageKeyFromUrl, hashKey: currentCanonicalHashKey } =
+      findPageKeyByLocalizedPath(currentFullBrowserPath);
+
+    console.log(
+      `[Navbar switchLanguage] Current parsed from browser: pageKey="${currentPageKeyFromUrl}", hashKey="${currentCanonicalHashKey}"`
+    );
+
+    const targetPageKey =
+      currentPageKeyFromUrl && currentPageKeyFromUrl !== PAGE_KEYS.NOT_FOUND
+        ? currentPageKeyFromUrl
+        : PAGE_KEYS.HOME;
+
+    const newPath = getLocalizedPath(
+      targetPageKey,
+      newLang,
+      currentCanonicalHashKey || undefined
+    );
+    console.log(
+      `[Navbar switchLanguage] Target pageKey for new lang: "${targetPageKey}". New full path to navigate: "${newPath}"`
+    );
+
+    setContextLanguage(newLang, { preventNavigation: true });
+
+    const currentPathnameForCompare =
+      window.location.pathname + window.location.search;
+    const newPathForCompare = newPath.split("#")[0];
+    const currentHashForCompare = window.location.hash || "";
+    const newHashForCompare = newPath.includes("#")
+      ? newPath.substring(newPath.indexOf("#"))
+      : "";
+
+    if (
+      currentPathnameForCompare !== newPathForCompare ||
+      currentHashForCompare !== newHashForCompare
+    ) {
+      console.log(
+        `[Navbar switchLanguage] Navigating to: "${newPath}" using navigateWouter`
+      );
+      navigateWouter(newPath, { replace: true });
+    } else {
+      console.log(
+        `[Navbar switchLanguage] New path "${newPath}" is same as current browser path or only hash differs in same way. No explicit navigation by Navbar.`
+      );
+    }
+  };
+
+  const isActive = (pageKeyToCheck: PageKey, hashPageKeyToCheck?: PageKey) => {
+    const {
+      pageKey: currentPageKey,
+      lang: currentLangFromUrl,
+      hashSlug: currentHashSlugValue,
+    } = findPageKeyByLocalizedPath(
+      window.location.pathname + window.location.hash
+    );
+
+    if (currentLangFromUrl !== language) return false;
+    if (currentPageKey !== pageKeyToCheck) return false;
+
+    if (hashPageKeyToCheck) {
+      const targetHashSlug = getLocalizedSlug(hashPageKeyToCheck, language);
+      return currentHashSlugValue === targetHashSlug;
+    }
+    return !currentHashSlugValue;
+  };
+
+  const handleLinkClick = (closeMobileMenu = true, targetPath?: string) => {
+    if (closeMobileMenu) {
+      setIsMobileMenuOpen(false);
+      setMobileDropdownsOpen({});
+    }
+    const homePathForCurrentLang = getLocalizedPath(PAGE_KEYS.HOME, language);
+    if (
+      targetPath === homePathForCurrentLang &&
+      window.location.pathname === targetPath.split("#")[0]
+    ) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const toggleMobileDropdown = (key: "oferta" | "foto") => {
+    setMobileDropdownsOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const navLinkHref = (pageKey: PageKey, hashKey?: PageKey) => {
+    let path = getInternalRoutePath(pageKey, language);
+    if (hashKey) {
+      const hashSlug = getLocalizedSlug(hashKey, language);
+      if (hashSlug) {
+        path += `#${hashSlug}`;
+      }
+    }
+    return path;
+  };
+
+  const ofertaLinks: {
+    pageKey: PageKey;
+    hashKey?: PageKey;
+    labelKey: string;
+  }[] = [
+    { pageKey: PAGE_KEYS.OFFER, labelKey: "nav.allAttractions" },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_TENTS,
+      labelKey: "nav.tents",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+      labelKey: "nav.tablesChairs",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_INFLATABLES,
+      labelKey: "nav.inflatables",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_POPCORN,
+      labelKey: "nav.popcorn",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_COTTON_CANDY,
+      labelKey: "nav.cottonCandy",
+    },
+    {
+      pageKey: PAGE_KEYS.OFFER,
+      hashKey: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+      labelKey: "nav.chocolateFountain",
+    },
+  ];
+
+  const galeriaLinks: {
+    pageKey: PageKey;
+    hashKey?: PageKey;
+    labelKey: string;
+  }[] = [
+    { pageKey: PAGE_KEYS.GALLERY, labelKey: "nav.allPhotos" },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_TENTS,
+      labelKey: "nav.photoTents",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS,
+      labelKey: "nav.photoTablesChairs",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_INFLATABLES,
+      labelKey: "nav.photoInflatables",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY,
+      labelKey: "nav.photoCottonCandy",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_POPCORN,
+      labelKey: "nav.photoPopcorn",
+    },
+    {
+      pageKey: PAGE_KEYS.GALLERY,
+      hashKey: PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS,
+      labelKey: "nav.photoFountains",
+    },
+  ];
+
+  return (
+    <>
+      <nav
+        ref={navRef}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled
+            ? "bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg"
+            : "bg-white dark:bg-slate-900"
+        )}
+      >
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <WouterLink
+              href={navLinkHref(PAGE_KEYS.HOME)}
+              onClick={() =>
+                handleLinkClick(
+                  true,
+                  getLocalizedPath(PAGE_KEYS.HOME, language)
+                )
+              }
+            >
+              <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                <img
+                  src="/favicon.png"
+                  alt="Słodkolandia Logo"
+                  className="w-10 h-10"
+                />
+                <span className="brand-title text-xl font-bold text-slate-800 dark:text-white whitespace-nowrap">
+                  {t("hero.title")}
+                </span>
+              </div>
+            </WouterLink>
+
+            <div className="hidden lg:flex items-center space-x-4">
+              <WouterLink href={navLinkHref(PAGE_KEYS.HOME)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.HOME) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.HOME) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() =>
+                    handleLinkClick(
+                      true,
+                      getLocalizedPath(PAGE_KEYS.HOME, language)
+                    )
+                  }
+                >
+                  {t("nav.home")}
+                </Button>
+              </WouterLink>
+
+              <WouterLink href={navLinkHref(PAGE_KEYS.ABOUT)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.ABOUT) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.ABOUT) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.about")}
+                </Button>
+              </WouterLink>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isActive(PAGE_KEYS.OFFER) ? "default" : "ghost"}
+                    className={cn(
+                      "text-base font-medium px-3",
+                      !isActive(PAGE_KEYS.OFFER) &&
+                        "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                    )}
+                  >
+                    {t("nav.offer")} <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  {ofertaLinks.map((link) => (
+                    <DropdownMenuItem
+                      asChild
+                      key={`${link.pageKey}-${link.hashKey || "base"}`}
+                    >
+                      <WouterLink
+                        href={navLinkHref(link.pageKey, link.hashKey)}
+                        onClick={() => handleLinkClick()}
+                        className="w-full"
+                      >
+                        {t(link.labelKey)}
+                      </WouterLink>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant={isActive(PAGE_KEYS.GALLERY) ? "default" : "ghost"}
+                    className={cn(
+                      "text-base font-medium px-3",
+                      !isActive(PAGE_KEYS.GALLERY) &&
+                        "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                    )}
+                  >
+                    {t("nav.photo")}
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-56">
+                  {galeriaLinks.map((link) => (
+                    <DropdownMenuItem
+                      asChild
+                      key={`${link.pageKey}-${link.hashKey || "base"}`}
+                    >
+                      <WouterLink
+                        href={navLinkHref(link.pageKey, link.hashKey)}
+                        onClick={() => handleLinkClick()}
+                        className="w-full"
+                      >
+                        {t(link.labelKey)}
+                      </WouterLink>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <WouterLink href={navLinkHref(PAGE_KEYS.PRICING)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.PRICING) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.PRICING) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.pricing")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={navLinkHref(PAGE_KEYS.CONTACT)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.CONTACT) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.CONTACT) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.contact")}
+                </Button>
+              </WouterLink>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <Globe className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => switchLanguage("pl")}>
+                    🇵🇱 Polski
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => switchLanguage("en")}>
+                    🇬🇧 English
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <ThemeToggle />
+              <a
+                href="https://m.me/slodkolandiawita"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Messenger"
+              >
+                <MessageCircle className="h-5 w-5" />
+              </a>
+              <Dialog
+                open={isReviewModalOpen}
+                onOpenChange={setIsReviewModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/20"
+                    title={t("nav.review")}
+                  >
+                    <Star className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md z-[60]">
+                  <DialogHeader>
+                    <DialogTitle className="text-center">
+                      Dodaj opinię o "{t("hero.title")}"!
+                    </DialogTitle>
+                    <DialogDescription className="text-center">
+                      Zeskanuj kod QR, aby dodać opinię na Google Maps.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col items-center space-y-4 py-4">
+                    <div className="bg-white p-4 rounded-lg shadow-inner">
+                      <img
+                        src="/qr-opinia.png"
+                        alt="QR Code - Dodaj opinię"
+                        className="w-48 h-48"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                      Kod QR - Dodaj opinię
+                      <br />
+                      lub kliknij w link:
+                    </p>
+                    <a
+                      href="https://g.page/r/CWM4dGuLyfXlEAE/review"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                      Dodaj opinię na Google
+                    </a>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <a
+                href="tel:+48531890827"
+                className="btn-gradient text-white px-3 py-2 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center space-x-2 whitespace-nowrap text-sm"
+              >
+                <Phone className="h-4 w-4" />
+                <span>531 890 827</span>
+              </a>
+            </div>
+
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setIsMobileMenuOpen(!isMobileMenuOpen);
+                  if (isMobileMenuOpen) setMobileDropdownsOpen({});
+                }}
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="lg:hidden fixed inset-x-0 top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md overflow-y-auto"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                maxHeight: "calc(100vh - 4rem)",
+              }}
+            >
+              <div className="px-4 pt-2 pb-24 space-y-1">
+                <WouterLink href={navLinkHref(PAGE_KEYS.HOME)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.HOME) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.HOME) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() =>
+                      handleLinkClick(
+                        true,
+                        getLocalizedPath(PAGE_KEYS.HOME, language)
+                      )
+                    }
+                  >
+                    {t("nav.home")}
+                  </Button>
+                </WouterLink>
+                <WouterLink href={navLinkHref(PAGE_KEYS.ABOUT)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.ABOUT) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.ABOUT) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.about")}
+                  </Button>
+                </WouterLink>
+                <div>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-between text-base font-medium py-3 text-slate-700 dark:text-slate-200"
+                    onClick={() => toggleMobileDropdown("oferta")}
+                  >
+                    {t("nav.offer")}
+                    <ChevronDown
+                      className={cn(
+                        "h-5 w-5 transition-transform",
+                        mobileDropdownsOpen.oferta && "rotate-180"
+                      )}
+                    />
+                  </Button>
+                  <AnimatePresence>
+                    {mobileDropdownsOpen.oferta && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden ml-4 mt-1 space-y-1 border-l border-slate-300 dark:border-slate-700 pl-4"
+                      >
+                        {ofertaLinks.map((link) => (
+                          <WouterLink
+                            href={navLinkHref(link.pageKey, link.hashKey)}
+                            key={`${link.pageKey}-${link.hashKey || "base"}`}
+                          >
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start text-sm text-slate-600 dark:text-slate-300 py-2"
+                              onClick={() => handleLinkClick()}
+                            >
+                              {t(link.labelKey)}
+                            </Button>
+                          </WouterLink>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <div>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-between text-base font-medium py-3 text-slate-700 dark:text-slate-200"
+                    onClick={() => toggleMobileDropdown("foto")}
+                  >
+                    {t("nav.photo")}
+                    <ChevronDown
+                      className={cn(
+                        "h-5 w-5 transition-transform",
+                        mobileDropdownsOpen.foto && "rotate-180"
+                      )}
+                    />
+                  </Button>
+                  <AnimatePresence>
+                    {mobileDropdownsOpen.foto && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden ml-4 mt-1 space-y-1 border-l border-slate-300 dark:border-slate-700 pl-4"
+                      >
+                        {galeriaLinks.map((link) => (
+                          <WouterLink
+                            href={navLinkHref(link.pageKey, link.hashKey)}
+                            key={`${link.pageKey}-${link.hashKey || "base"}`}
+                          >
+                            <Button
+                              variant="ghost"
+                              className="w-full justify-start text-sm text-slate-600 dark:text-slate-300 py-2"
+                              onClick={() => handleLinkClick()}
+                            >
+                              {t(link.labelKey)}
+                            </Button>
+                          </WouterLink>
+                        ))}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+                <WouterLink href={navLinkHref(PAGE_KEYS.PRICING)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.PRICING) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.PRICING) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.pricing")}
+                  </Button>
+                </WouterLink>
+                <WouterLink href={navLinkHref(PAGE_KEYS.CONTACT)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.CONTACT) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.CONTACT) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.contact")}
+                  </Button>
+                </WouterLink>
+                <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700 mt-3">
+                  <div className="flex justify-center space-x-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => switchLanguage("pl")}
+                      className={
+                        language === "pl" ? "bg-sky-100 dark:bg-sky-900" : ""
+                      }
+                    >
+                      🇵🇱 PL
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => switchLanguage("en")}
+                      className={
+                        language === "en" ? "bg-sky-100 dark:bg-sky-900" : ""
+                      }
+                    >
+                      🇬🇧 EN
+                    </Button>
+                    <ThemeToggle />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setIsReviewModalOpen(true);
+                      handleLinkClick();
+                    }}
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold flex items-center justify-center space-x-2"
+                  >
+                    <Star className="h-4 w-4" />
+                    <span>{t("nav.review")}</span>
+                  </Button>
+                  <a
+                    href="https://m.me/slodkolandiawita"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
+                    onClick={() => handleLinkClick()}
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Messenger</span>
+                  </a>
+                  <a
+                    href="tel:+48531890827"
+                    className="btn-gradient text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
+                    onClick={() => handleLinkClick()}
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span>Zadzwoń: 531 890 827</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+      <AnimatePresence>
+        {isReviewModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/60 z-[55]"
+            onClick={() => setIsReviewModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+
+-------------------------------
+
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Images, Filter } from "lucide-react";
+import { motion } from "framer-motion";
+import SEOHead from "@/components/SEOHead";
+import AttractionGallery from "@/components/AttractionGallery";
+import CallToAction from "@/components/CallToAction";
+import { stockPhotos } from "@/data/stockPhotos";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useLocation } from "wouter";
+import {
+  getLocalizedPath,
+  getLocalizedSlug,
+  PAGE_KEYS,
+  Language,
+  PageKey,
+  getInternalRoutePath,
+} from "@/config/paths";
+
+interface GalleryCategoryFilter {
+  id: string;
+  nameKey: string;
+  pageKeyForHash: PageKey | null;
+  images: string[];
+}
+
+export default function Galeria() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const { t, language } = useLanguage();
+  const [location, navigate] = useLocation();
+
+  const galleryCategories: GalleryCategoryFilter[] = [
+    {
+      id: "all",
+      nameKey: "galleryPage.categoryAll",
+      pageKeyForHash: null,
+      images: ([] as string[]).concat(
+        ...Object.values(stockPhotos).filter(Array.isArray)
+      ),
+    },
+    {
+      id: getLocalizedSlug(PAGE_KEYS.GALLERY_PHOTO_TENTS, language),
+      nameKey: "galleryPage.categoryTents",
+      pageKeyForHash: PAGE_KEYS.GALLERY_PHOTO_TENTS,
+      images: stockPhotos.partyTents || [],
+    },
+    {
+      id: getLocalizedSlug(
+        PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS,
+        language
+      ),
+      nameKey: "galleryPage.categoryTablesChairs",
+      pageKeyForHash: PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS,
+      images: [], // <-- POPRAWKA: Użyj pustej tablicy, jeśli stockPhotos.tablesAndChairs nie istnieje
+      // LUB stockPhotos.NAZWA_TWOJEGO_KLUCZA_DLA_STOLOW || []
+    },
+    {
+      id: getLocalizedSlug(PAGE_KEYS.GALLERY_PHOTO_INFLATABLES, language),
+      nameKey: "galleryPage.categoryInflatables",
+      pageKeyForHash: PAGE_KEYS.GALLERY_PHOTO_INFLATABLES,
+      images: stockPhotos.inflatableCastles || [],
+    },
+    {
+      id: getLocalizedSlug(PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY, language),
+      nameKey: "galleryPage.categoryCottonCandy",
+      pageKeyForHash: PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY,
+      images: stockPhotos.cottonCandyMachine || [],
+    },
+    {
+      id: getLocalizedSlug(PAGE_KEYS.GALLERY_PHOTO_POPCORN, language),
+      nameKey: "galleryPage.categoryPopcorn",
+      pageKeyForHash: PAGE_KEYS.GALLERY_PHOTO_POPCORN,
+      images: stockPhotos.popcornMachine || [],
+    },
+    {
+      id: getLocalizedSlug(PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS, language),
+      nameKey: "galleryPage.categoryFountains",
+      pageKeyForHash: PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS,
+      images: stockPhotos.chocolateFountain || [],
+    },
+    {
+      id: "event-setups",
+      nameKey: "galleryPage.categoryEventSetups",
+      pageKeyForHash: null,
+      images: stockPhotos.eventSetup || [],
+    },
+  ];
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    const categoryFromHash = galleryCategories.find((cat) => {
+      if (cat.id === "all" && !hash) return true;
+      if (
+        cat.pageKeyForHash &&
+        hash === getLocalizedSlug(cat.pageKeyForHash, language)
+      )
+        return true;
+      if (!cat.pageKeyForHash && cat.id === hash && cat.id !== "all")
+        return true;
+      return false;
+    });
+
+    const internalGalleryPathForLang = getInternalRoutePath(
+      PAGE_KEYS.GALLERY,
+      language
+    );
+
+    if (categoryFromHash) {
+      if (activeCategory !== categoryFromHash.id) {
+        setActiveCategory(categoryFromHash.id);
+      }
+    } else if (!hash && location.startsWith(internalGalleryPathForLang)) {
+      if (activeCategory !== "all") {
+        setActiveCategory("all");
+      }
+    }
+  }, [location, language]);
+
+  const currentCategoryData = galleryCategories.find(
+    (cat) => cat.id === activeCategory
+  );
+  const currentCategoryName = currentCategoryData
+    ? t(currentCategoryData.nameKey)
+    : t("galleryPage.categoryAll");
+  const currentCategoryImages = currentCategoryData
+    ? currentCategoryData.images
+    : galleryCategories.find((cat) => cat.id === "all")?.images || [];
+
+  const handleCategoryChange = (categoryId: string) => {
+    setActiveCategory(categoryId);
+
+    let pathForWouter = getInternalRoutePath(PAGE_KEYS.GALLERY, language);
+    const categoryObject = galleryCategories.find((c) => c.id === categoryId);
+
+    if (categoryId !== "all" && categoryObject) {
+      const hashSlug = categoryObject.pageKeyForHash
+        ? getLocalizedSlug(categoryObject.pageKeyForHash, language)
+        : categoryObject.id;
+      if (hashSlug) {
+        pathForWouter += `#${hashSlug}`;
+      }
+    }
+
+    console.log(
+      `[Galeria handleCategoryChange] Target path for Wouter navigate: "${pathForWouter}" (current language: ${language})`
+    );
+
+    if (location !== pathForWouter) {
+      navigate(pathForWouter, { replace: true });
+    } else {
+      console.log(
+        `[Galeria handleCategoryChange] Wouter location already "${location}", no navigation needed.`
+      );
+    }
+  };
+
+  return (
+    <>
+      <SEOHead
+        title={t("seo.galleryTitle")}
+        description={t("seo.galleryDescription")}
+        canonical={getLocalizedPath(PAGE_KEYS.GALLERY, language)}
+      />
+
+      <div className="pt-16">
+        <section className="py-12 md:py-20 bg-gradient-to-br from-sky-50 to-emerald-50 dark:from-slate-800 dark:to-slate-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center">
+                  <Images className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">
+                {t("galleryPage.heroTitle")}
+              </h2>
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+                {t("galleryPage.heroDescription")}
+              </p>
+              <Badge
+                variant="secondary"
+                className="text-sm md:text-base px-4 py-2 bg-white/80 dark:bg-card dark:text-card-foreground"
+              >
+                {t("galleryPage.badgeEventsDone")}
+              </Badge>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="py-6 bg-white dark:bg-muted-foreground border-b border-border sticky top-16 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+              <div className="w-full md:w-auto flex items-center justify-center md:justify-start mb-2 md:mb-0 md:mr-4">
+                <Filter className="h-4 w-4 text-muted-foreground mr-1.5" />
+                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                  {t("galleryPage.filterLabel")}
+                </span>
+              </div>
+              {galleryCategories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={
+                    activeCategory === category.id ? "default" : "outline"
+                  }
+                  onClick={() => handleCategoryChange(category.id)}
+                  size="sm"
+                  className="whitespace-nowrap"
+                >
+                  {t(category.nameKey)}
+                  {category.images && category.images.length > 0 && (
+                    <Badge
+                      variant={
+                        activeCategory === category.id ? "outline" : "secondary"
+                      }
+                      className={`ml-2 ${
+                        activeCategory === category.id
+                          ? "border-primary-foreground/50 text-primary-foreground/80"
+                          : "bg-muted text-muted-foreground dark:bg-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      {category.images.length}
+                    </Badge>
+                  )}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-gradient-to-tl from-sky-50 to-emerald-50 dark:from-slate-800 dark:to-slate-700">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="mb-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground dark:text-white">
+                {currentCategoryName}
+              </h2>
+              <p className="text-sm text-muted-foreground dark:text-slate-400">
+                {t("galleryPage.currentCategoryInfo", {
+                  count: currentCategoryImages.length.toString(),
+                })}
+              </p>
+            </motion.div>
+
+            {currentCategoryData && currentCategoryImages.length > 0 ? (
+              <AttractionGallery
+                images={currentCategoryImages}
+                title={currentCategoryName}
+              />
+            ) : (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🖼️</div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {t("offerPage.noAttractionsTitle")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("offerPage.noAttractionsDescription")}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-slate-100/50 dark:bg-slate-800/30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">
+                {t("galleryPage.statsTitle")}
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+              {[
+                {
+                  number: "500+",
+                  labelKey: "galleryPage.statEvents",
+                  icon: "🎉",
+                },
+                {
+                  number: "1000+",
+                  labelKey: "galleryPage.statKids",
+                  icon: "😊",
+                },
+                {
+                  number: "50+",
+                  labelKey: "galleryPage.statAttractions",
+                  icon: "🎨",
+                },
+                {
+                  number: "100 km",
+                  labelKey: "galleryPage.statRadius",
+                  icon: "🚛",
+                },
+              ].map((stat, index) => (
+                <motion.div
+                  key={index}
+                  className="text-center bg-card dark:bg-slate-800/50 rounded-lg p-6 shadow-sm"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className="text-2xl md:text-3xl font-bold text-primary dark:text-sky-400 mb-2">
+                    {stat.number}
+                  </div>
+                  <div className="text-muted-foreground text-sm md:text-base">
+                    {t(stat.labelKey)}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <CallToAction
+          variant="secondary"
+          className="mx-4 sm:mx-6 lg:mx-8 my-12 md:my-16"
+        />
+      </div>
+    </>
+  );
+}
+
+
+-------------------------------
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Filter } from "lucide-react";
+import { motion } from "framer-motion";
+import SEOHead from "@/components/SEOHead";
+import AttractionCard from "@/components/AttractionCard";
+import CallToAction from "@/components/CallToAction";
+import {
+  attractions,
+  getAttractionsByCategory,
+  Attraction,
+} from "@/data/attractions";
+import { useLanguage } from "@/hooks/useLanguage";
+import { useLocation } from "wouter";
+import {
+  getLocalizedPath,
+  getLocalizedSlug,
+  PageKey,
+  Language,
+  PAGE_KEYS,
+  getInternalRoutePath, // Potrzebne do generowania ścieżki dla navigate
+  defaultLang, // Potrzebne do logiki
+} from "@/config/paths";
+
+interface CategoryFilter {
+  id: string;
+  nameKey: string;
+  pageKeyForHash: PageKey | null;
+  count?: number;
+  filterLogic: (attraction: Attraction) => boolean;
+}
+
+// Ta funkcja pomocnicza deriveInternalPathFromLocalized nie jest już potrzebna,
+// jeśli WouterLink i navigate używają poprawnych ścieżek względem base
+
+export default function Oferta() {
+  const [activeCategory, setActiveCategory] = useState("all");
+  const { t, language } = useLanguage();
+  const [location, navigate] = useLocation(); // location to ścieżka względna do base
+
+  const categories: CategoryFilter[] = [
+    {
+      id: "all",
+      nameKey: "nav.allAttractions",
+      pageKeyForHash: null,
+      count: attractions.filter((attr) => attr.category !== "uslugi").length,
+      filterLogic: (attr) => attr.category !== "uslugi",
+    },
+    {
+      id: "namioty",
+      nameKey: "nav.tents",
+      pageKeyForHash: PAGE_KEYS.OFFER_TENTS,
+      count: getAttractionsByCategory("namioty").length,
+      filterLogic: (attr) => attr.category === "namioty",
+    },
+    {
+      id: "stoly-krzesla-obrusy",
+      nameKey: "nav.tablesChairs",
+      pageKeyForHash: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+      count: getAttractionsByCategory("wyposazenie").length,
+      filterLogic: (attr) => attr.category === "wyposazenie",
+    },
+    {
+      id: "dmuchance",
+      nameKey: "nav.inflatables",
+      pageKeyForHash: PAGE_KEYS.OFFER_INFLATABLES,
+      count: getAttractionsByCategory("dmuchance").length,
+      filterLogic: (attr) => attr.category === "dmuchance",
+    },
+    {
+      id: "popcorn",
+      nameKey: "nav.popcorn",
+      pageKeyForHash: PAGE_KEYS.OFFER_POPCORN,
+      count: attractions.filter((a) => a.id === "popcorn").length,
+      filterLogic: (attr) => attr.id === "popcorn",
+    },
+    {
+      id: "wata-cukrowa",
+      nameKey: "nav.cottonCandy",
+      pageKeyForHash: PAGE_KEYS.OFFER_COTTON_CANDY,
+      count: attractions.filter((a) => a.id === "wata-cukrowa").length,
+      filterLogic: (attr) => attr.id === "wata-cukrowa",
+    },
+    {
+      id: "fontanna-czekoladowa",
+      nameKey: "nav.chocolateFountain",
+      pageKeyForHash: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+      count: attractions.filter((a) => a.id === "fontanna-czekoladowa").length,
+      filterLogic: (attr) => attr.id === "fontanna-czekoladowa",
+    },
+  ];
+
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    // location z useLocation() to ścieżka WZGLĘDNA do base routera
+    // np. jeśli base="/en" i URL to /en/offer#tents, location to "/offer#tents"
+
+    const categoryFromHash = categories.find((cat) => {
+      if (cat.id === "all" && !hash) return true;
+      if (
+        cat.pageKeyForHash &&
+        hash === getLocalizedSlug(cat.pageKeyForHash, language)
+      )
+        return true;
+      return false;
+    });
+
+    const internalOfferPathForLang = getInternalRoutePath(
+      PAGE_KEYS.OFFER,
+      language
+    ); // np. "/offer" lub "/oferta"
+
+    if (categoryFromHash) {
+      if (activeCategory !== categoryFromHash.id) {
+        console.log(
+          `[Oferta useEffect] Setting activeCategory from hash: ${categoryFromHash.id}`
+        );
+        setActiveCategory(categoryFromHash.id);
+      }
+    } else if (!hash && location.startsWith(internalOfferPathForLang)) {
+      // Sprawdź, czy jesteśmy na bazowej ścieżce oferty
+      if (activeCategory !== "all") {
+        console.log(
+          `[Oferta useEffect] No hash, on offer base path. Setting activeCategory to "all"`
+        );
+        setActiveCategory("all");
+      }
+    }
+  }, [location, language]); // Usunięto categories z zależności, bo jest stała
+
+  const selectedFilter = categories.find((cat) => cat.id === activeCategory);
+  const filteredAttractions = selectedFilter
+    ? attractions.filter(selectedFilter.filterLogic)
+    : attractions.filter((attr) => attr.category !== "uslugi");
+
+  const activeCategoryName = selectedFilter?.nameKey || "nav.allAttractions";
+
+  const handleCategoryChange = (categoryId: string) => {
+    setActiveCategory(categoryId); // Ustaw kategorię lokalnie od razu dla UI
+    const categoryObject = categories.find((c) => c.id === categoryId);
+
+    // Generujemy ścieżkę WEWNĘTRZNĄ (względną do base) dla Woutera
+    let pathForWouter = getInternalRoutePath(PAGE_KEYS.OFFER, language); // np. "/offer" lub "/oferta"
+    let hashTargetSlug = "";
+
+    if (
+      categoryObject &&
+      categoryObject.id !== "all" &&
+      categoryObject.pageKeyForHash
+    ) {
+      hashTargetSlug = getLocalizedSlug(
+        categoryObject.pageKeyForHash,
+        language
+      );
+      if (hashTargetSlug) pathForWouter += `#${hashTargetSlug}`;
+    }
+
+    console.log(
+      `[Oferta handleCategoryChange] Target path for Wouter navigate: "${pathForWouter}" (current language: ${language})`
+    );
+
+    // location z useLocation() to już ścieżka względna do base.
+    // Porównujemy ją z nowo wygenerowaną ścieżką względną.
+    if (location !== pathForWouter) {
+      navigate(pathForWouter, { replace: true });
+    } else {
+      console.log(
+        `[Oferta handleCategoryChange] Wouter location already "${location}", no navigation needed.`
+      );
+    }
+  };
+
+  return (
+    <>
+      <SEOHead
+        title={t("seo.offerTitle")}
+        description={t("seo.offerDescription")}
+        canonical={getLocalizedPath(PAGE_KEYS.OFFER, language)}
+      />
+
+      <div className="pt-16">
+        <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">
+                {t("offerPage.heroTitle")}
+              </h2>
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+                {t("offerPage.heroDescription")}
+              </p>
+              <Badge
+                variant="secondary"
+                className="text-base md:text-lg px-4 py-2 bg-white/80 dark:bg-card dark:text-card-foreground"
+              >
+                {t("offerPage.badgeLocation")}
+              </Badge>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="py-6 bg-white dark:bg-muted-foreground border-b border-border sticky top-16 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
+              <div className="w-full md:w-auto flex items-center justify-center md:justify-start mb-2 md:mb-0 md:mr-4">
+                <Filter className="h-4 w-4 text-muted-foreground mr-1.5" />
+                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                  {t("offerPage.filterLabel")}
+                </span>
+              </div>
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={
+                    activeCategory === category.id ? "default" : "outline"
+                  }
+                  onClick={() => handleCategoryChange(category.id)}
+                  size="sm"
+                  className="whitespace-nowrap"
+                >
+                  {t(category.nameKey)}
+                  {category.count !== undefined && category.count > 0 && (
+                    <Badge
+                      variant={
+                        activeCategory === category.id ? "outline" : "secondary"
+                      }
+                      className={`ml-2 ${
+                        activeCategory === category.id
+                          ? "border-primary-foreground/50 text-primary-foreground/80"
+                          : "bg-muted text-muted-foreground dark:bg-slate-700 dark:text-slate-300"
+                      }`}
+                    >
+                      {category.count}
+                    </Badge>
+                  )}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-gradient-to-tl from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="mb-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+                {activeCategory === "all"
+                  ? t("offerPage.allAttractionsCount", {
+                      count: filteredAttractions.length.toString(),
+                    })
+                  : t("offerPage.categoryAttractionsCount", {
+                      categoryName: t(activeCategoryName),
+                      count: filteredAttractions.length.toString(),
+                    })}
+              </h2>
+            </motion.div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {filteredAttractions.map((attraction, index) => (
+                <AttractionCard
+                  key={attraction.id}
+                  attraction={attraction}
+                  index={index}
+                />
+              ))}
+            </div>
+
+            {filteredAttractions.length === 0 && (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">🎪</div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {t("offerPage.noAttractionsTitle")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("offerPage.noAttractionsDescription")}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-muted dark:bg-muted">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 md:gap-12">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="space-y-8"
+              >
+                <div id={getLocalizedSlug(PAGE_KEYS.OFFER_TENTS, language)}>
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("offerPage.sectionTentsTitle")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("offerPage.sectionTentsDescription")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(
+                    PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+                    language
+                  )}
+                >
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("offerPage.sectionTablesChairsTitle")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("offerPage.sectionTablesChairsDescription")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(PAGE_KEYS.OFFER_INFLATABLES, language)}
+                >
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("offerPage.sectionInflatablesTitle")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("offerPage.sectionInflatablesDescription")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(PAGE_KEYS.OFFER_POPCORN, language)}
+                  className="pt-2"
+                >
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("nav.popcorn")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("attractionsData.popcorn.description")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(PAGE_KEYS.OFFER_COTTON_CANDY, language)}
+                  className="pt-2"
+                >
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("nav.cottonCandy")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("attractionsData.wata-cukrowa.description")}
+                  </p>
+                </div>
+                <div
+                  id={getLocalizedSlug(
+                    PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+                    language
+                  )}
+                  className="pt-2"
+                >
+                  <h2 className="text-2xl font-bold text-foreground dark:text-foreground mb-3 flex items-center">
+                    {t("nav.chocolateFountain")}
+                  </h2>
+                  <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                    {t("attractionsData.fontanna-czekoladowa.description")}
+                  </p>
+                </div>
+              </motion.div>
+
+              <div className="lg:col-span-2">
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: true }}
+                  className="bg-card rounded-xl p-6 md:p-8 shadow-lg"
+                >
+                  <h3 className="text-xl md:text-2xl font-bold text-foreground mb-6">
+                    {t("offerPage.servicesIncludeTitle")}
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-4">
+                      {[
+                        {
+                          titleKey: "offerPage.serviceTransport",
+                          descKey: "offerPage.serviceTransportDesc",
+                          color: "bg-sky-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceProfessional",
+                          descKey: "offerPage.serviceProfessionalDesc",
+                          color: "bg-emerald-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceInsurance",
+                          descKey: "offerPage.serviceInsuranceDesc",
+                          color: "bg-amber-500",
+                        },
+                      ].map((service) => (
+                        <div
+                          key={service.titleKey}
+                          className="flex items-start space-x-3"
+                        >
+                          <div
+                            className={`w-2 h-2 ${service.color} rounded-full mt-1.5 flex-shrink-0`}
+                          ></div>
+                          <div>
+                            <h4 className="font-semibold text-foreground">
+                              {t(service.titleKey)}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {t(service.descKey)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="space-y-4">
+                      {[
+                        {
+                          titleKey: "offerPage.serviceCertified",
+                          descKey: "offerPage.serviceCertifiedDesc",
+                          color: "bg-purple-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceFlexible",
+                          descKey: "offerPage.serviceFlexibleDesc",
+                          color: "bg-pink-500",
+                        },
+                        {
+                          titleKey: "offerPage.serviceConsultations",
+                          descKey: "offerPage.serviceConsultationsDesc",
+                          color: "bg-indigo-500",
+                        },
+                      ].map((service) => (
+                        <div
+                          key={service.titleKey}
+                          className="flex items-start space-x-3"
+                        >
+                          <div
+                            className={`w-2 h-2 ${service.color} rounded-full mt-1.5 flex-shrink-0`}
+                          ></div>
+                          <div>
+                            <h4 className="font-semibold text-foreground">
+                              {t(service.titleKey)}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {t(service.descKey)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <CallToAction
+          variant="secondary"
+          className="mx-4 sm:mx-6 lg:mx-8 my-12 md:my-16"
+        />
+      </div>
+    </>
+  );
+}
+
+
+--------------------------------------
+
+export type Language = "pl" | "en";
+export const defaultLang: Language = "pl";
+export const supportedLngs: readonly Language[] = ["pl", "en"];
+
+export const PAGE_KEYS = {
+  HOME: "home",
+  ABOUT: "about",
+  OFFER: "offer",
+  GALLERY: "gallery",
+  PRICING: "pricing",
+  CONTACT: "contact",
+  PRIVACY_POLICY: "privacy",
+  TERMS: "terms",
+  NOT_FOUND: "notFound",
+  OFFER_TENTS: "offer_tents",
+  OFFER_TABLES_CHAIRS_LINENS: "offer_tables_chairs_linens",
+  OFFER_INFLATABLES: "offer_inflatables",
+  OFFER_POPCORN: "offer_popcorn",
+  OFFER_COTTON_CANDY: "offer_cotton_candy",
+  OFFER_CHOCOLATE_FOUNTAIN: "offer_chocolate_fountain",
+  GALLERY_PHOTO_TENTS: "gallery_photo_tents",
+  GALLERY_PHOTO_TABLES_CHAIRS_LINENS: "gallery_photo_tables_chairs_linens",
+  GALLERY_PHOTO_INFLATABLES: "gallery_photo_inflatables",
+  GALLERY_PHOTO_COTTON_CANDY: "gallery_photo_cotton_candy",
+  GALLERY_PHOTO_POPCORN: "gallery_photo_popcorn",
+  GALLERY_PHOTO_FOUNTAINS: "gallery_photo_fountains",
+} as const;
+
+export type PageKey = (typeof PAGE_KEYS)[keyof typeof PAGE_KEYS];
+export type OfferHashKey = Extract<
+  PageKey,
+  | typeof PAGE_KEYS.OFFER_TENTS
+  | typeof PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS
+  | typeof PAGE_KEYS.OFFER_INFLATABLES
+  | typeof PAGE_KEYS.OFFER_POPCORN
+  | typeof PAGE_KEYS.OFFER_COTTON_CANDY
+  | typeof PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN
+>;
+export type GalleryHashKey = Extract<
+  PageKey,
+  | typeof PAGE_KEYS.GALLERY_PHOTO_TENTS
+  | typeof PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS
+  | typeof PAGE_KEYS.GALLERY_PHOTO_INFLATABLES
+  | typeof PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY
+  | typeof PAGE_KEYS.GALLERY_PHOTO_POPCORN
+  | typeof PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS
+>;
+export type HashKey = OfferHashKey | GalleryHashKey;
+
+const slugsConfig: Record<Language, Record<PageKey, string>> = {
+  pl: {
+    [PAGE_KEYS.HOME]: "",
+    [PAGE_KEYS.ABOUT]: "o-nas",
+    [PAGE_KEYS.OFFER]: "oferta",
+    [PAGE_KEYS.GALLERY]: "galeria",
+    [PAGE_KEYS.PRICING]: "cennik",
+    [PAGE_KEYS.CONTACT]: "kontakt",
+    [PAGE_KEYS.PRIVACY_POLICY]: "polityka-prywatnosci",
+    [PAGE_KEYS.TERMS]: "regulamin",
+    [PAGE_KEYS.NOT_FOUND]: "404",
+    [PAGE_KEYS.OFFER_TENTS]: "namioty",
+    [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: "stoly-krzesla-obrusy",
+    [PAGE_KEYS.OFFER_INFLATABLES]: "dmuchance",
+    [PAGE_KEYS.OFFER_POPCORN]: "popcorn",
+    [PAGE_KEYS.OFFER_COTTON_CANDY]: "wata-cukrowa",
+    [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: "fontanna-czekoladowa",
+    [PAGE_KEYS.GALLERY_PHOTO_TENTS]: "foto-namioty",
+    [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]: "foto-stoly-krzesla-obrusy",
+    [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: "foto-dmuchance",
+    [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: "foto-wata",
+    [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: "foto-popcorn",
+    [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: "foto-fontanny",
+  },
+  en: {
+    [PAGE_KEYS.HOME]: "",
+    [PAGE_KEYS.ABOUT]: "about-us",
+    [PAGE_KEYS.OFFER]: "offer",
+    [PAGE_KEYS.GALLERY]: "gallery",
+    [PAGE_KEYS.PRICING]: "pricing",
+    [PAGE_KEYS.CONTACT]: "contact",
+    [PAGE_KEYS.PRIVACY_POLICY]: "privacy-policy",
+    [PAGE_KEYS.TERMS]: "terms-of-service",
+    [PAGE_KEYS.NOT_FOUND]: "404",
+    [PAGE_KEYS.OFFER_TENTS]: "tents",
+    [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: "tables-chairs-linens",
+    [PAGE_KEYS.OFFER_INFLATABLES]: "inflatables",
+    [PAGE_KEYS.OFFER_POPCORN]: "popcorn",
+    [PAGE_KEYS.OFFER_COTTON_CANDY]: "cotton-candy",
+    [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: "chocolate-fountain",
+    [PAGE_KEYS.GALLERY_PHOTO_TENTS]: "photo-tents",
+    [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]:
+      "photo-tables-chairs-linens",
+    [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: "photo-inflatables",
+    [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: "photo-cotton-candy",
+    [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: "photo-popcorn",
+    [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: "photo-fountains",
+  },
+};
+
+export const getLocalizedSlug = (pageKey: PageKey, lang: Language): string => {
+  const slug = slugsConfig[lang]?.[pageKey];
+  if (typeof slug === "string") return slug;
+  const fallback = slugsConfig[defaultLang]?.[pageKey];
+  if (typeof fallback === "string") return fallback;
+  return pageKey.toLowerCase().replace(/_/g, "-");
+};
+
+export function getInternalRoutePath(pageKey: PageKey, lang: Language): string {
+  if (pageKey === PAGE_KEYS.HOME) return "/";
+  return `/${getLocalizedSlug(pageKey, lang)}`;
+}
+
+export function getPrefixedBasePath(pageKey: PageKey, lang: Language): string {
+  const slug = getLocalizedSlug(pageKey, lang);
+  const langPrefix = lang === defaultLang ? "" : `/${lang}`;
+  if (pageKey === PAGE_KEYS.HOME) return langPrefix || "/";
+  return `${langPrefix}/${slug}`;
+}
+
+export function getLocalizedPath(
+  pageKey: PageKey,
+  lang: Language,
+  hashPageKey?: PageKey
+): string {
+  let basePathKey: PageKey = pageKey;
+  let actualHashKeyForSlug: PageKey | undefined = hashPageKey;
+  if (pageKey.startsWith("OFFER_") || pageKey.startsWith("GALLERY_PHOTO_")) {
+    basePathKey = pageKey.startsWith("OFFER_")
+      ? PAGE_KEYS.OFFER
+      : PAGE_KEYS.GALLERY;
+    actualHashKeyForSlug = pageKey;
+  }
+  let fullPath = getPrefixedBasePath(basePathKey, lang);
+  if (actualHashKeyForSlug) {
+    const hashSlugValue = getLocalizedSlug(actualHashKeyForSlug, lang);
+    if (hashSlugValue) fullPath += `#${hashSlugValue}`;
+  }
+  return fullPath;
+}
+
+export function findPageKeyByLocalizedPath(currentFullPath: string): {
+  pageKey: PageKey | null;
+  lang: Language | null;
+  hashKey: PageKey | null;
+  hashSlug: string | null;
+  basePathWithoutLang: string;
+} {
+  console.log(`[FPLP v7] Input currentFullPath: "${currentFullPath}"`);
+  const [pathAndQuery, hashValueFromUrl] = currentFullPath.split("#");
+  const pathOnly = pathAndQuery.split("?")[0];
+  console.log(
+    `[FPLP v7] pathOnly: "${pathOnly}", hashValue: "${
+      hashValueFromUrl || "null"
+    }"`
+  );
+
+  let detectedLang: Language = defaultLang;
+  const pathSegments = pathOnly.split("/").filter(Boolean);
+  let slugSegmentsForAnalysis: string[];
+
+  if (
+    pathSegments.length > 0 &&
+    supportedLngs.includes(pathSegments[0] as Language)
+  ) {
+    detectedLang = pathSegments[0] as Language;
+    slugSegmentsForAnalysis = pathSegments.slice(1);
+    console.log(
+      `[FPLP v7] Detected lang from prefix: "${detectedLang}", slug segments: "[${slugSegmentsForAnalysis.join(
+        ","
+      )}]"`
+    );
+  } else {
+    detectedLang = defaultLang;
+    slugSegmentsForAnalysis = pathSegments;
+    console.log(
+      `[FPLP v7] No known lang prefix or path starts with default lang. Assumed lang: "${detectedLang}", slug segments: "[${slugSegmentsForAnalysis.join(
+        ","
+      )}]"`
+    );
+  }
+
+  const slugToAnalyze =
+    slugSegmentsForAnalysis.join("/") ||
+    slugsConfig[detectedLang][PAGE_KEYS.HOME];
+  const basePathWithoutLang =
+    `/${slugSegmentsForAnalysis.join("/")}`.replace(/\/$/, "") || "/";
+
+  console.log(
+    `[FPLP v7] For detectedLang "${detectedLang}": slugToAnalyze="${slugToAnalyze}", basePathWithoutLang="${basePathWithoutLang}"`
+  );
+
+  let foundPageKey: PageKey | null = null;
+  console.log(
+    `[FPLP v7] Searching for slug "${slugToAnalyze}" in slugsConfig for lang "${detectedLang}"`
+  );
+  for (const key in slugsConfig[detectedLang]) {
+    if (
+      Object.prototype.hasOwnProperty.call(slugsConfig[detectedLang], key) &&
+      Object.values(PAGE_KEYS).includes(key as PageKey)
+    ) {
+      if (slugsConfig[detectedLang][key as PageKey] === slugToAnalyze) {
+        foundPageKey = key as PageKey;
+        console.log(
+          `[FPLP v7] Matched! foundPageKey: "${foundPageKey}" for slug "${slugToAnalyze}"`
+        );
+        break;
+      }
+    }
+  }
+
+  if (!foundPageKey) {
+    console.warn(
+      `[FPLP v7] No pageKey found for slug "${slugToAnalyze}" and lang "${detectedLang}", setting to NOT_FOUND.`
+    );
+    foundPageKey = PAGE_KEYS.NOT_FOUND;
+  }
+
+  let foundHashKey: PageKey | null = null;
+  if (
+    hashValueFromUrl &&
+    foundPageKey &&
+    foundPageKey !== PAGE_KEYS.NOT_FOUND
+  ) {
+    console.log(
+      `[FPLP v7] Searching for hashValue "${hashValueFromUrl}" in slugsConfig for lang "${detectedLang}"`
+    );
+    for (const key in slugsConfig[detectedLang]) {
+      if (
+        Object.prototype.hasOwnProperty.call(slugsConfig[detectedLang], key) &&
+        (key.startsWith("OFFER_") || key.startsWith("GALLERY_PHOTO_")) &&
+        Object.values(PAGE_KEYS).includes(key as PageKey)
+      ) {
+        if (slugsConfig[detectedLang][key as PageKey] === hashValueFromUrl) {
+          foundHashKey = key as PageKey;
+          console.log(
+            `[FPLP v7] Matched hash! foundHashKey: "${foundHashKey}"`
+          );
+          break;
+        }
+      }
+    }
+    if (!foundHashKey) {
+      console.warn(
+        `[FPLP v7] No hashKey found for hashSlug "${hashValueFromUrl}" and lang "${detectedLang}".`
+      );
+    }
+  }
+
+  const langToReturn =
+    foundPageKey === PAGE_KEYS.NOT_FOUND ? null : detectedLang;
+
+  console.log(
+    `[FPLP v7] Returning: pageKey="${foundPageKey}", lang="${langToReturn}", hashKey="${
+      foundHashKey || "null"
+    }", basePathWithoutLang="${basePathWithoutLang}"`
+  );
+  return {
+    pageKey: foundPageKey,
+    lang: langToReturn,
+    hashKey: foundHashKey,
+    hashSlug: hashValueFromUrl || null,
+    basePathWithoutLang: basePathWithoutLang,
+  };
+}
+
+------------------------------------
+
+import React, { useEffect, useRef } from "react";
+import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
+import { queryClient } from "./lib/queryClient";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ScrollToTopButton from "./components/ScrollToTopButton";
+import CookieConsent from "./components/CookieConsent";
+import Home from "./pages/Home";
+import Oferta from "./pages/Oferta";
+import Galeria from "./pages/Galeria";
+import Cennik from "./pages/Cennik";
+import Kontakt from "./pages/Kontakt";
+import ONas from "./pages/ONas";
+import NotFound from "./pages/not-found";
+import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
+import {
+  getLocalizedPath,
+  getLocalizedSlug,
+  findPageKeyByLocalizedPath,
+  PageKey,
+  Language,
+  PAGE_KEYS,
+  defaultLang,
+  getInternalRoutePath,
+} from "@/config/paths";
+
+function ScrollRestoration() {
+  const [wouterLocation] = useLocation();
+  useEffect(() => {
+    const [, hashValue] = wouterLocation.split("#");
+    if (!hashValue) {
+      window.scrollTo(0, 0);
+    } else {
+      setTimeout(() => {
+        const element = document.getElementById(hashValue);
+        if (element) {
+          const navbarHeight =
+            document.querySelector("nav")?.offsetHeight || 70;
+          const yOffset = -navbarHeight - 20;
+          const y =
+            element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        } else {
+          window.scrollTo(0, 0);
+        }
+      }, 100);
+    }
+  }, [wouterLocation]);
+  return null;
+}
+
+function LanguageRouterLogic() {
+  const [wouterLocation, navigate] = useLocation();
+  const {
+    language,
+    setLanguage: setGlobalLanguage,
+    isLanguageInitialized,
+  } = useLanguage();
+
+  const effectUrlSyncRunCountRef = useRef(0);
+  const effectLangChangeNavRunCountRef = useRef(0);
+
+  // Efekt 1: Synchronizacja języka z URL i korekta niekanonicznych ścieżek
+  useEffect(() => {
+    if (!isLanguageInitialized) {
+      console.log("[LRL_v8_URL_SYNC EFFECT] Waiting for init...");
+      return;
+    }
+
+    effectUrlSyncRunCountRef.current += 1;
+    const runId = effectUrlSyncRunCountRef.current;
+    const currentBrowserPath =
+      window.location.pathname + window.location.search + window.location.hash;
+
+    console.log(
+      `%c[LRL_v8_URL_SYNC Effect #${runId} START] currentBrowserPath: "${currentBrowserPath}", wL: "${wouterLocation}", globalLang: "${language}"`,
+      "color: purple; font-weight: bold;"
+    );
+
+    if (runId > 7) {
+      console.error(
+        `[LRL_v8_URL_SYNC Effect #${runId} FATAL] Loop detected. Path: "${currentBrowserPath}" Lang: "${language}". Halting.`
+      );
+      return;
+    }
+
+    const {
+      pageKey: parsedPageKey,
+      lang: langFromUrl,
+      hashKey: parsedHashKey,
+    } = findPageKeyByLocalizedPath(currentBrowserPath);
+    console.log(
+      `  [LRL_v8_URL_SYNC Effect #${runId}] Parsed from URL: pageKey="${parsedPageKey}", langFromUrl="${langFromUrl}", hashKey="${parsedHashKey}"`
+    );
+
+    let langToUseForPathCheck = language;
+
+    if (langFromUrl) {
+      if (langFromUrl !== language) {
+        console.warn(
+          `  [LRL_v8_URL_SYNC Effect #${runId}] ACTION: Lang from URL ("${langFromUrl}") differs from global ("${language}"). Setting global lang.`
+        );
+        setGlobalLanguage(langFromUrl, { preventNavigation: true });
+        return;
+      }
+      langToUseForPathCheck = langFromUrl;
+    } else if (parsedPageKey && parsedPageKey !== PAGE_KEYS.NOT_FOUND) {
+      if (language !== defaultLang) {
+        console.warn(
+          `  [LRL_v8_URL_SYNC Effect #${runId}] ACTION: No lang in URL for known page "${parsedPageKey}". Global lang "${language}" is not default. Setting global lang to "${defaultLang}".`
+        );
+        setGlobalLanguage(defaultLang, { preventNavigation: true });
+        return;
+      }
+      langToUseForPathCheck = defaultLang;
+    }
+
+    console.log(
+      `  [LRL_v8_URL_SYNC Effect #${runId}] Lang for path check is: "${langToUseForPathCheck}" (global lang: "${language}")`
+    );
+
+    if (parsedPageKey && parsedPageKey !== PAGE_KEYS.NOT_FOUND) {
+      const canonicalPath = getLocalizedPath(
+        parsedPageKey,
+        langToUseForPathCheck,
+        parsedHashKey || undefined
+      );
+      const normalizedCurrent = currentBrowserPath
+        .toLowerCase()
+        .replace(/\/$/, "")
+        .replace(/\/#$/, "");
+      const normalizedCanonical = canonicalPath
+        .toLowerCase()
+        .replace(/\/$/, "")
+        .replace(/\/#$/, "");
+
+      console.log(
+        `  [LRL_v8_URL_SYNC Effect #${runId}] Canonical path for pageKey '${parsedPageKey}', lang '${langToUseForPathCheck}': "${canonicalPath}"`
+      );
+      console.log(
+        `  [LRL_v8_URL_SYNC Effect #${runId}] Comparing current_norm: "${normalizedCurrent}" vs canonical_norm: "${normalizedCanonical}"`
+      );
+
+      if (normalizedCurrent !== normalizedCanonical) {
+        console.warn(
+          `  [LRL_v8_URL_SYNC Effect #${runId}] ACTION: Path MISMATCH. Current: "${currentBrowserPath}", Canonical: "${canonicalPath}". NAVIGATING.`
+        );
+        effectUrlSyncRunCountRef.current = 0;
+        navigate(canonicalPath, { replace: true });
+        return;
+      } else {
+        console.log(
+          `  [LRL_v8_URL_SYNC Effect #${runId}] Path is canonical. No path redirect needed by URL_SYNC. Resetting counter.`
+        );
+        effectUrlSyncRunCountRef.current = 0;
+      }
+    } else {
+      const homePath = getLocalizedPath(PAGE_KEYS.HOME, langToUseForPathCheck);
+      console.warn(
+        `  [LRL_v8_URL_SYNC Effect #${runId}] Page NOT FOUND. Redirecting to home for lang "${langToUseForPathCheck}": "${homePath}"`
+      );
+      if (currentBrowserPath !== homePath) {
+        effectUrlSyncRunCountRef.current = 0;
+        navigate(homePath, { replace: true });
+        return;
+      } else {
+        console.log(
+          `  [LRL_v8_URL_SYNC Effect #${runId}] Page NOT_FOUND, but already at home path. Resetting counter.`
+        );
+        effectUrlSyncRunCountRef.current = 0;
+      }
+    }
+
+    if (effectUrlSyncRunCountRef.current !== 0) {
+      console.log(
+        `  [LRL_v8_URL_SYNC Effect #${runId}] No action taken. Resetting counter.`
+      );
+      effectUrlSyncRunCountRef.current = 0;
+    }
+    console.log(
+      `%c[LRL_v8_URL_SYNC Effect #${runId} END] Final counter: ${effectUrlSyncRunCountRef.current}`,
+      "color: teal; font-weight: bold;"
+    );
+  }, [
+    wouterLocation,
+    language,
+    isLanguageInitialized,
+    setGlobalLanguage,
+    navigate,
+  ]);
+
+  useEffect(() => {
+    if (!isLanguageInitialized) {
+      console.log("[LRL_v8_LANG_NAV EFFECT] Waiting for init...");
+      return;
+    }
+
+    effectLangChangeNavRunCountRef.current += 1;
+    const runId = effectLangChangeNavRunCountRef.current;
+    console.log(
+      `%c[LRL_v8_LANG_NAV Effect #${runId} START] globalLang is now: "${language}" (triggered by language change)`,
+      "color: orange; font-weight: bold;"
+    );
+    if (runId > 5) {
+      console.error(
+        `[LRL_v8_LANG_NAV Effect #${runId} FATAL] Loop detected in language change navigation. Halting.`
+      );
+      return;
+    }
+
+    const currentBrowserPath =
+      window.location.pathname + window.location.search + window.location.hash;
+    const { pageKey: currentPageKey, hashKey: currentHashKey } =
+      findPageKeyByLocalizedPath(currentBrowserPath);
+
+    console.log(
+      `  [LRL_v8_LANG_NAV Effect #${runId}] Current path: "${currentBrowserPath}", parsed pageKey: "${currentPageKey}", parsed hashKey: "${currentHashKey}"`
+    );
+
+    const targetPageKeyForNav =
+      currentPageKey && currentPageKey !== PAGE_KEYS.NOT_FOUND
+        ? currentPageKey
+        : PAGE_KEYS.HOME;
+    const newCanonicalPathForNewLang = getLocalizedPath(
+      targetPageKeyForNav,
+      language,
+      currentHashKey || undefined
+    );
+
+    const normalizedCurrent = currentBrowserPath
+      .toLowerCase()
+      .replace(/\/$/, "")
+      .replace(/\/#$/, "");
+    const normalizedNewCanonical = newCanonicalPathForNewLang
+      .toLowerCase()
+      .replace(/\/$/, "")
+      .replace(/\/#$/, "");
+
+    console.log(
+      `  [LRL_v8_LANG_NAV Effect #${runId}] New canonical path for new lang "${language}" and pageKey "${targetPageKeyForNav}": "${newCanonicalPathForNewLang}"`
+    );
+    console.log(
+      `  [LRL_v8_LANG_NAV Effect #${runId}] Comparing current_norm: "${normalizedCurrent}" vs new_canonical_norm: "${normalizedNewCanonical}"`
+    );
+
+    if (normalizedCurrent !== normalizedNewCanonical) {
+      console.warn(
+        `  [LRL_v8_LANG_NAV Effect #${runId}] ACTION: Language changed to "${language}". URL "${currentBrowserPath}" is not canonical for new lang. NAVIGATING to "${newCanonicalPathForNewLang}".`
+      );
+      effectLangChangeNavRunCountRef.current = 0;
+      navigate(newCanonicalPathForNewLang, { replace: true });
+    } else {
+      console.log(
+        `  [LRL_v8_LANG_NAV Effect #${runId}] Language changed to "${language}", and current path "${currentBrowserPath}" is already canonical. No navigation needed by LANG_NAV. Resetting counter.`
+      );
+      effectLangChangeNavRunCountRef.current = 0;
+    }
+    console.log(
+      `%c[LRL_v8_LANG_NAV Effect #${runId} END] Final counter: ${effectLangChangeNavRunCountRef.current}`,
+      "color: darkorange; font-weight: bold;"
+    );
+  }, [language, isLanguageInitialized, navigate]);
+
+  return null;
+}
+
+function AppRoutes() {
+  const { language } = useLanguage();
+  return (
+    <Switch>
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.HOME, language)}
+        component={Home}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.ABOUT, language)}
+        component={ONas}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.OFFER, language)}
+        component={Oferta}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.GALLERY, language)}
+        component={Galeria}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.PRICING, language)}
+        component={Cennik}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.CONTACT, language)}
+        component={Kontakt}
+      />
+      <Route>
+        <NotFound />
+      </Route>
+    </Switch>
+  );
+}
+
+function AppMainContent() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <ScrollRestoration />
+        <AppRoutes />
+      </main>
+      <Footer />
+      <ScrollToTopButton />
+      <CookieConsent />
+    </div>
+  );
+}
+
+function LanguageAwareRouter() {
+  const { language, isLanguageInitialized } = useLanguage();
+
+  if (!isLanguageInitialized) {
+    return <div>Loading language...</div>;
+  }
+
+  const base = language === defaultLang ? "/" : `/${language}`;
+  const routerKey = `main-router-${language}-${base}`;
+
+  console.log(
+    `[App] Rendering WouterRouter with base: "${base}", key: "${routerKey}"`
+  );
+
+  return (
+    <WouterRouter base={base} key={routerKey}>
+      <LanguageRouterLogic />
+      <AppMainContent />
+    </WouterRouter>
+  );
+}
+
+function App() {
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <LanguageAwareRouter />
+          </TooltipProvider>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+}
+
+export default App;

@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+// Importuj 'plugin' z tailwindcss/plugin, jeśli będziesz pisać bardziej złożone pluginy
+// import plugin from 'tailwindcss/plugin'; // Przykład
 
 export default {
   darkMode: ["class"],
@@ -84,7 +86,27 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+
+      textShadow: {
+        subtle: "0.1rem 0.1rem 0.15rem rgba(0, 0, 0, 0.3)",
+      },
     },
   },
-  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/typography"),
+
+    function ({ matchUtilities, theme, e }) {
+      matchUtilities(
+        {
+          "text-shadow": (value) => ({
+            textShadow: value,
+          }),
+        },
+        {
+          values: theme("textShadow"),
+        }
+      );
+    },
+  ],
 } satisfies Config;
