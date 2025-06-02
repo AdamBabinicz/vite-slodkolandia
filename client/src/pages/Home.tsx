@@ -97,7 +97,7 @@ export default function Home() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="border-2 bg-sky-600 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
+                  className="border-2 bg-sky-800 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
                 >
                   <Calendar className="h-5 w-5 mr-2" />
                   {t("hero.askDate")}
