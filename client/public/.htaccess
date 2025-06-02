@@ -2,24 +2,23 @@ Options -Indexes
 AddDefaultCharset utf-8
 RewriteEngine On
 
-# Przekierowanie Z WWW na BEZ WWW (jeśli SŁODKOLANDIA ma być bez www)
-# ZMIEŃ 'slodkolandia.cba.pl' na swoją domenę!
-RewriteCond %{HTTP_HOST} ^www\.slodkolandia.cba\.pl [NC]
-RewriteRule ^(.*)$ https://slodkolandia.cba.pl/$1 [L,R=301]
-
-# Przekierowanie na HTTPS
-RewriteCond %{HTTPS} off
+# Przekierowanie na HTTPS (powinno być pierwsze lub wczesne)
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Przekierowanie Z non-www NA WWW
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteCond %{HTTP_HOST} !^localhost [NC] # Aby uniknąć problemów lokalnie
+RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 <IfModule mod_headers.c>
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-    # Header set Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()" # Opcjonalnie, jeśli działa
     <FilesMatch "\.(ico|jpe?g|png|gif|swf|svg|avif|webp|mp4|webm|woff2?|ttf|otf|css|js|webmanifest)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
-        # Header set Access-Control-Allow-Origin "*" # Zazwyczaj niepotrzebne dla zasobów z tej samej domeny
     </FilesMatch>
     <FilesMatch "^index\.html$">
         Header set Cache-Control "no-cache, must-revalidate"
@@ -27,11 +26,6 @@ RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
     Header append Vary "Accept-Encoding"
 </IfModule>
 
-# Jeśli masz jakieś stare URL-e do przekierowania na nowe ścieżki SPA dla SŁODKOLANDII,
-# umieść je TUTAJ, przed regułami SPA, np.:
-# RewriteRule ^stary-link-slodkolandia/?$ /nowa-sciezka-oferta [L,R=301,NC]
-
-# Reguły dla aplikacji jednostronicowej (SPA)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
@@ -45,12 +39,10 @@ RewriteRule . /index.html [L]
 AddType image/avif .avif
 AddType image/webp .webp
 
-# Proste blokowanie niektórych botów (możesz rozbudować, jeśli potrzebujesz)
 RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [NC,OR]
 RewriteCond %{HTTP_USER_AGENT} ^HTTrack [NC]
 RewriteRule ^.* - [F,L]
 
-# Zabezpieczenie plików konfiguracyjnych
 <FilesMatch "\.(htaccess|htpasswd|ini|log|sh|conf|config|cnf|sql|bak|backup|swp|~$)$">
   Require all denied
 </FilesMatch>

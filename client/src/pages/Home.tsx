@@ -11,16 +11,16 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { motion } from "framer-motion";
-// import SEOHead from "@/components/SEOHead";
 import AttractionCard from "@/components/AttractionCard";
 import CallToAction from "@/components/CallToAction";
 import { attractions } from "@/data/attractions";
 import { heroImages } from "@/data/stockPhotos";
 import { useLanguage } from "@/hooks/useLanguage";
+import { PAGE_KEYS, getInternalRoutePath } from "@/config/paths";
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -32,13 +32,19 @@ export default function Home() {
 
   const featuredAttractions = attractions.slice(0, 6);
 
+  const contactPathForLink = getInternalRoutePath(PAGE_KEYS.CONTACT, language);
+  const offerPathForLink = getInternalRoutePath(PAGE_KEYS.OFFER, language);
+
+  if (language === "en") {
+    console.log("[Home.tsx DEBUG] For CONTACT link in EN:", {
+      languageFromContext: language,
+      generatedHrefContact: contactPathForLink,
+      generatedHrefOffer: offerPathForLink,
+    });
+  }
+
   return (
     <>
-      {/* <SEOHead
-        title={t("seo.homeTitle")}
-        description={t("seo.homeDescription")}
-      /> */}
-
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
           {heroImages.map((image, index) => (
@@ -64,9 +70,6 @@ export default function Home() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            {/* <h1 className="brand-title text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
-              {t("hero.title")}
-            </h1> */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
               <span className="brand-title-home-main">
                 {t("hero.title")?.split(" wita:")[0]}
@@ -84,7 +87,7 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link href="/oferta">
+              <Link href={offerPathForLink}>
                 <Button
                   size="lg"
                   className="bg-white text-sky-800 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg"
@@ -93,7 +96,7 @@ export default function Home() {
                   {t("hero.seeOffer")}
                 </Button>
               </Link>
-              <Link href="/kontakt">
+              <Link href={contactPathForLink}>
                 <Button
                   variant="outline"
                   size="lg"
@@ -150,7 +153,7 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <Link href="/oferta">
+            <Link href={offerPathForLink}>
               <Button
                 size="lg"
                 className="btn-gradient text-white px-8 py-4 text-lg font-semibold hover:shadow-lg transition-all"

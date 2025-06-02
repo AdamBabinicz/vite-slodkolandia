@@ -33,7 +33,7 @@ const pageSpecificSEOMeta: Record<
     },
     en: {
       title:
-        "SLODKOLANDIA wita: - Event Attractions, Party Equipment Rental | Radom",
+        "SŁODKOLANDIA wita: - Event Attractions, Party Equipment Rental | Radom",
       description:
         "Party tent rental, slides, bouncy castles. Cotton candy, popcorn, chocolate fountain services. Radom and surroundings.",
       ogImage: "/img/f/4.avif",
@@ -47,7 +47,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/n/32.avif",
     },
     en: {
-      title: "Event Attractions Offer - SLODKOLANDIA wita: | Radom",
+      title: "Event Attractions Offer - SŁODKOLANDIA wita: | Radom",
       description:
         "Discover our offer of tents, inflatables, catering equipment, and more. Perfect for any event in Radom.",
       ogImage: "/img/n/31.avif",
@@ -58,10 +58,10 @@ const pageSpecificSEOMeta: Record<
       title: "Galeria Zdjęć - SŁODKOLANDIA wita: Atrakcje | Radom",
       description:
         "Zobacz zdjęcia z naszych realizacji i eventów. Namioty, dmuchańce, wata cukrowa i uśmiechy dzieci w Radomiu.",
-      ogImage: "/img/d/27/avif",
+      ogImage: "/img/d/27.avif", // Poprawiona literówka, jeśli miała być .avif
     },
     en: {
-      title: "Photo Gallery - SLODKOLANDIA wita: Attractions | Radom",
+      title: "Photo Gallery - SŁODKOLANDIA wita: Attractions | Radom",
       description:
         "See photos from our events. Tents, inflatables, cotton candy, and happy children in Radom.",
       ogImage: "/img/d/26.avif",
@@ -75,7 +75,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/d/22.avif",
     },
     en: {
-      title: "Contact - SLODKOLANDIA wita: | Attraction Rental Radom",
+      title: "Contact - SŁODKOLANDIA wita: | Attraction Rental Radom",
       description:
         "Contact us to rent attractions for your event. Quick quote and professional service in Radom.",
       ogImage: "/img/d/18.avif",
@@ -89,7 +89,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/d/23.avif",
     },
     en: {
-      title: "Service Pricing - SLODKOLANDIA wita: Event Attractions | Radom",
+      title: "Service Pricing - SŁODKOLANDIA wita: Event Attractions | Radom",
       description:
         "Check our price list for renting tents, inflatables, and other attractions. Competitive prices in Radom.",
       ogImage: "/img/d/28.avif",
@@ -103,10 +103,10 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/d/30.avif",
     },
     en: {
-      title: "About Us - SLODKOLANDIA wita: | Passion for Events in Radom",
+      title: "About Us - SŁODKOLANDIA wita: | Passion for Events in Radom",
       description:
         "Learn more about SŁODKOLANDIA wita:, our mission, and our experience in organizing unforgettable events in Radom and other locations.",
-      ogImage: "/img/d/5.afif",
+      ogImage: "/img/d/5.avif", // Poprawiona literówka z .afif na .avif
     },
   },
   [PAGE_KEYS.TERMS]: {
@@ -117,7 +117,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/s/3.avif",
     },
     en: {
-      title: "Terms of Service - SLODKOLANDIA wita:",
+      title: "Terms of Service - SŁODKOLANDIA wita:",
       description:
         "Please read the terms of service provided by SLODKOLANDIA wita:.",
       ogImage: "/img/s/18.avif",
@@ -131,7 +131,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/s/19.avif",
     },
     en: {
-      title: "Privacy Policy - SLODKOLANDIA wita:",
+      title: "Privacy Policy - SŁODKOLANDIA wita:",
       description:
         "Information on the processing of personal data by SLODKOLANDIA wita:.",
       ogImage: "/img/p/1.avif",
@@ -144,7 +144,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/p/4.avif",
     },
     en: {
-      title: "Page Not Found (404) - SLODKOLANDIA wita:",
+      title: "Page Not Found (404) - SŁODKOLANDIA wita:",
       description: "Sorry, the page you are looking for does not exist.",
       ogImage: "/img/p/2.avif",
     },
@@ -157,7 +157,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/n/1.avif",
     },
     en: {
-      title: "Party Tent Rental - SLODKOLANDIA wita: | Radom",
+      title: "Party Tent Rental - SŁODKOLANDIA wita: | Radom",
       description:
         "We offer rental of sturdy party tents for every occasion in Radom. Various sizes available.",
       ogImage: "/img/n/2.avif",
@@ -168,11 +168,13 @@ const pageSpecificSEOMeta: Record<
       title: "Stoły, Krzesła, Obrusy - Wynajem | Słodkolandia wita: Radom",
       description:
         "Kompleksowy wynajem stołów, krzeseł i obrusów na imprezy w Radomiu.",
+      ogImage: "/img/s/default-tables.avif", // Dodaj domyślny obrazek
     },
     en: {
       title: "Tables, Chairs, Linens - Rental | Słodkolandia wita: Radom",
       description:
         "Comprehensive rental of tables, chairs, and linens for events in Radom.",
+      ogImage: "/img/s/default-tables-en.avif", // Dodaj domyślny obrazek
     },
   },
   [PAGE_KEYS.OFFER_INFLATABLES]: {
@@ -181,12 +183,14 @@ const pageSpecificSEOMeta: Record<
         "Dmuchance na Wynajem - Zamki, Zjeżdżalnie | Słodkolandia wita: Radom",
       description:
         "Super dmuchance dla dzieci – zamki dmuchane i zjeżdżalnie na wynajem. Radom i okolice.",
+      ogImage: "/img/d/default-inflatables.avif", // Dodaj domyślny obrazek
     },
     en: {
       title:
         "Inflatables for Rent - Castles, Slides | Słodkolandia wita: Radom",
       description:
         "Awesome inflatables for kids - bouncy castles and slides for rent. Radom and surroundings.",
+      ogImage: "/img/d/default-inflatables-en.avif", // Dodaj domyślny obrazek
     },
   },
   [PAGE_KEYS.OFFER_POPCORN]: {
@@ -194,11 +198,13 @@ const pageSpecificSEOMeta: Record<
       title: "Maszyna do Popcornu na Wynajem | Słodkolandia wita: Radom",
       description:
         "Wynajmij profesjonalną maszynę do popcornu z obsługą na swoją imprezę. Radom.",
+      ogImage: "/img/p/default-popcorn.avif", // Dodaj domyślny obrazek
     },
     en: {
       title: "Popcorn Machine for Rent | Słodkolandia wita: Radom",
       description:
         "Rent a professional popcorn machine with service for your event. Radom.",
+      ogImage: "/img/p/default-popcorn-en.avif", // Dodaj domyślny obrazek
     },
   },
   [PAGE_KEYS.OFFER_COTTON_CANDY]: {
@@ -207,12 +213,14 @@ const pageSpecificSEOMeta: Record<
         "Wata Cukrowa na Wynajem - Maszyna z Obsługą | Słodkolandia wita: Radom",
       description:
         "Wata cukrowa dla dzieci i dorosłych. Wynajem maszyny z obsługą w Radomiu.",
+      ogImage: "/img/w/default-cottoncandy.avif", // Dodaj domyślny obrazek
     },
     en: {
       title:
         "Cotton Candy for Rent - Machine with Service | Słodkolandia wita: Radom",
       description:
         "Cotton candy for kids and adults. Machine rental with service in Radom.",
+      ogImage: "/img/w/default-cottoncandy-en.avif", // Dodaj domyślny obrazek
     },
   },
   [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: {
@@ -220,11 +228,13 @@ const pageSpecificSEOMeta: Record<
       title: "Fontanna Czekoladowa na Wynajem | Słodkolandia wita: Radom",
       description:
         "Wynajem fontanny czekoladowej z najlepszą belgijską czekoladą. Radom i okolice.",
+      ogImage: "/img/f/default-fountain.avif", // Dodaj domyślny obrazek
     },
     en: {
       title: "Chocolate Fountain for Rent | Słodkolandia wita: Radom",
       description:
         "Rent a chocolate fountain with the best Belgian chocolate. Radom and surroundings.",
+      ogImage: "/img/f/default-fountain-en.avif", // Dodaj domyślny obrazek
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_TENTS]: {
@@ -245,7 +255,7 @@ const pageSpecificSEOMeta: Record<
       title: "Zdjęcia: Stoły, Krzesła, Obrusy | Słodkolandia wita: Radom",
       description:
         "Galeria zdjęć wynajmowanych stołów, krzeseł i obrusów na imprezy.",
-      ogImage: "/s/3.avif",
+      ogImage: "/img/s/3.avif",
     },
     en: {
       title: "Photos: Tables, Chairs, Linens | Słodkolandia wita: Radom",
@@ -272,12 +282,12 @@ const pageSpecificSEOMeta: Record<
     pl: {
       title: "Zdjęcia: Wata Cukrowa na Imprezach | Słodkolandia wita:",
       description: "Galeria zdjęć z watą cukrową serwowaną na eventach.",
-      ogImage: "/img/w/11-.avif",
+      ogImage: "/img/w/11.avif", // Usunięto myślnik
     },
     en: {
       title: "Photos: Cotton Candy at Events | Słodkolandia wita:",
       description: "Photo gallery of cotton candy served at events.",
-      ogImage: "/img/w/22-.avif",
+      ogImage: "/img/w/22.avif", // Usunięto myślnik
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: {
@@ -285,12 +295,12 @@ const pageSpecificSEOMeta: Record<
       title: "Zdjęcia: Popcorn na Imprezach | Słodkolandia wita:",
       description:
         "Zobacz, jak wygląda nasz świeży popcorn na eventach. Galeria zdjęć.",
-      ogImage: "/img/p/22-.avif",
+      ogImage: "/img/p/22.avif", // Usunięto myślnik
     },
     en: {
       title: "Photos: Popcorn at Events | Słodkolandia wita:",
       description: "See our fresh popcorn at events. Photo gallery.",
-      ogImage: "/img/p/55-.avif",
+      ogImage: "/img/p/55.avif", // Usunięto myślnik
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: {
@@ -300,7 +310,7 @@ const pageSpecificSEOMeta: Record<
       ogImage: "/img/f/5.avif",
     },
     en: {
-      title: "Photos: Chocolate Fountain | Słodkolandia",
+      title: "Photos: Chocolate Fountain | SŁODKOLANDIA wita:", // Użyłem nazwy firmy, bo "Słodkolandia" mogło być zbyt ogólne
       description: "Photo gallery of our spectacular chocolate fountain.",
       ogImage: "/img/f/6.avif",
     },
@@ -344,7 +354,7 @@ const localizedPageNamesForBreadcrumbs: Record<
     en: "Photos: Tables & Chairs",
   },
   [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: {
-    pl: "Zdjęcia: Dmuchańce",
+    pl: "Zdjęcia: Dmuchance",
     en: "Photos: Inflatables",
   },
   [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: {
@@ -393,9 +403,10 @@ export default function SEOHead() {
     actualLangUsed
   ] || {
     title: "SŁODKOLANDIA wita:",
-    description: "Atrakcje eventowe.",
-    ogImage: "/img/d/8.avif",
+    description: "Atrakcje eventowe dla każdego.",
+    ogImage: "/img/og-default.png", // Upewnij się, że ten plik istnieje
   };
+
   const currentSeoLangSpecific =
     pageSpecificSEOMeta[effectivePageKeyForMeta]?.[actualLangUsed];
   const basePageSeoLangSpecific =
@@ -418,7 +429,7 @@ export default function SEOHead() {
     ? `${SLODKOLANDIA_BASE_URL}${
         ogImageRelative.startsWith("/") ? "" : "/"
       }${ogImageRelative}`
-    : `${SLODKOLANDIA_BASE_URL}/img/d/9.avif`;
+    : `${SLODKOLANDIA_BASE_URL}/img/og-default-fallback.png`; // OSTATECZNY FALLBACK - upewnij się, że istnieje
 
   let pathForCanonicalAndAlternate: string;
   if (
@@ -456,7 +467,7 @@ export default function SEOHead() {
   const country = "PL";
   const telephone = "+48531890827";
   const email = "mariusz1989poczta@wp.pl";
-  const logoUrl = `${SLODKOLANDIA_BASE_URL}/img/logo.avif`;
+  const logoUrl = `${SLODKOLANDIA_BASE_URL}/img/logo.avif`; // Upewnij się, że logo istnieje
   const priceRange = "$$";
 
   const localBusinessSchema = {
@@ -488,7 +499,14 @@ export default function SEOHead() {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: "Saturday",
         opens: "10:00",
-        closes: "15:00",
+        closes: "15:00", // Poprawiono z 18:00 na 15:00 jak w przykładzie
+      },
+      {
+        // Dodano niedzielę na podstawie danych z zapytania
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Sunday",
+        opens: "10:00",
+        closes: "18:00",
       },
     ],
     sameAs: socialLinksHrefs,
@@ -497,7 +515,7 @@ export default function SEOHead() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "SŁODKOLANDIA",
+    name: "SŁODKOLANDIA wita:", // Użycie pełnej nazwy
     url: SLODKOLANDIA_BASE_URL,
     potentialAction: {
       "@type": "SearchAction",
@@ -622,8 +640,17 @@ export default function SEOHead() {
       <meta property="og:description" content={seoDescription} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={fullOgImageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="SŁODKOLANDIA wita:" />
+
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={seoTitle} />
+      <meta name="twitter:description" content={seoDescription} />
+      <meta name="twitter:image" content={fullOgImageUrl} />
+      <meta name="twitter:url" content={canonicalUrl} />
+
       <script type="application/ld+json">
         {JSON.stringify(localBusinessSchema)}
       </script>

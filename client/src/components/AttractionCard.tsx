@@ -68,6 +68,23 @@ export default function AttractionCard({
   );
 
   const isItemized = attraction.pricingDisplayMode === "itemList";
+  let formattedPriceText: string;
+
+  if (isItemized && attraction.id === "stoly-krzesla-obrusy") {
+    formattedPriceText = t("pricingPage.itemizedPricingLabel");
+  } else {
+    if (!mainPricingOption.base) {
+      formattedPriceText = t("pricingPage.askForDate", {
+        defaultValue: "Zapytaj o cenę",
+      });
+    } else {
+      if (language === "en") {
+        formattedPriceText = `${pricingFromText}${currencyUnitText} ${mainPricingOption.base}`;
+      } else {
+        formattedPriceText = `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`;
+      }
+    }
+  }
 
   return (
     <>
@@ -109,18 +126,15 @@ export default function AttractionCard({
 
                 <div className="flex items-center justify-between mb-3">
                   <div className="text-md font-semibold text-sky-700 dark:text-sky-800">
-                    {isItemized && attraction.id === "stoly-krzesla-obrusy"
-                      ? t("pricingPage.itemizedPricingLabel")
-                      : language === "en"
-                      ? `${pricingFromText}${currencyUnitText}${mainPricingOption.base}`
-                      : `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`}
+                    {formattedPriceText}
                     {!(
                       isItemized && attraction.id === "stoly-krzesla-obrusy"
-                    ) && (
-                      <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
-                        / {translatedPeriod}
-                      </span>
-                    )}
+                    ) &&
+                      mainPricingOption.base && (
+                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                          / {translatedPeriod}
+                        </span>
+                      )}
                   </div>
                 </div>
               </div>

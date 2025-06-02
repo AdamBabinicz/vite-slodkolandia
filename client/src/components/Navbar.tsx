@@ -1,14 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link as WouterLink, useLocation } from "wouter";
-import {
-  Menu,
-  X,
-  Phone,
-  Globe,
-  MessageCircle,
-  Star,
-  ChevronDown,
-} from "lucide-react";
+import { Link as WouterLink } from "wouter";
+import { Menu, X, Phone, Globe, MessageCircle, Star } from "lucide-react";
 import { BsMessenger } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,10 +23,10 @@ import ThemeToggle from "./ThemeToggle";
 import {
   getLocalizedPath,
   findPageKeyByLocalizedPath,
-  getLocalizedSlug,
   PAGE_KEYS,
   PageKey,
   Language,
+  defaultLang,
   getInternalRoutePath,
 } from "@/config/paths";
 import { AnimatePresence, motion } from "framer-motion";
@@ -42,7 +34,6 @@ import { AnimatePresence, motion } from "framer-motion";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{}>({});
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   const { language, setLanguage: setContextLanguage, t } = useLanguage();
@@ -117,7 +108,6 @@ export default function Navbar() {
   const handleLinkClick = (closeMobileMenu = true, targetPath?: string) => {
     if (closeMobileMenu) {
       setIsMobileMenuOpen(false);
-      setMobileDropdownsOpen({});
     }
     const homePathForCurrentLang = getLocalizedPath(PAGE_KEYS.HOME, language);
     if (
@@ -130,6 +120,9 @@ export default function Navbar() {
   };
 
   const navLinkHref = (pageKey: PageKey): string => {
+    if (pageKey === PAGE_KEYS.HOME) {
+      return language === defaultLang ? "/" : "";
+    }
     return getInternalRoutePath(pageKey, language);
   };
 
@@ -158,7 +151,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                 <img
                   src="/img/logo.avif"
-                  alt="Logo Słodkolandia wita:"
+                  alt={t("hero.title")}
                   className="w-10 h-10"
                 />
                 <span className="brand-title text-xl font-bold text-slate-800 dark:text-white whitespace-nowrap">
@@ -353,7 +346,6 @@ export default function Navbar() {
                 size="icon"
                 onClick={() => {
                   setIsMobileMenuOpen(!isMobileMenuOpen);
-                  if (isMobileMenuOpen) setMobileDropdownsOpen({});
                 }}
                 aria-label="Toggle mobile menu"
               >
