@@ -130,6 +130,9 @@ export default function Navbar() {
   };
 
   const navLinkHref = (pageKey: PageKey): string => {
+    if (pageKey === PAGE_KEYS.HOME) {
+      return "";
+    }
     return getInternalRoutePath(pageKey, language);
   };
 
