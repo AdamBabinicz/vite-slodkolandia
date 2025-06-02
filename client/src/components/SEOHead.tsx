@@ -11,8 +11,7 @@ import {
   findPageKeyByLocalizedPath,
 } from "@/config/paths";
 
-export const SLODKOLANDIA_BASE_URL =
-  "https://www.twoja-nowa-domena-slodkolandia.pl";
+export const SLODKOLANDIA_BASE_URL = "https://www.slodkolandia.cba.pl";
 
 interface PageSEOMetaValues {
   title: string;
@@ -27,278 +26,283 @@ const pageSpecificSEOMeta: Record<
   [PAGE_KEYS.HOME]: {
     pl: {
       title:
-        "SŁODKOLANDIA - Atrakcje Eventowe, Wynajem Sprzętu Imprezowego | Radom",
+        "SŁODKOLANDIA wita: - Atrakcje Eventowe, Wynajem Sprzętu Imprezowego | Radom",
       description:
-        "Wynajem namiotów imprezowych, zjeżdżalni, zamków dmuchanych. Obsługa waty cukrowej, popcornu, fontann czekoladowych. Radom i okolice.",
-      ogImage: "/images/og-slodkolandia-home.png",
+        "Wynajem namiotów imprezowych, zjeżdżalni, zamków dmuchanych. Obsługa waty cukrowej, popcornu, fontanny czekoladowej. Radom i okolice.",
+      ogImage: "/img/og-slodkolandia-home.png",
     },
     en: {
-      title: "SLODKOLANDIA - Event Attractions, Party Equipment Rental | Radom",
+      title:
+        "SLODKOLANDIA wita: - Event Attractions, Party Equipment Rental | Radom",
       description:
         "Party tent rental, slides, bouncy castles. Cotton candy, popcorn, chocolate fountain services. Radom and surroundings.",
-      ogImage: "/images/og-slodkolandia-home.png",
+      ogImage: "/img/f/4.avif",
     },
   },
   [PAGE_KEYS.OFFER]: {
     pl: {
-      title: "Oferta Atrakcji Imprezowych - SŁODKOLANDIA | Radom",
+      title: "Oferta Atrakcji Imprezowych - SŁODKOLANDIA wita: | Radom",
       description:
         "Poznaj naszą ofertę wynajmu namiotów, dmuchańców, urządzeń gastronomicznych i więcej. Idealne na każdą imprezę w Radomiu.",
-      ogImage: "/images/og-slodkolandia-oferta.png",
+      ogImage: "/img/n/32.avif",
     },
     en: {
-      title: "Event Attractions Offer - SLODKOLANDIA | Radom",
+      title: "Event Attractions Offer - SLODKOLANDIA wita: | Radom",
       description:
         "Discover our offer of tents, inflatables, catering equipment, and more. Perfect for any event in Radom.",
-      ogImage: "/images/og-slodkolandia-oferta.png",
+      ogImage: "/img/n/31.avif",
     },
   },
   [PAGE_KEYS.GALLERY]: {
     pl: {
-      title: "Galeria Zdjęć - SŁODKOLANDIA Atrakcje | Radom",
+      title: "Galeria Zdjęć - SŁODKOLANDIA wita: Atrakcje | Radom",
       description:
         "Zobacz zdjęcia z naszych realizacji i eventów. Namioty, dmuchańce, wata cukrowa i uśmiechy dzieci w Radomiu.",
-      ogImage: "/images/og-slodkolandia-galeria.png",
+      ogImage: "/img/d/27/avif",
     },
     en: {
-      title: "Photo Gallery - SLODKOLANDIA Attractions | Radom",
+      title: "Photo Gallery - SLODKOLANDIA wita: Attractions | Radom",
       description:
         "See photos from our events. Tents, inflatables, cotton candy, and happy children in Radom.",
-      ogImage: "/images/og-slodkolandia-galeria.png",
+      ogImage: "/img/d/26.avif",
     },
   },
   [PAGE_KEYS.CONTACT]: {
     pl: {
-      title: "Kontakt - SŁODKOLANDIA | Wynajem Atrakcji Radom",
+      title: "Kontakt - SŁODKOLANDIA wita: | Wynajem Atrakcji Radom",
       description:
         "Skontaktuj się z nami, aby wynająć atrakcje na Twoją imprezę. Szybka wycena i profesjonalna obsługa w Radomiu.",
-      ogImage: "/images/og-slodkolandia-kontakt.png",
+      ogImage: "/img/d/22.avif",
     },
     en: {
-      title: "Contact - SLODKOLANDIA | Attraction Rental Radom",
+      title: "Contact - SLODKOLANDIA wita: | Attraction Rental Radom",
       description:
         "Contact us to rent attractions for your event. Quick quote and professional service in Radom.",
-      ogImage: "/images/og-slodkolandia-kontakt.png",
+      ogImage: "/img/d/18.avif",
     },
   },
   [PAGE_KEYS.PRICING]: {
     pl: {
-      title: "Cennik Usług - SŁODKOLANDIA Atrakcje Imprezowe | Radom",
+      title: "Cennik Usług - SŁODKOLANDIA wita: Atrakcje Imprezowe | Radom",
       description:
         "Sprawdź nasz cennik wynajmu namiotów, dmuchańców i innych atrakcji. Konkurencyjne ceny w Radomiu.",
-      ogImage: "/images/og-slodkolandia-cennik.png",
+      ogImage: "/img/d/23.avif",
     },
     en: {
-      title: "Service Pricing - SLODKOLANDIA Event Attractions | Radom",
+      title: "Service Pricing - SLODKOLANDIA wita: Event Attractions | Radom",
       description:
         "Check our price list for renting tents, inflatables, and other attractions. Competitive prices in Radom.",
-      ogImage: "/images/og-slodkolandia-cennik.png",
+      ogImage: "/img/d/28.avif",
     },
   },
   [PAGE_KEYS.ABOUT]: {
     pl: {
-      title: "O Nas - SŁODKOLANDIA | Pasja do Eventów w Radomiu",
+      title: "O Nas - SŁODKOLANDIA wita: | Pasja do Eventów w Radomiu",
       description:
-        "Dowiedz się więcej o SŁODKOLANDII, naszej misji i doświadczeniu w organizacji niezapomnianych imprez w Radomiu.",
-      ogImage: "/images/og-slodkolandia-o-nas.png",
+        "Dowiedz się więcej o firmie SŁODKOLANDIA wita:, naszej misji i doświadczeniu w organizacji niezapomnianych imprez w Radomiu oraz innych miejscowościach.",
+      ogImage: "/img/d/30.avif",
     },
     en: {
-      title: "About Us - SLODKOLANDIA | Passion for Events in Radom",
+      title: "About Us - SLODKOLANDIA wita: | Passion for Events in Radom",
       description:
-        "Learn more about SLODKOLANDIA, our mission, and experience in organizing unforgettable events in Radom.",
-      ogImage: "/images/og-slodkolandia-o-nas.png",
+        "Learn more about SŁODKOLANDIA wita:, our mission, and our experience in organizing unforgettable events in Radom and other locations.",
+      ogImage: "/img/d/5.afif",
     },
   },
   [PAGE_KEYS.TERMS]: {
     pl: {
-      title: "Regulamin Świadczenia Usług - SŁODKOLANDIA",
+      title: "Regulamin Świadczenia Usług - SŁODKOLANDIA wita:",
       description:
-        "Zapoznaj się z regulaminem świadczenia usług przez SŁODKOLANDIA.",
-      ogImage: "/images/og-slodkolandia-regulamin.png",
+        "Zapoznaj się z regulaminem świadczenia usług przez firmę SŁODKOLANDIA wita:.",
+      ogImage: "/img/s/3.avif",
     },
     en: {
-      title: "Terms of Service - SLODKOLANDIA",
-      description: "Please read the terms of service provided by SLODKOLANDIA.",
-      ogImage: "/images/og-slodkolandia-regulamin.png",
+      title: "Terms of Service - SLODKOLANDIA wita:",
+      description:
+        "Please read the terms of service provided by SLODKOLANDIA wita:.",
+      ogImage: "/img/s/18.avif",
     },
   },
   [PAGE_KEYS.PRIVACY_POLICY]: {
     pl: {
-      title: "Polityka Prywatności - SŁODKOLANDIA",
+      title: "Polityka Prywatności - SŁODKOLANDIA wita:",
       description:
-        "Informacje na temat przetwarzania danych osobowych przez SŁODKOLANDIA.",
-      ogImage: "/images/og-slodkolandia-polityka.png",
+        "Informacje na temat przetwarzania danych osobowych przez firmę SŁODKOLANDIA wita:.",
+      ogImage: "/img/s/19.avif",
     },
     en: {
-      title: "Privacy Policy - SLODKOLANDIA",
+      title: "Privacy Policy - SLODKOLANDIA wita:",
       description:
-        "Information on the processing of personal data by SLODKOLANDIA.",
-      ogImage: "/images/og-slodkolandia-polityka.png",
+        "Information on the processing of personal data by SLODKOLANDIA wita:.",
+      ogImage: "/img/p/1.avif",
     },
   },
   [PAGE_KEYS.NOT_FOUND]: {
     pl: {
-      title: "Strona Nie Znaleziona (404) - SŁODKOLANDIA",
+      title: "Strona Nie Znaleziona (404) - SŁODKOLANDIA wita:",
       description: "Przepraszamy, strona której szukasz nie istnieje.",
-      ogImage: "/images/og-slodkolandia-404.png",
+      ogImage: "/img/p/4.avif",
     },
     en: {
-      title: "Page Not Found (404) - SLODKOLANDIA",
+      title: "Page Not Found (404) - SLODKOLANDIA wita:",
       description: "Sorry, the page you are looking for does not exist.",
-      ogImage: "/images/og-slodkolandia-404.png",
+      ogImage: "/img/p/2.avif",
     },
   },
   [PAGE_KEYS.OFFER_TENTS]: {
     pl: {
-      title: "Wynajem Namiotów Imprezowych - SŁODKOLANDIA | Radom",
+      title: "Wynajem Namiotów Imprezowych - SŁODKOLANDIA wita: | Radom",
       description:
         "Oferujemy wynajem solidnych namiotów imprezowych na każdą okazję w Radomiu. Różne rozmiary dostępne.",
-      ogImage: "/images/og-slodkolandia-namioty.png",
+      ogImage: "/img/n/1.avif",
     },
     en: {
-      title: "Party Tent Rental - SLODKOLANDIA | Radom",
+      title: "Party Tent Rental - SLODKOLANDIA wita: | Radom",
       description:
         "We offer rental of sturdy party tents for every occasion in Radom. Various sizes available.",
-      ogImage: "/images/og-slodkolandia-namioty.png",
+      ogImage: "/img/n/2.avif",
     },
   },
   [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: {
     pl: {
-      title: "Stoły, Krzesła, Obrusy - Wynajem | Słodkolandia Radom",
+      title: "Stoły, Krzesła, Obrusy - Wynajem | Słodkolandia wita: Radom",
       description:
         "Kompleksowy wynajem stołów, krzeseł i obrusów na imprezy w Radomiu.",
     },
     en: {
-      title: "Tables, Chairs, Linens - Rental | Słodkolandia Radom",
+      title: "Tables, Chairs, Linens - Rental | Słodkolandia wita: Radom",
       description:
         "Comprehensive rental of tables, chairs, and linens for events in Radom.",
     },
   },
   [PAGE_KEYS.OFFER_INFLATABLES]: {
     pl: {
-      title: "Dmuchance na Wynajem - Zamki, Zjeżdżalnie | Słodkolandia Radom",
+      title:
+        "Dmuchance na Wynajem - Zamki, Zjeżdżalnie | Słodkolandia wita: Radom",
       description:
         "Super dmuchance dla dzieci – zamki dmuchane i zjeżdżalnie na wynajem. Radom i okolice.",
     },
     en: {
-      title: "Inflatables for Rent - Castles, Slides | Słodkolandia Radom",
+      title:
+        "Inflatables for Rent - Castles, Slides | Słodkolandia wita: Radom",
       description:
         "Awesome inflatables for kids - bouncy castles and slides for rent. Radom and surroundings.",
     },
   },
   [PAGE_KEYS.OFFER_POPCORN]: {
     pl: {
-      title: "Maszyna do Popcornu na Wynajem | Słodkolandia Radom",
+      title: "Maszyna do Popcornu na Wynajem | Słodkolandia wita: Radom",
       description:
         "Wynajmij profesjonalną maszynę do popcornu z obsługą na swoją imprezę. Radom.",
     },
     en: {
-      title: "Popcorn Machine for Rent | Słodkolandia Radom",
+      title: "Popcorn Machine for Rent | Słodkolandia wita: Radom",
       description:
         "Rent a professional popcorn machine with service for your event. Radom.",
     },
   },
   [PAGE_KEYS.OFFER_COTTON_CANDY]: {
     pl: {
-      title: "Wata Cukrowa na Wynajem - Maszyna z Obsługą | Słodkolandia Radom",
+      title:
+        "Wata Cukrowa na Wynajem - Maszyna z Obsługą | Słodkolandia wita: Radom",
       description:
-        "Kolorowa wata cukrowa dla dzieci i dorosłych. Wynajem maszyny z obsługą w Radomiu.",
+        "Wata cukrowa dla dzieci i dorosłych. Wynajem maszyny z obsługą w Radomiu.",
     },
     en: {
       title:
-        "Cotton Candy for Rent - Machine with Service | Słodkolandia Radom",
+        "Cotton Candy for Rent - Machine with Service | Słodkolandia wita: Radom",
       description:
-        "Colorful cotton candy for kids and adults. Machine rental with service in Radom.",
+        "Cotton candy for kids and adults. Machine rental with service in Radom.",
     },
   },
   [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: {
     pl: {
-      title: "Fontanna Czekoladowa na Wynajem | Słodkolandia Radom",
+      title: "Fontanna Czekoladowa na Wynajem | Słodkolandia wita: Radom",
       description:
         "Wynajem fontanny czekoladowej z najlepszą belgijską czekoladą. Radom i okolice.",
     },
     en: {
-      title: "Chocolate Fountain for Rent | Słodkolandia Radom",
+      title: "Chocolate Fountain for Rent | Słodkolandia wita: Radom",
       description:
         "Rent a chocolate fountain with the best Belgian chocolate. Radom and surroundings.",
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_TENTS]: {
     pl: {
-      title: "Zdjęcia: Namioty Imprezowe | Słodkolandia Radom",
+      title: "Zdjęcia: Namioty Imprezowe | Słodkolandia wita: Radom",
       description:
         "Zobacz nasze namioty imprezowe w akcji. Galeria zdjęć Słodkolandia.",
-      ogImage: "/images/og-slodkolandia-foto-namioty.png",
+      ogImage: "/img/n/7.avif",
     },
     en: {
-      title: "Photos: Party Tents | Słodkolandia Radom",
+      title: "Photos: Party Tents | Słodkolandia wita: Radom",
       description: "See our party tents in action. Słodkolandia photo gallery.",
-      ogImage: "/images/og-slodkolandia-foto-namioty.png",
+      ogImage: "/img/n/17.avif",
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]: {
     pl: {
-      title: "Zdjęcia: Stoły, Krzesła, Obrusy | Słodkolandia Radom",
+      title: "Zdjęcia: Stoły, Krzesła, Obrusy | Słodkolandia wita: Radom",
       description:
         "Galeria zdjęć wynajmowanych stołów, krzeseł i obrusów na imprezy.",
-      ogImage: "/images/og-slodkolandia-foto-stoly.png",
+      ogImage: "/s/3.avif",
     },
     en: {
-      title: "Photos: Tables, Chairs, Linens | Słodkolandia Radom",
+      title: "Photos: Tables, Chairs, Linens | Słodkolandia wita: Radom",
       description:
         "Photo gallery of rented tables, chairs, and linens for events.",
-      ogImage: "/images/og-slodkolandia-foto-stoly.png",
+      ogImage: "/img/s/19.avif",
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: {
     pl: {
-      title: "Zdjęcia: Dmuchance - Zamki, Zjeżdżalnie | Słodkolandia",
+      title: "Zdjęcia: Dmuchance - Zamki, Zjeżdżalnie | Słodkolandia wita:",
       description:
         "Zobacz nasze dmuchance dla dzieci w akcji! Zdjęcia z imprez.",
-      ogImage: "/images/og-slodkolandia-foto-dmuchance.png",
+      ogImage: "/img/d/1.avif",
     },
     en: {
-      title: "Photos: Inflatables - Castles, Slides | Słodkolandia",
+      title: "Photos: Inflatables - Castles, Slides | Słodkolandia wita:",
       description:
         "See our inflatables for kids in action! Photos from events.",
-      ogImage: "/images/og-slodkolandia-foto-dmuchance.png",
+      ogImage: "/img/d/3.avif",
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: {
     pl: {
-      title: "Zdjęcia: Wata Cukrowa na Imprezach | Słodkolandia",
+      title: "Zdjęcia: Wata Cukrowa na Imprezach | Słodkolandia wita:",
       description: "Galeria zdjęć z watą cukrową serwowaną na eventach.",
-      ogImage: "/images/og-slodkolandia-foto-wata.png",
+      ogImage: "/img/w/11-.avif",
     },
     en: {
-      title: "Photos: Cotton Candy at Events | Słodkolandia",
+      title: "Photos: Cotton Candy at Events | Słodkolandia wita:",
       description: "Photo gallery of cotton candy served at events.",
-      ogImage: "/images/og-slodkolandia-foto-wata.png",
+      ogImage: "/img/w/22-.avif",
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: {
     pl: {
-      title: "Zdjęcia: Popcorn na Imprezach | Słodkolandia",
+      title: "Zdjęcia: Popcorn na Imprezach | Słodkolandia wita:",
       description:
         "Zobacz, jak wygląda nasz świeży popcorn na eventach. Galeria zdjęć.",
-      ogImage: "/images/og-slodkolandia-foto-popcorn.png",
+      ogImage: "/img/p/22-.avif",
     },
     en: {
-      title: "Photos: Popcorn at Events | Słodkolandia",
+      title: "Photos: Popcorn at Events | Słodkolandia wita:",
       description: "See our fresh popcorn at events. Photo gallery.",
-      ogImage: "/images/og-slodkolandia-foto-popcorn.png",
+      ogImage: "/img/p/55-.avif",
     },
   },
   [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: {
     pl: {
-      title: "Zdjęcia: Fontanny Czekoladowe | Słodkolandia",
-      description: "Galeria zdjęć naszych efektownych fontann czekoladowych.",
-      ogImage: "/images/og-slodkolandia-foto-fontanny.png",
+      title: "Zdjęcia: Fontanny Czekoladowej | Słodkolandia wita:",
+      description: "Galeria zdjęć naszej efektownej fontanny czekoladowej.",
+      ogImage: "/img/f/5.avif",
     },
     en: {
-      title: "Photos: Chocolate Fountains | Słodkolandia",
-      description: "Photo gallery of our impressive chocolate fountains.",
-      ogImage: "/images/og-slodkolandia-foto-fontanny.png",
+      title: "Photos: Chocolate Fountain | Słodkolandia",
+      description: "Photo gallery of our spectacular chocolate fountain.",
+      ogImage: "/img/f/6.avif",
     },
   },
 };
@@ -324,7 +328,7 @@ const localizedPageNamesForBreadcrumbs: Record<
     pl: "Stoły, Krzesła, Obrusy",
     en: "Tables, Chairs, Linens",
   },
-  [PAGE_KEYS.OFFER_INFLATABLES]: { pl: "Dmuchance", en: "Inflatables" },
+  [PAGE_KEYS.OFFER_INFLATABLES]: { pl: "Dmuchańce", en: "Inflatables" },
   [PAGE_KEYS.OFFER_POPCORN]: { pl: "Popcorn", en: "Popcorn" },
   [PAGE_KEYS.OFFER_COTTON_CANDY]: { pl: "Wata Cukrowa", en: "Cotton Candy" },
   [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: {
@@ -340,7 +344,7 @@ const localizedPageNamesForBreadcrumbs: Record<
     en: "Photos: Tables & Chairs",
   },
   [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: {
-    pl: "Zdjęcia: Dmuchance",
+    pl: "Zdjęcia: Dmuchańce",
     en: "Photos: Inflatables",
   },
   [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: {
@@ -352,8 +356,8 @@ const localizedPageNamesForBreadcrumbs: Record<
     en: "Photos: Popcorn",
   },
   [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: {
-    pl: "Zdjęcia: Fontanny Czekoladowe",
-    en: "Photos: Chocolate Fountains",
+    pl: "Zdjęcia: Fontanna Czekoladowa",
+    en: "Photos: Chocolate Fountain",
   },
 };
 
@@ -388,9 +392,9 @@ export default function SEOHead() {
   const defaultSeoForLang = pageSpecificSEOMeta[PAGE_KEYS.HOME]?.[
     actualLangUsed
   ] || {
-    title: "SŁODKOLANDIA",
+    title: "SŁODKOLANDIA wita:",
     description: "Atrakcje eventowe.",
-    ogImage: "/images/og-slodkolandia-default.png",
+    ogImage: "/img/d/8.avif",
   };
   const currentSeoLangSpecific =
     pageSpecificSEOMeta[effectivePageKeyForMeta]?.[actualLangUsed];
@@ -414,7 +418,7 @@ export default function SEOHead() {
     ? `${SLODKOLANDIA_BASE_URL}${
         ogImageRelative.startsWith("/") ? "" : "/"
       }${ogImageRelative}`
-    : `${SLODKOLANDIA_BASE_URL}/images/og-slodkolandia-default.png`;
+    : `${SLODKOLANDIA_BASE_URL}/img/d/9.avif`;
 
   let pathForCanonicalAndAlternate: string;
   if (
@@ -435,20 +439,24 @@ export default function SEOHead() {
   const canonicalUrl = `${SLODKOLANDIA_BASE_URL}${pathForCanonicalAndAlternate}`;
 
   const socialLinksHrefs = [
-    "https://www.facebook.com/SlodkolandiaRadom/",
-    "https://www.instagram.com/slodkolandia.radom/",
+    "https://www.facebook.com/wata.cukrowa.popcorn",
+    "https://www.instagram.com/ewa1989",
+    "https://www.youtube.com/channel/UCau05zZiK3kpTe06XtKXNKA",
+    "https://twitter.com/popcorn_wata",
+    "https://www.pinterest.com/watapopcorn",
+    "https://www.google.pl/maps/place/SŁODKOLANDIA+wita:+🎪+✔/@51.3998663,21.1651462,17z",
   ];
 
-  const companyName = "SŁODKOLANDIA - Wypożyczalnia Atrakcji Imprezowych";
+  const companyName = "SŁODKOLANDIA wita: - Wypożyczalnia Atrakcji Imprezowych";
   const companyDescriptionForSchema =
     "Wynajem namiotów imprezowych, stołów, krzeseł, obrusów, zjeżdżalni i zamków dmuchanych, urządzeń do waty cukrowej i popcornu oraz fontanny czekoladowej.";
-  const streetAddress = "Zalesice ul. Słoneczna 9";
-  const locality = "Gózd";
-  const postalCode = "26-634";
+  const streetAddress = "ul. Żeromskiego 95/97";
+  const locality = "Radom";
+  const postalCode = "26-610";
   const country = "PL";
-  const telephone = "+48698071906";
-  const email = "kontakt@twoja-nowa-domena-slodkolandia.pl";
-  const logoUrl = `${SLODKOLANDIA_BASE_URL}/images/logo-og-slodkolandia.png`;
+  const telephone = "+48531890827";
+  const email = "mariusz1989poczta@wp.pl";
+  const logoUrl = `${SLODKOLANDIA_BASE_URL}/img/logo.avif`;
   const priceRange = "$$";
 
   const localBusinessSchema = {
@@ -615,7 +623,7 @@ export default function SEOHead() {
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:image" content={fullOgImageUrl} />
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="SŁODKOLANDIA" />
+      <meta property="og:site_name" content="SŁODKOLANDIA wita:" />
       <script type="application/ld+json">
         {JSON.stringify(localBusinessSchema)}
       </script>
