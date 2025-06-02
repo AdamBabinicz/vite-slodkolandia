@@ -157,7 +157,7 @@ export default function Navbar() {
             >
               <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
                 <img
-                  src="/favicon.png"
+                  src="/img/logo.avif"
                   alt="Logo Słodkolandia wita:"
                   className="w-10 h-10"
                 />

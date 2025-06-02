@@ -31,7 +31,7 @@ export default function CallToAction({
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="tel:+48531890827"
-              className="h-11 bg-white text-sky-600 px-8 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg inline-flex items-center justify-center gap-2"
+              className="h-11 bg-white text-sky-800 px-8 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg inline-flex items-center justify-center gap-2"
             >
               <Phone className="h-4 w-4" />
               <span>{t("cta.callNow")}</span>
@@ -40,7 +40,7 @@ export default function CallToAction({
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 bg-sky-600 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
+                className="border-2 bg-sky-800 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
               >
                 <Calendar className="h-5 w-5 mr-2" />
                 {t("cta.askForDate")}
@@ -71,7 +71,7 @@ export default function CallToAction({
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+48531890827"
-              className="h-11 bg-white text-sky-600 px-8 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg inline-flex items-center justify-center gap-2"
+              className="h-11 bg-white text-sky-800 px-8 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg inline-flex items-center justify-center gap-2"
             >
               <Phone className="h-5 w-5" />
               <span>+48 531 890 827</span>
@@ -80,7 +80,7 @@ export default function CallToAction({
               <Button
                 variant="outline"
                 size="lg"
-                className="border-2 bg-sky-600 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
+                className="border-2 bg-sky-800 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
               >
                 <Calendar className="h-5 w-5 mr-2" />
                 {t("cta.contactForm")}

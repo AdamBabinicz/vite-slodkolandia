@@ -51,8 +51,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">S</span>
+              <div className="w-8 h-8 bg-transparent rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold">
+                  <img
+                    src="/img/logo.avif"
+                    alt="Logo Słodkolandia wita:"
+                    className="w-6 h-6"
+                  />
+                </span>
               </div>
               <span className="brand-title text-xl font-bold">
                 <span className="brand-main">
