@@ -1,0 +1,48 @@
+Options -Indexes -MultiViews
+RewriteEngine On
+
+# Przekierowanie na HTTPS
+RewriteCond %{HTTPS} !=on
+RewriteCond %{ENV:HTTPS} !=on
+RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Przekierowanie z non-www na www (lub odwrotnie, dostosuj do swoich preferencji)
+# PONIŻEJ PRZYKŁAD PRZEKIEROWANIA NA WERSJĘ WWW - ZMIEŃ twoja-domena.pl
+RewriteCond %{HTTP_HOST} !^www\.twoja-domena\.pl$ [NC]
+RewriteRule ^(.*)$ https://www.twoja-domena.pl/$1 [L,R=301]
+
+# Reguły dla aplikacji jednostronicowej (SPA)
+RewriteCond %{REQUEST_FILENAME} -s [OR]
+RewriteCond %{REQUEST_FILENAME} -l [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^.*$ - [NC,L]
+RewriteRule ^(.*) /index.html [NC,L]
+
+AddType image/avif .avif
+AddType image/webp .webp
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE application/javascript application/rss+xml application/vnd.ms-fontobject application/x-font application/x-font-opentype application/x-font-otf application/x-font-truetype application/x-font-ttf application/x-javascript application/xhtml+xml application/xml font/opentype font/otf font/ttf image/svg+xml image/x-icon text/css text/html text/javascript text/plain text/xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  Headeralways set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+  <FilesMatch "\.(avif|css|eot|gif|ico|jpeg|jpg|js|json|png|svg|ttf|txt|webmanifest|webp|woff|woff2|xml)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|php|cgi|pl|fcgi)$">
+    Header set Cache-Control "private, no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
+
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|conf|config|cnf|sql|bak|backup|swp|~$)$">
+  Require all denied
+</FilesMatch>
