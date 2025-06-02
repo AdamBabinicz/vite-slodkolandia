@@ -275,7 +275,7 @@ export default function Navbar() {
 
               <ThemeToggle />
               <a
-                href="https://m.me/slodkolandiawita"
+                href="https://m.me/wata.cukrowa.popcorn"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
@@ -494,7 +494,7 @@ export default function Navbar() {
                     <span>{t("nav.review")}</span>
                   </Button>
                   <a
-                    href="https://m.me/slodkolandiawita"
+                    href="https://m.me/wata.cukrowa.popcorn"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
