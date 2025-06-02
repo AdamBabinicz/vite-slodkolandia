@@ -2,10 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Calculator, Phone, Info } from "lucide-react";
 import { motion } from "framer-motion";
-import SEOHead from "@/components/SEOHead";
 import CallToAction from "@/components/CallToAction";
 import { attractions, Attraction } from "@/data/attractions";
 import { useLanguage } from "@/hooks/useLanguage";
@@ -37,52 +35,6 @@ export default function Cennik() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const { t, language } = useLanguage();
 
-  const packageDeals = [
-    {
-      nameKey: "pricingPage.packageChildName",
-      descriptionKey: "pricingPage.packageChildDesc",
-      itemsKeys: [
-        "pricingPage.packageChildItem1",
-        "pricingPage.packageChildItem2",
-        "pricingPage.packageChildItem3",
-      ],
-      originalPrice: 580,
-      packagePrice: 450,
-      savings: 130,
-      popular: false,
-    },
-    {
-      nameKey: "pricingPage.packageFamilyName",
-      descriptionKey: "pricingPage.packageFamilyDesc",
-      itemsKeys: [
-        "pricingPage.packageFamilyItem1",
-        "pricingPage.packageFamilyItem2",
-        "pricingPage.packageFamilyItem3",
-        "pricingPage.packageFamilyItem4",
-      ],
-      originalPrice: 950,
-      packagePrice: 750,
-      savings: 200,
-      popular: true,
-    },
-    {
-      nameKey: "pricingPage.packageEventName",
-      descriptionKey: "pricingPage.packageEventDesc",
-      itemsKeys: [
-        "pricingPage.packageEventItem1",
-        "pricingPage.packageEventItem2",
-        "pricingPage.packageEventItem3",
-        "pricingPage.packageEventItem4",
-        "pricingPage.packageEventItem5",
-        "pricingPage.packageEventItem6",
-      ],
-      originalPrice: 1400,
-      packagePrice: 1100,
-      savings: 300,
-      popular: false,
-    },
-  ];
-
   const additionalServices = [
     {
       nameKey: "pricingPage.additionalServiceSnacksInfo",
@@ -99,11 +51,13 @@ export default function Cennik() {
       price: "",
       unitKey: "",
     },
-    {
-      nameKey: "",
-      price: "",
-      unitKey: "",
-    },
+    // Usunięto element, który mógł powodować problem, jeśli nameKey byłby pusty.
+    // Jeśli potrzebujesz tu czwartego elementu, upewnij się, że ma poprawny nameKey.
+    // {
+    //   nameKey: "jakiś.klucz.dla.czwartej.uslugi", // Upewnij się, że to nie jest ""
+    //   price: "100",
+    //   unitKey: "currencyUnit.zł",
+    // },
   ];
 
   const categories: CategoryFilterCennik[] = [
@@ -145,6 +99,7 @@ export default function Cennik() {
   ];
 
   const getTranslatedCategoryName = (attractionCategory: string) => {
+    if (!attractionCategory) return "";
     const categoryKey = `category.${attractionCategory
       .toLowerCase()
       .replace(/\s+/g, "")}`;
@@ -158,11 +113,6 @@ export default function Cennik() {
 
   return (
     <>
-      <SEOHead
-        title={t("seo.pricingTitle")}
-        description={t("seo.pricingDescription")}
-        canonical={getLocalizedPath(PAGE_KEYS.PRICING, language)}
-      />
       <div className="pt-16">
         <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -207,8 +157,6 @@ export default function Cennik() {
           </div>
         </section>
 
-        {/* <section className="py-12 md:py-16 bg-background dark:bg-background"></section> */}
-
         <section className="py-12 md:py-16 bg-muted dark:bg-muted">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -234,7 +182,7 @@ export default function Cennik() {
                     onClick={() => setSelectedCategory(category.id)}
                     size="sm"
                   >
-                    {t(category.nameKey)}
+                    {category.nameKey ? t(category.nameKey) : ""}
                   </Button>
                 ))}
               </div>
@@ -247,16 +195,27 @@ export default function Cennik() {
                 const translatedName = t(attractionNameKey, {
                   defaultValue: attraction.name,
                 });
-                const periodKey = `pricing.perPeriod.${mainPricingOption.period
-                  .toLowerCase()
-                  .replace(/\s+/g, "-")}`;
-                const translatedPeriod = t(periodKey, {
-                  defaultValue: mainPricingOption.period,
-                });
-                const currencyUnitText = t(
-                  `currencyUnit.${mainPricingOption.currency.toLowerCase()}`,
-                  { defaultValue: mainPricingOption.currency }
-                );
+
+                const periodKey = mainPricingOption.period
+                  ? `pricing.perPeriod.${mainPricingOption.period
+                      .toLowerCase()
+                      .replace(/\s+/g, "-")}`
+                  : "";
+                const translatedPeriod = periodKey
+                  ? t(periodKey, {
+                      defaultValue: mainPricingOption.period,
+                    })
+                  : mainPricingOption.period;
+
+                const currencyUnitKey = mainPricingOption.currency
+                  ? `currencyUnit.${mainPricingOption.currency.toLowerCase()}`
+                  : "";
+                const currencyUnitText = currencyUnitKey
+                  ? t(currencyUnitKey, {
+                      defaultValue: mainPricingOption.currency,
+                    })
+                  : mainPricingOption.currency;
+
                 const shortDescriptionKey = `attractionsData.${attraction.id}.shortDescription`;
                 const translatedShortDescription = t(shortDescriptionKey, {
                   defaultValue: attraction.shortDescription,
@@ -306,18 +265,21 @@ export default function Cennik() {
                             {isItemized &&
                             attraction.id === "stoly-krzesla-obrusy"
                               ? t("pricingPage.itemizedPricingLabel")
-                              : language === "en"
+                              : language === "en" && mainPricingOption.base
                               ? `${pricingFromText}${currencyUnitText}${mainPricingOption.base}`
-                              : `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`}
+                              : mainPricingOption.base
+                              ? `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`
+                              : t("pricingPage.askForDate")}
                           </div>
                           {!(
                             isItemized &&
                             attraction.id === "stoly-krzesla-obrusy"
-                          ) && (
-                            <div className="text-xs text-muted-foreground">
-                              / {translatedPeriod}
-                            </div>
-                          )}
+                          ) &&
+                            mainPricingOption.base && (
+                              <div className="text-xs text-muted-foreground">
+                                / {translatedPeriod}
+                              </div>
+                            )}
                         </div>
                         <Button
                           asChild
@@ -362,22 +324,24 @@ export default function Cennik() {
                   {t("pricingPage.additionalServicesTitle")}
                 </h2>
                 <div className="space-y-3">
-                  {additionalServices.map((service, index) => (
-                    <div
-                      key={index}
-                      className="flex justify-between items-center py-3 border-b border-border last:border-b-0"
-                    >
-                      <span className="text-muted-foreground dark:text-card-foreground text-sm md:text-base">
-                        {t(service.nameKey)}
-                      </span>
-                      {service.price && (
-                        <span className="font-semibold text-primary text-sm md:text-base">
-                          {service.price}{" "}
-                          {service.unitKey ? t(service.unitKey) : ""}
+                  {additionalServices.map((service, index) =>
+                    service.nameKey ? (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center py-3 border-b border-border last:border-b-0"
+                      >
+                        <span className="text-muted-foreground dark:text-card-foreground text-sm md:text-base">
+                          {t(service.nameKey)}
                         </span>
-                      )}
-                    </div>
-                  ))}
+                        {service.price && (
+                          <span className="font-semibold text-primary text-sm md:text-base">
+                            {service.price}{" "}
+                            {service.unitKey ? t(service.unitKey) : ""}
+                          </span>
+                        )}
+                      </div>
+                    ) : null
+                  )}
                 </div>
               </motion.div>
               <motion.div
@@ -408,24 +372,26 @@ export default function Cennik() {
                           titleKey: "pricingPage.discountLoyal",
                           descKey: "pricingPage.discountLoyalDesc",
                         },
-                      ].map((discount) => (
-                        <div
-                          key={discount.titleKey}
-                          className="flex items-start"
-                        >
-                          <div className="text-xl mr-3 md:mr-4 mt-0.5">
-                            {discount.icon}
+                      ].map((discount) =>
+                        discount.titleKey ? (
+                          <div
+                            key={discount.titleKey}
+                            className="flex items-start"
+                          >
+                            <div className="text-xl mr-3 md:mr-4 mt-0.5">
+                              {discount.icon}
+                            </div>
+                            <div>
+                              <h4 className="font-semibold mb-1">
+                                {t(discount.titleKey)}
+                              </h4>
+                              <p className="text-sm opacity-90">
+                                {t(discount.descKey)}
+                              </p>
+                            </div>
                           </div>
-                          <div>
-                            <h4 className="font-semibold mb-1">
-                              {t(discount.titleKey)}
-                            </h4>
-                            <p className="text-sm opacity-90">
-                              {t(discount.descKey)}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+                        ) : null
+                      )}
                     </div>
                     <div className="mt-8">
                       <Button
