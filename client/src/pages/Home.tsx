@@ -115,7 +115,7 @@ export default function Home() {
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <ChevronDown className="h-8 w-8 text-white opacity-70" />
+          {/* <ChevronDown className="h-8 w-8 text-white opacity-70" /> */}
         </motion.div>
       </section>
 
