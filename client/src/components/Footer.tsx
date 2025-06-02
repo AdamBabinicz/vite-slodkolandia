@@ -278,7 +278,7 @@ export default function Footer() {
                 <span className="text-slate-300">
                   {t("footer.address")}
                   <br />
-                  <span className="text-xs text-slate-400">
+                  <span className="text-xs text-slate-300">
                     {t("footer.addressDetail")}
                   </span>
                 </span>
@@ -288,21 +288,21 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-slate-600 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-slate-400 text-sm mb-4 md:mb-0">
+          <p className="text-slate-300 text-sm mb-4 md:mb-0">
             {t("footer.copyright", { year: currentYear.toString() })}
           </p>
           <div className="flex space-x-6 text-sm">
             <Link
               href="/polityka-prywatnosci"
               onClick={() => handleFooterLinkClick("/polityka-prywatnosci")}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-300 hover:text-white transition-colors"
             >
               {t("footer.privacyPolicy")}
             </Link>
             <Link
               href="/regulamin"
               onClick={() => handleFooterLinkClick("/regulamin")}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-300 hover:text-white transition-colors"
             >
               {t("footer.terms")}
             </Link>
