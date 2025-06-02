@@ -259,7 +259,15 @@ export default function Navbar() {
 
               <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t(
+                      "nav.changeLanguage",
+                      undefined,
+                      "Zmień język"
+                    )}
+                  >
                     <Globe className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
