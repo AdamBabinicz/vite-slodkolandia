@@ -1,34 +1,24 @@
-import { useState, useEffect } from "react"; // Usunięto useEffect, jeśli niepotrzebny
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Images, Filter } from "lucide-react";
 import { motion } from "framer-motion";
-import SEOHead from "@/components/SEOHead";
+// import SEOHead from "@/components/SEOHead";
 import AttractionGallery from "@/components/AttractionGallery";
 import CallToAction from "@/components/CallToAction";
 import { stockPhotos } from "@/data/stockPhotos";
-import { useLanguage } from "@/hooks/useLanguage"; // Używamy Twojego hooka językowego
-// Usunięto useLocation i navigate, jeśli nie zmieniamy URL
-import {
-  getLocalizedPath,
-  PAGE_KEYS,
-  // getLocalizedSlug, // Niepotrzebne, jeśli ID sekcji są statyczne
-  // getInternalRoutePath, // Niepotrzebne wewnątrz tego komponentu, jeśli nie generuje linków
-} from "@/config/paths";
-import { attractions } from "@/data/attractions"; // Dla tablesChairsImages
+import { useLanguage } from "@/hooks/useLanguage";
+import { getLocalizedPath, PAGE_KEYS } from "@/config/paths";
+import { attractions } from "@/data/attractions";
 
-// Definicja kategorii, jak w Twoim Foto.txt, ale z nameKey dla i18n
 interface SimpleGalleryCategory {
-  id: string; // Proste, statyczne ID, np. "namioty", "all", "realizacje"
-  nameKey: string; // Klucz do tłumaczenia nazwy
+  id: string;
+  nameKey: string;
   images: string[];
-  descriptionKey?: string; // Opcjonalny klucz do tłumaczenia opisu
-  // Dodajemy htmlId, jeśli chcemy mieć możliwość linkowania do sekcji, nawet jeśli nie używamy tego aktywnie
-  htmlId?: string; // Np. "foto-namioty" - może być statyczne lub generowane, jeśli potrzebne
+  descriptionKey?: string;
+  htmlId?: string;
 }
 
-// Definicja kategorii, staraj się używać prostych, stałych ID
-// pageKeyForSlug nie jest tu potrzebne, jeśli ID HTML są statyczne lub nie używane do nawigacji URL
 const sourceGalleryCategories: SimpleGalleryCategory[] = [
   {
     id: "all",
@@ -42,8 +32,8 @@ const sourceGalleryCategories: SimpleGalleryCategory[] = [
       ...(stockPhotos.popcornMachine || []),
       ...(stockPhotos.chocolateFountain || []),
       ...(stockPhotos.eventSetup || []),
-    ].filter(Boolean) as string[], // Upewnij się, że to tablica stringów
-    htmlId: "gallery-all-content", // Opcjonalne ID dla całej sekcji "wszystkie"
+    ].filter(Boolean) as string[],
+    htmlId: "gallery-all-content",
   },
   {
     id: "namioty",
@@ -165,11 +155,11 @@ export default function Galeria() {
 
   return (
     <>
-      <SEOHead
+      {/* <SEOHead
         title={t("galleryPage.seoTitle")}
         description={t("galleryPage.seoDescription")}
-        canonical={getLocalizedPath(PAGE_KEYS.GALLERY, language)} // pageKey, language
-      />
+        canonical={getLocalizedPath(PAGE_KEYS.GALLERY, language)} //
+      /> */}
 
       <div className="pt-16">
         <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
