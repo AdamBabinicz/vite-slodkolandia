@@ -87,7 +87,7 @@ export default function Home() {
               <Link href="/oferta">
                 <Button
                   size="lg"
-                  className="bg-white text-sky-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg"
+                  className="bg-white text-sky-800 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg"
                 >
                   <Star className="h-5 w-5 mr-2" />
                   {t("hero.seeOffer")}
