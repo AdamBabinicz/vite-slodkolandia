@@ -87,8 +87,12 @@ export default function Navbar() {
   }, [scrollbarWidth]);
 
   const switchLanguage = (newLang: Language) => {
-    if (newLang === language) return;
+    if (newLang === language) {
+      if (isMobileMenuOpen) setIsMobileMenuOpen(false); // Zamknij nawet jeśli język ten sam
+      return;
+    }
     setContextLanguage(newLang, { preventNavigation: false });
+    if (isMobileMenuOpen) setIsMobileMenuOpen(false);
   };
 
   const isActive = (pageKeyToCheck: PageKey) => {
@@ -106,7 +110,7 @@ export default function Navbar() {
   };
 
   const handleLinkClick = (closeMobileMenu = true, targetPath?: string) => {
-    if (closeMobileMenu) {
+    if (closeMobileMenu && isMobileMenuOpen) {
       setIsMobileMenuOpen(false);
     }
     const homePathForCurrentLang = getLocalizedPath(PAGE_KEYS.HOME, language);
@@ -121,7 +125,7 @@ export default function Navbar() {
 
   const navLinkHref = (pageKey: PageKey): string => {
     if (pageKey === PAGE_KEYS.HOME) {
-      return language === defaultLang ? "/" : "";
+      return language === defaultLang ? "/" : `/${language}`;
     }
     return getInternalRoutePath(pageKey, language);
   };
@@ -192,7 +196,7 @@ export default function Navbar() {
                     !isActive(PAGE_KEYS.ABOUT) &&
                       "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                   )}
-                  onClick={() => handleLinkClick()}
+                  onClick={() => handleLinkClick(true)}
                 >
                   {t("nav.about")}
                 </Button>
@@ -205,7 +209,7 @@ export default function Navbar() {
                     !isActive(PAGE_KEYS.OFFER) &&
                       "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                   )}
-                  onClick={() => handleLinkClick()}
+                  onClick={() => handleLinkClick(true)}
                 >
                   {t("nav.offer")}
                 </Button>
@@ -218,7 +222,7 @@ export default function Navbar() {
                     !isActive(PAGE_KEYS.GALLERY) &&
                       "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                   )}
-                  onClick={() => handleLinkClick()}
+                  onClick={() => handleLinkClick(true)}
                 >
                   {t("nav.photo")}
                 </Button>
@@ -231,7 +235,7 @@ export default function Navbar() {
                     !isActive(PAGE_KEYS.PRICING) &&
                       "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                   )}
-                  onClick={() => handleLinkClick()}
+                  onClick={() => handleLinkClick(true)}
                 >
                   {t("nav.pricing")}
                 </Button>
@@ -244,7 +248,7 @@ export default function Navbar() {
                     !isActive(PAGE_KEYS.CONTACT) &&
                       "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
                   )}
-                  onClick={() => handleLinkClick()}
+                  onClick={() => handleLinkClick(true)}
                 >
                   {t("nav.contact")}
                 </Button>
@@ -399,7 +403,7 @@ export default function Navbar() {
                       !isActive(PAGE_KEYS.ABOUT) &&
                         "text-slate-700 dark:text-slate-200"
                     )}
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     {t("nav.about")}
                   </Button>
@@ -413,7 +417,7 @@ export default function Navbar() {
                       !isActive(PAGE_KEYS.OFFER) &&
                         "text-slate-700 dark:text-slate-200"
                     )}
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     {t("nav.offer")}
                   </Button>
@@ -427,7 +431,7 @@ export default function Navbar() {
                       !isActive(PAGE_KEYS.GALLERY) &&
                         "text-slate-700 dark:text-slate-200"
                     )}
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     {t("nav.photo")}
                   </Button>
@@ -441,7 +445,7 @@ export default function Navbar() {
                       !isActive(PAGE_KEYS.PRICING) &&
                         "text-slate-700 dark:text-slate-200"
                     )}
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     {t("nav.pricing")}
                   </Button>
@@ -454,7 +458,7 @@ export default function Navbar() {
                       !isActive(PAGE_KEYS.CONTACT) &&
                         "text-slate-700 dark:text-slate-200"
                     )}
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     {t("nav.contact")}
                   </Button>
@@ -486,7 +490,7 @@ export default function Navbar() {
                   <Button
                     onClick={() => {
                       setIsReviewModalOpen(true);
-                      handleLinkClick();
+                      handleLinkClick(true);
                     }}
                     className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold flex items-center justify-center space-x-2"
                   >
@@ -498,7 +502,7 @@ export default function Navbar() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>Messenger</span>
@@ -506,7 +510,7 @@ export default function Navbar() {
                   <a
                     href="tel:+48531890827"
                     className="btn-gradient text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
-                    onClick={() => handleLinkClick()}
+                    onClick={() => handleLinkClick(true)}
                   >
                     <Phone className="h-4 w-4" />
                     <span>Zadzwoń: 531 890 827</span>
