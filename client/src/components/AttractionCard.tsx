@@ -36,20 +36,17 @@ export default function AttractionCard({
   const attractionNameKey = `attractionsData.${attraction.id}.name`;
   const attractionShortDescriptionKey = `attractionsData.${attraction.id}.shortDescription`;
 
-  const translatedName =
-    t(attractionNameKey) !== attractionNameKey
-      ? t(attractionNameKey)
-      : attraction.name;
-  const translatedShortDescription =
-    t(attractionShortDescriptionKey) !== attractionShortDescriptionKey
-      ? t(attractionShortDescriptionKey)
-      : attraction.shortDescription;
+  const translatedName = t(attractionNameKey, undefined, attraction.name);
+  const translatedShortDescription = t(
+    attractionShortDescriptionKey,
+    undefined,
+    attraction.shortDescription
+  );
 
   const categoryKey = `category.${attraction.category
     .toLowerCase()
     .replace(/\s+/g, "")}`;
-  const translatedCategory =
-    t(categoryKey) !== categoryKey ? t(categoryKey) : attraction.category;
+  const translatedCategory = t(categoryKey, undefined, attraction.category);
 
   const mainPricingOption = attraction.pricingOptions[0];
 
@@ -59,12 +56,14 @@ export default function AttractionCard({
   }
 
   const periodKey = `pricing.perPeriod.${mainPricingOption.period.toLowerCase()}`;
-  const translatedPeriod =
-    t(periodKey) !== periodKey ? t(periodKey) : mainPricingOption.period;
+  const translatedPeriod = t(periodKey, undefined, mainPricingOption.period);
 
-  const pricingFromText = t("attractionCard.priceFrom");
-  const currencyUnitText = t(
-    `currencyUnit.${mainPricingOption.currency.toLowerCase()}`
+  const pricingFromTextRaw = t("attractionCard.priceFrom");
+  const currencyKeyForLookup = `currencyUnit.${mainPricingOption.currency.toLowerCase()}`;
+  const currencyUnitTextRaw = t(
+    currencyKeyForLookup,
+    undefined,
+    mainPricingOption.currency
   );
 
   const isItemized = attraction.pricingDisplayMode === "itemList";
@@ -78,10 +77,38 @@ export default function AttractionCard({
         defaultValue: "Zapytaj o cenę",
       });
     } else {
+      const priceBaseStr = String(mainPricingOption.base);
+
       if (language === "en") {
-        formattedPriceText = `${pricingFromText}${currencyUnitText} ${mainPricingOption.base}`;
+        // Bardzo jawne składanie stringa ze spacjami
+        const part1 = pricingFromTextRaw.trim(); // Usuń ewentualne spacje z tłumaczenia
+        const part2 = currencyUnitTextRaw.trim(); // Usuń ewentualne spacje z tłumaczenia
+
+        formattedPriceText = part1 + " " + part2 + " " + priceBaseStr;
+
+        console.log("[AttractionCard EN DEBUG FINAL]", {
+          rawFrom: `"${pricingFromTextRaw}"`,
+          rawCurrency: `"${currencyUnitTextRaw}"`,
+          trimmedFrom: `"${part1}"`,
+          trimmedCurrency: `"${part2}"`,
+          base: priceBaseStr,
+          finalEN: `"${formattedPriceText}"`,
+        });
       } else {
-        formattedPriceText = `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`;
+        // dla 'pl'
+        const part1 = pricingFromTextRaw.trim();
+        const part2 = currencyUnitTextRaw.trim();
+
+        formattedPriceText = part1 + " " + priceBaseStr + " " + part2;
+
+        console.log("[AttractionCard PL DEBUG FINAL]", {
+          rawFrom: `"${pricingFromTextRaw}"`,
+          rawCurrency: `"${currencyUnitTextRaw}"`,
+          trimmedFrom: `"${part1}"`,
+          trimmedCurrency: `"${part2}"`,
+          base: priceBaseStr,
+          finalPL: `"${formattedPriceText}"`,
+        });
       }
     }
   }
@@ -132,6 +159,7 @@ export default function AttractionCard({
                     ) &&
                       mainPricingOption.base && (
                         <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                          {" "}
                           / {translatedPeriod}
                         </span>
                       )}

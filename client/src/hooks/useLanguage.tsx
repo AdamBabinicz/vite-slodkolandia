@@ -23,6 +23,7 @@ interface LanguageContextType {
 
 const translations: Record<Language, Record<string, string>> = {
   pl: {
+    "currencyUnit.pln": "zł",
     "common.close": "Zamknij",
     "nav.home": "Start",
     "nav.about": "O Nas",
@@ -705,6 +706,7 @@ const translations: Record<Language, Record<string, string>> = {
     "reviewModal.googleButton": "Dodaj opinię w Google",
   },
   en: {
+    "currencyUnit.pln": "PLN",
     "common.close": "Close",
     "nav.home": "Home",
     "nav.about": "About Us",

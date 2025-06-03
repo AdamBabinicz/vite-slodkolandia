@@ -9,7 +9,6 @@ import { attractions, Attraction } from "@/data/attractions";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Link as WouterLink } from "wouter";
 import {
-  getLocalizedPath,
   PageKey,
   PAGE_KEYS,
   getInternalRoutePath,
@@ -51,13 +50,6 @@ export default function Cennik() {
       price: "",
       unitKey: "",
     },
-    // Usunięto element, który mógł powodować problem, jeśli nameKey byłby pusty.
-    // Jeśli potrzebujesz tu czwartego elementu, upewnij się, że ma poprawny nameKey.
-    // {
-    //   nameKey: "jakiś.klucz.dla.czwartej.uslugi", // Upewnij się, że to nie jest ""
-    //   price: "100",
-    //   unitKey: "currencyUnit.zł",
-    // },
   ];
 
   const categories: CategoryFilterCennik[] = [
@@ -266,7 +258,7 @@ export default function Cennik() {
                             attraction.id === "stoly-krzesla-obrusy"
                               ? t("pricingPage.itemizedPricingLabel")
                               : language === "en" && mainPricingOption.base
-                              ? `${pricingFromText}${currencyUnitText}${mainPricingOption.base}`
+                              ? `${pricingFromText}${currencyUnitText} ${mainPricingOption.base}`
                               : mainPricingOption.base
                               ? `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`
                               : t("pricingPage.askForDate")}
@@ -277,6 +269,7 @@ export default function Cennik() {
                           ) &&
                             mainPricingOption.base && (
                               <div className="text-xs text-muted-foreground">
+                                {" "}
                                 / {translatedPeriod}
                               </div>
                             )}

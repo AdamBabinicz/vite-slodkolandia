@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import { X, Phone, MessageCircle, Users, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-// Usunięto import ScrollArea, jeśli nie jest używany lub powoduje problemy
-// import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Attraction } from "@/data/attractions";
 import AttractionGallery from "./AttractionGallery";
@@ -102,11 +100,9 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
               stiffness: 250,
               duration: 0.2,
             }}
-            // Główny kontener modala: flex, flex-col, max-height i WAŻNE: overflow-hidden
             className="bg-card text-card-foreground rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Nagłówek Modala (nieprzewijalny) */}
             <div className="flex-shrink-0 flex items-center justify-between p-5 md:p-6 border-b dark:border-slate-700">
               <div className="flex items-center space-x-3">
                 <span className="text-3xl md:text-4xl">
@@ -134,11 +130,8 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            {/* Kontener na treść, która ma być przewijalna */}
-            {/* KLUCZOWE KLASY: flex-1 (aby wypełnił przestrzeń) i overflow-y-auto (aby pojawił się pasek przewijania) */}
             <div className="flex-1 overflow-y-auto">
               <div className="p-5 md:p-6 space-y-6 md:space-y-8">
-                {/* Cała treść modala idzie tutaj */}
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
                     {t("offerPage.sectionDescriptionTitle", {
@@ -150,7 +143,6 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                   </p>
                 </div>
 
-                {/* Sekcja Cennika */}
                 <div>
                   <h3 className="text-lg font-semibold mb-2">
                     {attraction.pricingDisplayMode === "itemList"
@@ -201,7 +193,7 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                                       defaultValue: item.period,
                                     })
                                   : language === "en"
-                                  ? `${pricingFromTextForItem}${itemCurrencyUnitText}${item.price}`
+                                  ? `${pricingFromTextForItem}${itemCurrencyUnitText} ${item.price}` // POPRAWKA TUTAJ
                                   : `${pricingFromTextForItem}${item.price} ${itemCurrencyUnitText}`}
                                 {item.price !== 0 &&
                                   item.period &&
@@ -250,9 +242,10 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                             )}
                             <div className="text-xl md:text-2xl font-bold text-primary">
                               {language === "en"
-                                ? `${pricingFromTextGlobal}${currencyUnitText}${option.base}`
+                                ? `${pricingFromTextGlobal}${currencyUnitText} ${option.base}` // POPRAWKA TUTAJ
                                 : `${pricingFromTextGlobal}${option.base} ${currencyUnitText}`}
                               <span className="text-base md:text-lg text-muted-foreground ml-1.5">
+                                {" "}
                                 / {translatedPeriod}
                               </span>
                             </div>
@@ -275,7 +268,6 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                   )}
                 </div>
 
-                {/* Sekcja Cechy */}
                 {attraction.features && attraction.features.length > 0 && (
                   <div>
                     <h3 className="text-lg font-semibold mb-3">
@@ -297,7 +289,6 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                   </div>
                 )}
 
-                {/* Sekcja Specyfikacji */}
                 {attraction.specifications &&
                   attraction.specifications.filter(
                     (spec) => spec.value && spec.value.trim() !== ""
@@ -331,7 +322,6 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                     </div>
                   )}
 
-                {/* Sekcja Galerii w Modalu */}
                 {attraction.images && attraction.images.length > 0 && (
                   <>
                     <Separator className="dark:bg-slate-700" />
@@ -350,7 +340,6 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                   </>
                 )}
 
-                {/* Sekcja CTA */}
                 <div className="bg-gradient-to-r from-primary/10 to-accent/10 dark:from-primary/20 dark:to-accent/20 rounded-lg p-6 text-center border border-primary/20 dark:border-primary/30">
                   <h3 className="text-xl font-bold mb-2">
                     {t("modal.ctaTitle", {
@@ -386,10 +375,8 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                     </Button>
                   </div>
                 </div>
-              </div>{" "}
-              {/* Koniec kontenera z paddingiem p-5/p-6 */}
-            </div>{" "}
-            {/* Koniec kontenera flex-1 overflow-y-auto */}
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       )}

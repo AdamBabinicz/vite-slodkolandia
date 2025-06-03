@@ -1,0 +1,3346 @@
+import express, { type Express } from "express";
+import fs from "fs";
+import path from "path";
+import { createServer as createViteServer, createLogger } from "vite";
+import { type Server } from "http";
+import viteConfig from "../vite.config";
+import { nanoid } from "nanoid";
+
+const viteLogger = createLogger();
+
+export function log(message: string, source = "express") {
+  const formattedTime = new Date().toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+
+  console.log(`${formattedTime} [${source}] ${message}`);
+}
+
+export async function setupVite(app: Express, server: Server) {
+  const serverOptions = {
+    middlewareMode: true,
+    hmr: { server },
+    allowedHosts: true,
+  };
+
+  const vite = await createViteServer({
+    ...viteConfig,
+    configFile: false,
+    customLogger: {
+      ...viteLogger,
+      error: (msg, options) => {
+        viteLogger.error(msg, options);
+        process.exit(1);
+      },
+    },
+    server: serverOptions,
+    appType: "custom",
+  });
+
+  app.use(vite.middlewares);
+  app.use("*", async (req, res, next) => {
+    const url = req.originalUrl;
+
+    try {
+      const clientTemplate = path.resolve(
+        import.meta.dirname,
+        "..",
+        "client",
+        "index.html",
+      );
+
+      // always reload the index.html file from disk incase it changes
+      let template = await fs.promises.readFile(clientTemplate, "utf-8");
+      template = template.replace(
+        `src="/src/main.tsx"`,
+        `src="/src/main.tsx?v=${nanoid()}"`,
+      );
+      const page = await vite.transformIndexHtml(url, template);
+      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+    } catch (e) {
+      vite.ssrFixStacktrace(e as Error);
+      next(e);
+    }
+  });
+}
+
+export function serveStatic(app: Express) {
+  const distPath = path.resolve(import.meta.dirname, "public");
+
+  if (!fs.existsSync(distPath)) {
+    throw new Error(
+      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+    );
+  }
+
+  app.use(express.static(distPath));
+
+  // fall through to index.html if the file doesn't exist
+  app.use("*", (_req, res) => {
+    res.sendFile(path.resolve(distPath, "index.html"));
+  });
+}
+
+
+-------------------------------
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Calculator, Phone, Info } from "lucide-react";
+import { motion } from "framer-motion";
+// import SEOHead from "@/components/SEOHead";
+import CallToAction from "@/components/CallToAction";
+import { attractions, Attraction } from "@/data/attractions";
+import { useLanguage } from "@/hooks/useLanguage";
+import { Link as WouterLink } from "wouter";
+import {
+  getLocalizedPath,
+  PageKey,
+  PAGE_KEYS,
+  getInternalRoutePath,
+  getLocalizedSlug,
+} from "@/config/paths";
+
+interface CategoryFilterCennik {
+  id: string;
+  nameKey: string;
+  filterLogic: (attraction: Attraction) => boolean;
+}
+
+const attractionIdToOfferHashKeyMap: Record<string, PageKey | undefined> = {
+  "namioty-imprezowe": PAGE_KEYS.OFFER_TENTS,
+  "stoly-krzesla-obrusy": PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+  "dmuchane-atrakcje": PAGE_KEYS.OFFER_INFLATABLES,
+  popcorn: PAGE_KEYS.OFFER_POPCORN,
+  "wata-cukrowa": PAGE_KEYS.OFFER_COTTON_CANDY,
+  "fontanna-czekoladowa": PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+};
+
+export default function Cennik() {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const { t, language } = useLanguage();
+
+  const packageDeals = [
+    {
+      nameKey: "pricingPage.packageChildName",
+      descriptionKey: "pricingPage.packageChildDesc",
+      itemsKeys: [
+        "pricingPage.packageChildItem1",
+        "pricingPage.packageChildItem2",
+        "pricingPage.packageChildItem3",
+      ],
+      originalPrice: 580,
+      packagePrice: 450,
+      savings: 130,
+      popular: false,
+    },
+    {
+      nameKey: "pricingPage.packageFamilyName",
+      descriptionKey: "pricingPage.packageFamilyDesc",
+      itemsKeys: [
+        "pricingPage.packageFamilyItem1",
+        "pricingPage.packageFamilyItem2",
+        "pricingPage.packageFamilyItem3",
+        "pricingPage.packageFamilyItem4",
+      ],
+      originalPrice: 950,
+      packagePrice: 750,
+      savings: 200,
+      popular: true,
+    },
+    {
+      nameKey: "pricingPage.packageEventName",
+      descriptionKey: "pricingPage.packageEventDesc",
+      itemsKeys: [
+        "pricingPage.packageEventItem1",
+        "pricingPage.packageEventItem2",
+        "pricingPage.packageEventItem3",
+        "pricingPage.packageEventItem4",
+        "pricingPage.packageEventItem5",
+        "pricingPage.packageEventItem6",
+      ],
+      originalPrice: 1400,
+      packagePrice: 1100,
+      savings: 300,
+      popular: false,
+    },
+  ];
+
+  const additionalServices = [
+    {
+      nameKey: "pricingPage.additionalServiceSnacksInfo",
+      price: "",
+      unitKey: "",
+    },
+    {
+      nameKey: "pricingPage.additionalServiceExtraChocolate",
+      price: "",
+      unitKey: "",
+    },
+    {
+      nameKey: "pricingPage.additionalServiceTablecloth",
+      price: "",
+      unitKey: "",
+    },
+    {
+      nameKey: "",
+      price: "",
+      unitKey: "",
+    },
+  ];
+
+  const categories: CategoryFilterCennik[] = [
+    {
+      id: "all",
+      nameKey: "pricingPage.categoryAll",
+      filterLogic: (attr) => attr.category !== "uslugi",
+    },
+    {
+      id: "namioty",
+      nameKey: "nav.tents",
+      filterLogic: (attr) => attr.category === "namioty",
+    },
+    {
+      id: "wyposazenie",
+      nameKey: "nav.tablesChairs",
+      filterLogic: (attr) => attr.category === "wyposazenie",
+    },
+    {
+      id: "dmuchance",
+      nameKey: "nav.inflatables",
+      filterLogic: (attr) => attr.category === "dmuchance",
+    },
+    {
+      id: "wata-cukrowa",
+      nameKey: "nav.cottonCandy",
+      filterLogic: (attr) => attr.id === "wata-cukrowa",
+    },
+    {
+      id: "popcorn",
+      nameKey: "nav.popcorn",
+      filterLogic: (attr) => attr.id === "popcorn",
+    },
+    {
+      id: "fontanna-czekoladowa",
+      nameKey: "nav.chocolateFountain",
+      filterLogic: (attr) => attr.id === "fontanna-czekoladowa",
+    },
+  ];
+
+  const getTranslatedCategoryName = (attractionCategory: string) => {
+    const categoryKey = `category.${attractionCategory
+      .toLowerCase()
+      .replace(/\s+/g, "")}`;
+    return t(categoryKey, { defaultValue: attractionCategory });
+  };
+
+  const selectedFilter = categories.find((cat) => cat.id === selectedCategory);
+  const filteredAttractions = selectedFilter
+    ? attractions.filter(selectedFilter.filterLogic)
+    : attractions.filter((attr) => attr.category !== "uslugi");
+
+  return (
+    <>
+      {/* <SEOHead
+        title={t("seo.pricingTitle")}
+        description={t("seo.pricingDescription")}
+        canonical={getLocalizedPath(PAGE_KEYS.PRICING, language)}
+      /> */}
+      <div className="pt-16">
+        <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              className="text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-sky-500 to-emerald-500 rounded-full flex items-center justify-center">
+                  <Calculator className="h-8 w-8 text-white" />
+                </div>
+              </div>
+              <h2 className="text-2xl md:text-4xl font-bold text-slate-800 dark:text-white mb-6">
+                {t("pricingPage.heroTitle")}
+              </h2>
+              <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+                {t("pricingPage.heroDescription")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 md:gap-4">
+                <Badge
+                  variant="secondary"
+                  className="text-sm md:text-base px-3 py-1.5 md:px-4 md:py-2 bg-white/80 dark:bg-card dark:text-card-foreground"
+                >
+                  {t("pricingPage.badgeTransportFree15km")}
+                </Badge>
+                <Badge
+                  variant="secondary"
+                  className="text-sm md:text-base px-3 py-1.5 md:px-4 md:py-2 bg-white/80 dark:bg-card dark:text-card-foreground"
+                >
+                  {t("pricingPage.badgeSetupIncluded")}
+                </Badge>
+                <Badge
+                  variant="secondary"
+                  className="text-sm md:text-base px-3 py-1.5 md:px-4 md:py-2 bg-white/80 dark:bg-card dark:text-card-foreground"
+                >
+                  {t("pricingPage.badgeInsuranceOC")}
+                </Badge>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* <section className="py-12 md:py-16 bg-background dark:bg-background"></section> */}
+
+        <section className="py-12 md:py-16 bg-muted dark:bg-muted">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-10 md:mb-12"
+            >
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 md:mb-4 dark:text-card-foreground/60">
+                {t("pricingPage.individualTitle")}
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground mb-8">
+                {t("pricingPage.individualDescription")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-2 md:gap-3">
+                {categories.map((category) => (
+                  <Button
+                    key={category.id}
+                    variant={
+                      selectedCategory === category.id ? "default" : "outline"
+                    }
+                    onClick={() => setSelectedCategory(category.id)}
+                    size="sm"
+                  >
+                    {t(category.nameKey)}
+                  </Button>
+                ))}
+              </div>
+            </motion.div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {filteredAttractions.map((attraction, index) => {
+                const mainPricingOption = attraction.pricingOptions[0];
+                if (!mainPricingOption) return null;
+                const attractionNameKey = `attractionsData.${attraction.id}.name`;
+                const translatedName = t(attractionNameKey, {
+                  defaultValue: attraction.name,
+                });
+                const periodKey = `pricing.perPeriod.${mainPricingOption.period
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`;
+                const translatedPeriod = t(periodKey, {
+                  defaultValue: mainPricingOption.period,
+                });
+                const currencyUnitText = t(
+                  `currencyUnit.${mainPricingOption.currency.toLowerCase()}`,
+                  { defaultValue: mainPricingOption.currency }
+                );
+                const shortDescriptionKey = `attractionsData.${attraction.id}.shortDescription`;
+                const translatedShortDescription = t(shortDescriptionKey, {
+                  defaultValue: attraction.shortDescription,
+                });
+                const pricingFromText = t("attractionCard.priceFrom");
+                const isItemized = attraction.pricingDisplayMode === "itemList";
+                const offerHashPageKey =
+                  attractionIdToOfferHashKeyMap[attraction.id];
+
+                let linkToOfferSection = getInternalRoutePath(
+                  PAGE_KEYS.OFFER,
+                  language
+                );
+                if (offerHashPageKey) {
+                  const hashSlug = getLocalizedSlug(offerHashPageKey, language);
+                  if (hashSlug) {
+                    linkToOfferSection += `#${hashSlug}`;
+                  }
+                }
+
+                return (
+                  <motion.div
+                    key={attraction.id}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                    viewport={{ once: true }}
+                  >
+                    <Card className="h-full flex flex-col hover:shadow-lg transition-shadow bg-card text-card-foreground">
+                      <CardHeader>
+                        <CardTitle className="text-lg font-bold text-foreground mb-1 dark:text-card-foreground/60">
+                          {translatedName}
+                        </CardTitle>
+                        <Badge
+                          variant="outline"
+                          className="text-xs w-fit border-border text-muted-foreground"
+                        >
+                          {getTranslatedCategoryName(attraction.category)}
+                        </Badge>
+                      </CardHeader>
+                      <CardContent className="flex-grow flex flex-col justify-between">
+                        <div>
+                          <p className="text-sm text-muted-foreground mb-4 min-h-[3rem]">
+                            {translatedShortDescription}
+                          </p>
+                          <div className="text-2xl font-bold text-primary mb-1">
+                            {isItemized &&
+                            attraction.id === "stoly-krzesla-obrusy"
+                              ? t("pricingPage.itemizedPricingLabel")
+                              : language === "en"
+                              ? `${pricingFromText}${currencyUnitText}${mainPricingOption.base}`
+                              : `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`}
+                          </div>
+                          {!(
+                            isItemized &&
+                            attraction.id === "stoly-krzesla-obrusy"
+                          ) && (
+                            <div className="text-xs text-muted-foreground">
+                              / {translatedPeriod}
+                            </div>
+                          )}
+                        </div>
+                        <Button
+                          asChild
+                          variant="link"
+                          className="p-0 h-auto mt-4 text-primary self-start"
+                        >
+                          <WouterLink href={linkToOfferSection}>
+                            {t("attractionCard.details")}{" "}
+                            <Info className="ml-1.5 h-3.5 w-3.5" />
+                          </WouterLink>
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
+            </div>
+            {filteredAttractions.length === 0 && (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">😔</div>
+                <h3 className="text-xl font-semibold text-foreground mb-2">
+                  {t("offerPage.noAttractionsTitle")}
+                </h3>
+                <p className="text-muted-foreground">
+                  {t("offerPage.noAttractionsDescription")}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-background dark:bg-background">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 items-start">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
+                  {t("pricingPage.additionalServicesTitle")}
+                </h2>
+                <div className="space-y-3">
+                  {additionalServices.map((service, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center py-3 border-b border-border last:border-b-0"
+                    >
+                      <span className="text-muted-foreground dark:text-card-foreground text-sm md:text-base">
+                        {t(service.nameKey)}
+                      </span>
+                      {service.price && (
+                        <span className="font-semibold text-primary text-sm md:text-base">
+                          {service.price}{" "}
+                          {service.unitKey ? t(service.unitKey) : ""}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
+                <Card className="bg-gradient-to-br from-primary to-accent text-primary-foreground">
+                  <CardContent className="p-6 md:p-8">
+                    <h3 className="text-2xl md:text-3xl font-bold mb-6">
+                      {t("pricingPage.discountsTitle")}
+                    </h3>
+                    <div className="space-y-5">
+                      {[
+                        {
+                          icon: "💰",
+                          titleKey: "pricingPage.discountPackages",
+                          descKey: "pricingPage.discountPackagesDesc",
+                        },
+                        {
+                          icon: "📅",
+                          titleKey: "pricingPage.discountLongTerm",
+                          descKey: "pricingPage.discountLongTermDesc",
+                        },
+                        {
+                          icon: "👥",
+                          titleKey: "pricingPage.discountLoyal",
+                          descKey: "pricingPage.discountLoyalDesc",
+                        },
+                      ].map((discount) => (
+                        <div
+                          key={discount.titleKey}
+                          className="flex items-start"
+                        >
+                          <div className="text-xl mr-3 md:mr-4 mt-0.5">
+                            {discount.icon}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold mb-1">
+                              {t(discount.titleKey)}
+                            </h4>
+                            <p className="text-sm opacity-90">
+                              {t(discount.descKey)}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-8">
+                      <Button
+                        asChild
+                        size="lg"
+                        variant="secondary"
+                        className="bg-white text-primary hover:bg-slate-100"
+                      >
+                        <a
+                          href={`tel:${t("contact.phoneValue", {
+                            defaultValue: "+48531890827",
+                          })}`}
+                        >
+                          <Phone className="h-4 w-4 mr-2" />
+                          {t("pricingPage.askForDiscount")}
+                        </a>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 md:py-16 bg-amber-100/50 dark:bg-accent/10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-8 md:mb-10"
+            >
+              <Info className="h-10 w-10 md:h-12 md:w-12 text-amber-600 dark:text-accent mx-auto mb-4" />
+              <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3 md:mb-4">
+                {t("pricingPage.importantInfoTitle")}
+              </h2>
+            </motion.div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+              <Card className="border-amber-300 dark:border-accent/30 bg-card">
+                <CardHeader>
+                  <CardTitle className="text-amber-700 dark:text-accent flex items-center text-lg md:text-xl">
+                    {t("pricingPage.rentalConditionsTitle")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2.5 text-sm text-muted-foreground">
+                  <p>{t("pricingPage.rentalCondition1")}</p>
+                  <p>{t("pricingPage.rentalCondition2")}</p>
+                  <p>{t("pricingPage.rentalCondition3")}</p>
+                  <p>{t("pricingPage.rentalCondition4")}</p>
+                </CardContent>
+              </Card>
+              <Card className="border-amber-300 dark:border-accent/30 bg-card">
+                <CardHeader>
+                  <CardTitle className="text-amber-700 dark:text-accent flex items-center text-lg md:text-xl">
+                    {t("pricingPage.transportSetupTitle")}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2.5 text-sm text-muted-foreground">
+                  <p>{t("pricingPage.transportSetup1")}</p>
+                  <p>{t("pricingPage.transportSetup2")}</p>
+                  <p>{t("pricingPage.transportSetup3")}</p>
+                  <p>{t("pricingPage.transportSetup4")}</p>
+                  <p>{t("pricingPage.transportSetup5")}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+        <CallToAction />
+      </div>
+    </>
+  );
+}
+
+
+--------------------------
+
+import React, { useEffect, useRef } from "react";
+import { Switch, Route, useLocation, Router as WouterRouter } from "wouter";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
+import { queryClient } from "./lib/queryClient";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import ScrollToTopButton from "./components/ScrollToTopButton";
+// import CookieConsent from "./components/CookieConsent";
+import Home from "./pages/Home";
+import Oferta from "./pages/Oferta";
+import Galeria from "./pages/Galeria";
+import Cennik from "./pages/Cennik";
+import Kontakt from "./pages/Kontakt";
+import ONas from "./pages/ONas";
+import Regulamin from "@/components/Regulamin";
+import PolitykaPrywatnosci from "@/components/PolitykaPrywatnosci";
+import NotFound from "./pages/not-found";
+import { LanguageProvider, useLanguage } from "@/hooks/useLanguage";
+import {
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+  PAGE_KEYS,
+  defaultLang,
+  getInternalRoutePath,
+  getLocalizedSlug,
+  Language,
+} from "@/config/paths";
+import SEOHead from "@/components/SEOHead"; // Zakładając, że SEOHead.tsx jest w src/components/SEOHead.tsx
+
+const APP_DEBUG_MODE = false;
+
+function ScrollRestoration() {
+  const [wouterLocation] = useLocation();
+
+  useEffect(() => {
+    const hashValue = window.location.hash.replace("#", "");
+    if (APP_DEBUG_MODE) {
+      console.log(
+        `[ScrollRestoration] Detected hash: "${hashValue}", Full location for effect: "${wouterLocation}"`
+      );
+    }
+
+    if (!hashValue) {
+      window.scrollTo(0, 0);
+    } else {
+      const scrollTimeoutId = setTimeout(() => {
+        const element = document.getElementById(hashValue);
+        if (element) {
+          if (APP_DEBUG_MODE) {
+            console.log(
+              `[ScrollRestoration] Element with id "${hashValue}" FOUND. Attempting to scroll with block: "start".`
+            );
+          }
+          element.scrollIntoView({ block: "start" });
+        } else {
+          if (APP_DEBUG_MODE) {
+            console.warn(
+              `[ScrollRestoration] Element with id "${hashValue}" NOT FOUND for scrolling.`
+            );
+          }
+        }
+      }, 200);
+      return () => clearTimeout(scrollTimeoutId);
+    }
+  }, [wouterLocation]);
+  return null;
+}
+
+function LanguageRouterLogic() {
+  const [wouterLocation, navigate] = useLocation();
+  const {
+    language: contextLanguage,
+    setLanguage: setGlobalLanguage,
+    isLanguageInitialized,
+  } = useLanguage();
+
+  const logicRunCounter = useRef(0);
+  const userInitiatedLangChangeRef = useRef<Language | null>(null);
+
+  const normalizePathForComparison = (p: string) => {
+    const [pathPart, hashPart] = p.split("#");
+    const normalizedPath = pathPart.replace(/\/+$/, "") || "/";
+    return hashPart ? `${normalizedPath}#${hashPart}` : normalizedPath;
+  };
+
+  useEffect(() => {
+    if (!isLanguageInitialized) {
+      if (APP_DEBUG_MODE) {
+        console.log(
+          `%c[LRL_v13.5 USER_LANG_CHANGE_EFFECT] Waiting for init...`,
+          "color: brown;"
+        );
+      }
+      return;
+    }
+
+    if (userInitiatedLangChangeRef.current === contextLanguage) {
+      return;
+    }
+
+    if (APP_DEBUG_MODE) {
+      console.log(
+        `%c[LRL_v13.5 USER_LANG_CHANGE_EFFECT] Context language is now: "${contextLanguage}". Previous intent: "${userInitiatedLangChangeRef.current}"`,
+        "color: orange; font-weight: bold;"
+      );
+    }
+    userInitiatedLangChangeRef.current = contextLanguage;
+    logicRunCounter.current = 0;
+
+    const currentBrowserFullPath =
+      window.location.pathname + window.location.search + window.location.hash;
+    const {
+      pageKey: currentPageKeyFromUrl,
+      lang: langCurrentlyInUrl,
+      hashKey: currentHashKeyFromUrl,
+    } = findPageKeyByLocalizedPath(currentBrowserFullPath);
+
+    if (APP_DEBUG_MODE) {
+      console.log(
+        `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] Current URL: "${currentBrowserFullPath}", langInUrl: "${langCurrentlyInUrl}", pageKeyFromUrl: "${currentPageKeyFromUrl}"`
+      );
+    }
+
+    if (langCurrentlyInUrl !== contextLanguage) {
+      const targetPageKeyForNav =
+        currentPageKeyFromUrl && currentPageKeyFromUrl !== PAGE_KEYS.NOT_FOUND
+          ? currentPageKeyFromUrl
+          : PAGE_KEYS.HOME;
+
+      const newAbsolutePathTarget = getLocalizedPath(
+        targetPageKeyForNav,
+        contextLanguage,
+        currentHashKeyFromUrl || undefined
+      );
+
+      let relativePathForNavigate = getInternalRoutePath(
+        targetPageKeyForNav,
+        contextLanguage
+      );
+      if (currentHashKeyFromUrl) {
+        const hashSlug = getLocalizedSlug(
+          currentHashKeyFromUrl,
+          contextLanguage
+        );
+        if (hashSlug) relativePathForNavigate += `#${hashSlug}`;
+      }
+
+      const normalizedCurrent = normalizePathForComparison(
+        currentBrowserFullPath
+      );
+      const normalizedNewTargetAbsolute = normalizePathForComparison(
+        newAbsolutePathTarget
+      );
+
+      if (APP_DEBUG_MODE) {
+        console.log(
+          `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] New absolute target: "${newAbsolutePathTarget}", Relative for navigate: "${relativePathForNavigate}"`
+        );
+      }
+
+      if (normalizedCurrent !== normalizedNewTargetAbsolute) {
+        if (APP_DEBUG_MODE) {
+          console.warn(
+            `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] ACTION: Navigating to reflect new context language. Target: "${newAbsolutePathTarget}" (using relative: "${relativePathForNavigate}")`
+          );
+        }
+        navigate(relativePathForNavigate, { replace: true });
+      } else {
+        if (APP_DEBUG_MODE) {
+          console.log(
+            `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] URL already matches new context language. Clearing intent.`
+          );
+        }
+        userInitiatedLangChangeRef.current = null;
+      }
+    } else {
+      if (APP_DEBUG_MODE) {
+        console.log(
+          `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] URL lang ("${langCurrentlyInUrl}") already matches new context language ("${contextLanguage}"). Clearing intent.`
+        );
+      }
+      userInitiatedLangChangeRef.current = null;
+    }
+  }, [contextLanguage, isLanguageInitialized, navigate]);
+
+  useEffect(() => {
+    if (!isLanguageInitialized) {
+      return;
+    }
+
+    const currentBrowserFullPathForCheck =
+      window.location.pathname + window.location.search + window.location.hash;
+    const { lang: langInCurrentUrlCheck } = findPageKeyByLocalizedPath(
+      currentBrowserFullPathForCheck
+    );
+
+    if (
+      userInitiatedLangChangeRef.current === contextLanguage &&
+      langInCurrentUrlCheck !== contextLanguage
+    ) {
+      if (APP_DEBUG_MODE) {
+        console.log(
+          `%c[LRL_v13.5 URL_SYNC_EFFECT] User intent for lang "${contextLanguage}" is active, but URL lang is "${langInCurrentUrlCheck}". URL_SYNC waits.`,
+          "color: gray;"
+        );
+      }
+      return;
+    }
+
+    logicRunCounter.current += 1;
+    const runId = logicRunCounter.current;
+    const currentBrowserFullPath =
+      window.location.pathname + window.location.search + window.location.hash;
+
+    if (runId > 6) {
+      if (APP_DEBUG_MODE) {
+        console.error(
+          `[LRL_v13.5 URL_SYNC_EFFECT #${runId}] FATAL LOOP. Path: "${currentBrowserFullPath}", ContextLang: "${contextLanguage}". Halting.`
+        );
+      }
+      logicRunCounter.current = 0;
+      userInitiatedLangChangeRef.current = null;
+      return;
+    }
+
+    const {
+      pageKey: parsedPageKeyFromUrl,
+      lang: langDetectedInUrl,
+      hashKey: parsedHashKeyFromUrl,
+    } = findPageKeyByLocalizedPath(currentBrowserFullPath);
+
+    if (langDetectedInUrl !== contextLanguage) {
+      if (APP_DEBUG_MODE) {
+        console.warn(
+          `  [LRL_v13.5 URL_SYNC_EFFECT #${runId}] ACTION (URL has priority): Context lang ("${contextLanguage}") differs from URL lang ("${langDetectedInUrl}"). Updating context.`
+        );
+      }
+      setGlobalLanguage(langDetectedInUrl, { preventNavigation: true });
+      return;
+    }
+
+    const pageKeyToUse =
+      parsedPageKeyFromUrl && parsedPageKeyFromUrl !== PAGE_KEYS.NOT_FOUND
+        ? parsedPageKeyFromUrl
+        : PAGE_KEYS.HOME;
+    const canonicalAbsolutePath = getLocalizedPath(
+      pageKeyToUse,
+      contextLanguage,
+      parsedHashKeyFromUrl || undefined
+    );
+    const normalizedCurrent = normalizePathForComparison(
+      currentBrowserFullPath
+    );
+    const normalizedCanonical = normalizePathForComparison(
+      canonicalAbsolutePath
+    );
+
+    if (normalizedCurrent !== normalizedCanonical) {
+      let reason = "Path MISMATCH";
+      if (
+        parsedPageKeyFromUrl === PAGE_KEYS.NOT_FOUND &&
+        pageKeyToUse === PAGE_KEYS.HOME
+      ) {
+        reason = "Page NOT_FOUND, redirecting to HOME";
+      }
+      if (APP_DEBUG_MODE) {
+        console.warn(
+          `  [LRL_v13.5 URL_SYNC_EFFECT #${runId}] ACTION: ${reason}. Current: "${currentBrowserFullPath}", Canonical: "${canonicalAbsolutePath}". NAVIGATING.`
+        );
+      }
+
+      let relativePathForNavigate = getInternalRoutePath(
+        pageKeyToUse,
+        contextLanguage
+      );
+      if (parsedHashKeyFromUrl) {
+        const hashSlug = getLocalizedSlug(
+          parsedHashKeyFromUrl,
+          contextLanguage
+        );
+        if (hashSlug) relativePathForNavigate += `#${hashSlug}`;
+      }
+      navigate(relativePathForNavigate, { replace: true });
+      return;
+    } else {
+      logicRunCounter.current = 0;
+      if (userInitiatedLangChangeRef.current === contextLanguage) {
+        if (APP_DEBUG_MODE) {
+          console.log(
+            `  [LRL_v13.5 URL_SYNC_EFFECT #${runId}] Path is canonical and lang intent fulfilled. Clearing userInitiatedLangChangeRef.`
+          );
+        }
+        userInitiatedLangChangeRef.current = null;
+      }
+    }
+  }, [
+    wouterLocation,
+    contextLanguage,
+    isLanguageInitialized,
+    setGlobalLanguage,
+    navigate,
+  ]);
+
+  return null;
+}
+
+function AppRoutes() {
+  const { language } = useLanguage();
+  return (
+    <Switch>
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.HOME, language)}
+        component={Home}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.ABOUT, language)}
+        component={ONas}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.OFFER, language)}
+        component={Oferta}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.GALLERY, language)}
+        component={Galeria}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.PRICING, language)}
+        component={Cennik}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.CONTACT, language)}
+        component={Kontakt}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.TERMS, language)}
+        component={Regulamin}
+      />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.PRIVACY_POLICY, language)}
+        component={PolitykaPrywatnosci}
+      />
+      <Route component={NotFound} />
+    </Switch>
+  );
+}
+
+function AppMainContent() {
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Navbar />
+      <main className="flex-1">
+        <ScrollRestoration />
+        <AppRoutes />
+      </main>
+      <Footer />
+      <ScrollToTopButton />
+      {/* <CookieConsent /> */}
+    </div>
+  );
+}
+
+function LanguageAwareRouter() {
+  const { language, isLanguageInitialized } = useLanguage();
+
+  if (!isLanguageInitialized) {
+    return null;
+  }
+
+  const base = language === defaultLang ? "/" : `/${language}`;
+  const routerKey = `main-router-${base}`;
+
+  return (
+    <WouterRouter key={routerKey} base={base}>
+      <SEOHead />
+      <LanguageRouterLogic />
+      <AppMainContent />
+    </WouterRouter>
+  );
+}
+
+function App() {
+  return (
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <LanguageProvider>
+          <TooltipProvider>
+            <Toaster />
+            <LanguageAwareRouter />
+          </TooltipProvider>
+        </LanguageProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  );
+}
+
+export default App;
+
+
+-------------------------------
+
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/android-chrome-192x192.png"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+-----------------------------
+
+import { Helmet } from "react-helmet-async";
+import { useLocation } from "wouter";
+import {
+  PAGE_KEYS,
+  defaultLang,
+  supportedLngs,
+  Language,
+  PageKey,
+  getLocalizedSlug,
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+} from "@/config/paths";
+
+export const SLODKOLANDIA_BASE_URL = "https://www.slodkolandia.cba.pl";
+
+interface PageSEOMetaValues {
+  title: string;
+  description: string;
+  ogImage?: string;
+}
+
+const pageSpecificSEOMeta: Record<
+  PageKey,
+  Partial<Record<Language, PageSEOMetaValues>>
+> = {
+  [PAGE_KEYS.HOME]: {
+    pl: {
+      title:
+        "SŁODKOLANDIA wita: - Atrakcje Eventowe, Wynajem Sprzętu Imprezowego | Radom",
+      description:
+        "Wynajem namiotów imprezowych, zjeżdżalni, zamków dmuchanych. Obsługa waty cukrowej, popcornu, fontanny czekoladowej. Radom i okolice.",
+      ogImage: "/img/og-slodkolandia-home.png",
+    },
+    en: {
+      title:
+        "SLODKOLANDIA wita: - Event Attractions, Party Equipment Rental | Radom",
+      description:
+        "Party tent rental, slides, bouncy castles. Cotton candy, popcorn, chocolate fountain services. Radom and surroundings.",
+      ogImage: "/img/f/4.avif",
+    },
+  },
+  [PAGE_KEYS.OFFER]: {
+    pl: {
+      title: "Oferta Atrakcji Imprezowych - SŁODKOLANDIA wita: | Radom",
+      description:
+        "Poznaj naszą ofertę wynajmu namiotów, dmuchańców, urządzeń gastronomicznych i więcej. Idealne na każdą imprezę w Radomiu.",
+      ogImage: "/img/n/32.avif",
+    },
+    en: {
+      title: "Event Attractions Offer - SLODKOLANDIA wita: | Radom",
+      description:
+        "Discover our offer of tents, inflatables, catering equipment, and more. Perfect for any event in Radom.",
+      ogImage: "/img/n/31.avif",
+    },
+  },
+  [PAGE_KEYS.GALLERY]: {
+    pl: {
+      title: "Galeria Zdjęć - SŁODKOLANDIA wita: Atrakcje | Radom",
+      description:
+        "Zobacz zdjęcia z naszych realizacji i eventów. Namioty, dmuchańce, wata cukrowa i uśmiechy dzieci w Radomiu.",
+      ogImage: "/img/d/27/avif",
+    },
+    en: {
+      title: "Photo Gallery - SLODKOLANDIA wita: Attractions | Radom",
+      description:
+        "See photos from our events. Tents, inflatables, cotton candy, and happy children in Radom.",
+      ogImage: "/img/d/26.avif",
+    },
+  },
+  [PAGE_KEYS.CONTACT]: {
+    pl: {
+      title: "Kontakt - SŁODKOLANDIA wita: | Wynajem Atrakcji Radom",
+      description:
+        "Skontaktuj się z nami, aby wynająć atrakcje na Twoją imprezę. Szybka wycena i profesjonalna obsługa w Radomiu.",
+      ogImage: "/img/d/22.avif",
+    },
+    en: {
+      title: "Contact - SLODKOLANDIA wita: | Attraction Rental Radom",
+      description:
+        "Contact us to rent attractions for your event. Quick quote and professional service in Radom.",
+      ogImage: "/img/d/18.avif",
+    },
+  },
+  [PAGE_KEYS.PRICING]: {
+    pl: {
+      title: "Cennik Usług - SŁODKOLANDIA wita: Atrakcje Imprezowe | Radom",
+      description:
+        "Sprawdź nasz cennik wynajmu namiotów, dmuchańców i innych atrakcji. Konkurencyjne ceny w Radomiu.",
+      ogImage: "/img/d/23.avif",
+    },
+    en: {
+      title: "Service Pricing - SLODKOLANDIA wita: Event Attractions | Radom",
+      description:
+        "Check our price list for renting tents, inflatables, and other attractions. Competitive prices in Radom.",
+      ogImage: "/img/d/28.avif",
+    },
+  },
+  [PAGE_KEYS.ABOUT]: {
+    pl: {
+      title: "O Nas - SŁODKOLANDIA wita: | Pasja do Eventów w Radomiu",
+      description:
+        "Dowiedz się więcej o firmie SŁODKOLANDIA wita:, naszej misji i doświadczeniu w organizacji niezapomnianych imprez w Radomiu oraz innych miejscowościach.",
+      ogImage: "/img/d/30.avif",
+    },
+    en: {
+      title: "About Us - SLODKOLANDIA wita: | Passion for Events in Radom",
+      description:
+        "Learn more about SŁODKOLANDIA wita:, our mission, and our experience in organizing unforgettable events in Radom and other locations.",
+      ogImage: "/img/d/5.afif",
+    },
+  },
+  [PAGE_KEYS.TERMS]: {
+    pl: {
+      title: "Regulamin Świadczenia Usług - SŁODKOLANDIA wita:",
+      description:
+        "Zapoznaj się z regulaminem świadczenia usług przez firmę SŁODKOLANDIA wita:.",
+      ogImage: "/img/s/3.avif",
+    },
+    en: {
+      title: "Terms of Service - SLODKOLANDIA wita:",
+      description:
+        "Please read the terms of service provided by SLODKOLANDIA wita:.",
+      ogImage: "/img/s/18.avif",
+    },
+  },
+  [PAGE_KEYS.PRIVACY_POLICY]: {
+    pl: {
+      title: "Polityka Prywatności - SŁODKOLANDIA wita:",
+      description:
+        "Informacje na temat przetwarzania danych osobowych przez firmę SŁODKOLANDIA wita:.",
+      ogImage: "/img/s/19.avif",
+    },
+    en: {
+      title: "Privacy Policy - SLODKOLANDIA wita:",
+      description:
+        "Information on the processing of personal data by SLODKOLANDIA wita:.",
+      ogImage: "/img/p/1.avif",
+    },
+  },
+  [PAGE_KEYS.NOT_FOUND]: {
+    pl: {
+      title: "Strona Nie Znaleziona (404) - SŁODKOLANDIA wita:",
+      description: "Przepraszamy, strona której szukasz nie istnieje.",
+      ogImage: "/img/p/4.avif",
+    },
+    en: {
+      title: "Page Not Found (404) - SLODKOLANDIA wita:",
+      description: "Sorry, the page you are looking for does not exist.",
+      ogImage: "/img/p/2.avif",
+    },
+  },
+  [PAGE_KEYS.OFFER_TENTS]: {
+    pl: {
+      title: "Wynajem Namiotów Imprezowych - SŁODKOLANDIA wita: | Radom",
+      description:
+        "Oferujemy wynajem solidnych namiotów imprezowych na każdą okazję w Radomiu. Różne rozmiary dostępne.",
+      ogImage: "/img/n/1.avif",
+    },
+    en: {
+      title: "Party Tent Rental - SLODKOLANDIA wita: | Radom",
+      description:
+        "We offer rental of sturdy party tents for every occasion in Radom. Various sizes available.",
+      ogImage: "/img/n/2.avif",
+    },
+  },
+  [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: {
+    pl: {
+      title: "Stoły, Krzesła, Obrusy - Wynajem | Słodkolandia wita: Radom",
+      description:
+        "Kompleksowy wynajem stołów, krzeseł i obrusów na imprezy w Radomiu.",
+    },
+    en: {
+      title: "Tables, Chairs, Linens - Rental | Słodkolandia wita: Radom",
+      description:
+        "Comprehensive rental of tables, chairs, and linens for events in Radom.",
+    },
+  },
+  [PAGE_KEYS.OFFER_INFLATABLES]: {
+    pl: {
+      title:
+        "Dmuchance na Wynajem - Zamki, Zjeżdżalnie | Słodkolandia wita: Radom",
+      description:
+        "Super dmuchance dla dzieci – zamki dmuchane i zjeżdżalnie na wynajem. Radom i okolice.",
+    },
+    en: {
+      title:
+        "Inflatables for Rent - Castles, Slides | Słodkolandia wita: Radom",
+      description:
+        "Awesome inflatables for kids - bouncy castles and slides for rent. Radom and surroundings.",
+    },
+  },
+  [PAGE_KEYS.OFFER_POPCORN]: {
+    pl: {
+      title: "Maszyna do Popcornu na Wynajem | Słodkolandia wita: Radom",
+      description:
+        "Wynajmij profesjonalną maszynę do popcornu z obsługą na swoją imprezę. Radom.",
+    },
+    en: {
+      title: "Popcorn Machine for Rent | Słodkolandia wita: Radom",
+      description:
+        "Rent a professional popcorn machine with service for your event. Radom.",
+    },
+  },
+  [PAGE_KEYS.OFFER_COTTON_CANDY]: {
+    pl: {
+      title:
+        "Wata Cukrowa na Wynajem - Maszyna z Obsługą | Słodkolandia wita: Radom",
+      description:
+        "Wata cukrowa dla dzieci i dorosłych. Wynajem maszyny z obsługą w Radomiu.",
+    },
+    en: {
+      title:
+        "Cotton Candy for Rent - Machine with Service | Słodkolandia wita: Radom",
+      description:
+        "Cotton candy for kids and adults. Machine rental with service in Radom.",
+    },
+  },
+  [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: {
+    pl: {
+      title: "Fontanna Czekoladowa na Wynajem | Słodkolandia wita: Radom",
+      description:
+        "Wynajem fontanny czekoladowej z najlepszą belgijską czekoladą. Radom i okolice.",
+    },
+    en: {
+      title: "Chocolate Fountain for Rent | Słodkolandia wita: Radom",
+      description:
+        "Rent a chocolate fountain with the best Belgian chocolate. Radom and surroundings.",
+    },
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_TENTS]: {
+    pl: {
+      title: "Zdjęcia: Namioty Imprezowe | Słodkolandia wita: Radom",
+      description:
+        "Zobacz nasze namioty imprezowe w akcji. Galeria zdjęć Słodkolandia.",
+      ogImage: "/img/n/7.avif",
+    },
+    en: {
+      title: "Photos: Party Tents | Słodkolandia wita: Radom",
+      description: "See our party tents in action. Słodkolandia photo gallery.",
+      ogImage: "/img/n/17.avif",
+    },
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]: {
+    pl: {
+      title: "Zdjęcia: Stoły, Krzesła, Obrusy | Słodkolandia wita: Radom",
+      description:
+        "Galeria zdjęć wynajmowanych stołów, krzeseł i obrusów na imprezy.",
+      ogImage: "/s/3.avif",
+    },
+    en: {
+      title: "Photos: Tables, Chairs, Linens | Słodkolandia wita: Radom",
+      description:
+        "Photo gallery of rented tables, chairs, and linens for events.",
+      ogImage: "/img/s/19.avif",
+    },
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: {
+    pl: {
+      title: "Zdjęcia: Dmuchance - Zamki, Zjeżdżalnie | Słodkolandia wita:",
+      description:
+        "Zobacz nasze dmuchance dla dzieci w akcji! Zdjęcia z imprez.",
+      ogImage: "/img/d/1.avif",
+    },
+    en: {
+      title: "Photos: Inflatables - Castles, Slides | Słodkolandia wita:",
+      description:
+        "See our inflatables for kids in action! Photos from events.",
+      ogImage: "/img/d/3.avif",
+    },
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: {
+    pl: {
+      title: "Zdjęcia: Wata Cukrowa na Imprezach | Słodkolandia wita:",
+      description: "Galeria zdjęć z watą cukrową serwowaną na eventach.",
+      ogImage: "/img/w/11-.avif",
+    },
+    en: {
+      title: "Photos: Cotton Candy at Events | Słodkolandia wita:",
+      description: "Photo gallery of cotton candy served at events.",
+      ogImage: "/img/w/22-.avif",
+    },
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: {
+    pl: {
+      title: "Zdjęcia: Popcorn na Imprezach | Słodkolandia wita:",
+      description:
+        "Zobacz, jak wygląda nasz świeży popcorn na eventach. Galeria zdjęć.",
+      ogImage: "/img/p/22-.avif",
+    },
+    en: {
+      title: "Photos: Popcorn at Events | Słodkolandia wita:",
+      description: "See our fresh popcorn at events. Photo gallery.",
+      ogImage: "/img/p/55-.avif",
+    },
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: {
+    pl: {
+      title: "Zdjęcia: Fontanny Czekoladowej | Słodkolandia wita:",
+      description: "Galeria zdjęć naszej efektownej fontanny czekoladowej.",
+      ogImage: "/img/f/5.avif",
+    },
+    en: {
+      title: "Photos: Chocolate Fountain | Słodkolandia",
+      description: "Photo gallery of our spectacular chocolate fountain.",
+      ogImage: "/img/f/6.avif",
+    },
+  },
+};
+
+const localizedPageNamesForBreadcrumbs: Record<
+  PageKey,
+  Partial<Record<Language, string>>
+> = {
+  [PAGE_KEYS.HOME]: { pl: "Strona Główna", en: "Home Page" },
+  [PAGE_KEYS.OFFER]: { pl: "Oferta", en: "Offer" },
+  [PAGE_KEYS.GALLERY]: { pl: "Galeria", en: "Gallery" },
+  [PAGE_KEYS.CONTACT]: { pl: "Kontakt", en: "Contact" },
+  [PAGE_KEYS.PRICING]: { pl: "Cennik", en: "Pricing" },
+  [PAGE_KEYS.ABOUT]: { pl: "O Nas", en: "About Us" },
+  [PAGE_KEYS.TERMS]: { pl: "Regulamin", en: "Terms and Conditions" },
+  [PAGE_KEYS.PRIVACY_POLICY]: {
+    pl: "Polityka Prywatności",
+    en: "Privacy Policy",
+  },
+  [PAGE_KEYS.NOT_FOUND]: { pl: "Nie znaleziono", en: "Not Found" },
+  [PAGE_KEYS.OFFER_TENTS]: { pl: "Namioty", en: "Tents" },
+  [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: {
+    pl: "Stoły, Krzesła, Obrusy",
+    en: "Tables, Chairs, Linens",
+  },
+  [PAGE_KEYS.OFFER_INFLATABLES]: { pl: "Dmuchańce", en: "Inflatables" },
+  [PAGE_KEYS.OFFER_POPCORN]: { pl: "Popcorn", en: "Popcorn" },
+  [PAGE_KEYS.OFFER_COTTON_CANDY]: { pl: "Wata Cukrowa", en: "Cotton Candy" },
+  [PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN]: {
+    pl: "Fontanna Czekoladowa",
+    en: "Chocolate Fountain",
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_TENTS]: {
+    pl: "Zdjęcia: Namioty",
+    en: "Photos: Tents",
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS]: {
+    pl: "Zdjęcia: Stoły i Krzesła",
+    en: "Photos: Tables & Chairs",
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_INFLATABLES]: {
+    pl: "Zdjęcia: Dmuchańce",
+    en: "Photos: Inflatables",
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY]: {
+    pl: "Zdjęcia: Wata Cukrowa",
+    en: "Photos: Cotton Candy",
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_POPCORN]: {
+    pl: "Zdjęcia: Popcorn",
+    en: "Photos: Popcorn",
+  },
+  [PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS]: {
+    pl: "Zdjęcia: Fontanna Czekoladowa",
+    en: "Photos: Chocolate Fountain",
+  },
+};
+
+interface BreadcrumbItem {
+  "@type": "ListItem";
+  position: number;
+  name: string;
+  item: string;
+}
+
+interface BreadcrumbListSchema {
+  "@context": "https://schema.org";
+  "@type": "BreadcrumbList";
+  itemListElement: BreadcrumbItem[];
+}
+
+export default function SEOHead() {
+  useLocation();
+  const currentBrowserFullPath =
+    window.location.pathname + window.location.search + window.location.hash;
+
+  const {
+    pageKey: detectedPageKey,
+    lang: langUsedInUrl,
+    hashKey: detectedHashKey,
+  } = findPageKeyByLocalizedPath(currentBrowserFullPath);
+
+  const basePageKey: PageKey = detectedPageKey || PAGE_KEYS.HOME;
+  const actualLangUsed = langUsedInUrl || defaultLang;
+  const effectivePageKeyForMeta: PageKey = detectedHashKey || basePageKey;
+
+  const defaultSeoForLang = pageSpecificSEOMeta[PAGE_KEYS.HOME]?.[
+    actualLangUsed
+  ] || {
+    title: "SŁODKOLANDIA wita:",
+    description: "Atrakcje eventowe.",
+    ogImage: "/img/d/8.avif",
+  };
+  const currentSeoLangSpecific =
+    pageSpecificSEOMeta[effectivePageKeyForMeta]?.[actualLangUsed];
+  const basePageSeoLangSpecific =
+    pageSpecificSEOMeta[basePageKey]?.[actualLangUsed];
+
+  const seoTitle =
+    currentSeoLangSpecific?.title ||
+    basePageSeoLangSpecific?.title ||
+    defaultSeoForLang.title;
+  const seoDescription =
+    currentSeoLangSpecific?.description ||
+    basePageSeoLangSpecific?.description ||
+    defaultSeoForLang.description;
+  const ogImageRelative =
+    currentSeoLangSpecific?.ogImage ||
+    basePageSeoLangSpecific?.ogImage ||
+    defaultSeoForLang.ogImage;
+
+  const fullOgImageUrl = ogImageRelative
+    ? `${SLODKOLANDIA_BASE_URL}${
+        ogImageRelative.startsWith("/") ? "" : "/"
+      }${ogImageRelative}`
+    : `${SLODKOLANDIA_BASE_URL}/img/d/9.avif`;
+
+  let pathForCanonicalAndAlternate: string;
+  if (
+    detectedHashKey &&
+    (basePageKey === PAGE_KEYS.OFFER || basePageKey === PAGE_KEYS.GALLERY)
+  ) {
+    pathForCanonicalAndAlternate = getLocalizedPath(
+      basePageKey,
+      actualLangUsed,
+      detectedHashKey
+    );
+  } else {
+    pathForCanonicalAndAlternate = getLocalizedPath(
+      basePageKey,
+      actualLangUsed
+    );
+  }
+  const canonicalUrl = `${SLODKOLANDIA_BASE_URL}${pathForCanonicalAndAlternate}`;
+
+  const socialLinksHrefs = [
+    "https://www.facebook.com/wata.cukrowa.popcorn",
+    "https://www.instagram.com/ewa1989",
+    "https://www.youtube.com/channel/UCau05zZiK3kpTe06XtKXNKA",
+    "https://twitter.com/popcorn_wata",
+    "https://www.pinterest.com/watapopcorn",
+    "https://www.google.pl/maps/place/SŁODKOLANDIA+wita:+🎪+✔/@51.3998663,21.1651462,17z",
+  ];
+
+  const companyName = "SŁODKOLANDIA wita: - Wypożyczalnia Atrakcji Imprezowych";
+  const companyDescriptionForSchema =
+    "Wynajem namiotów imprezowych, stołów, krzeseł, obrusów, zjeżdżalni i zamków dmuchanych, urządzeń do waty cukrowej i popcornu oraz fontanny czekoladowej.";
+  const streetAddress = "ul. Żeromskiego 95/97";
+  const locality = "Radom";
+  const postalCode = "26-610";
+  const country = "PL";
+  const telephone = "+48531890827";
+  const email = "mariusz1989poczta@wp.pl";
+  const logoUrl = `${SLODKOLANDIA_BASE_URL}/img/logo.avif`;
+  const priceRange = "$$";
+
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": SLODKOLANDIA_BASE_URL,
+    name: companyName,
+    description: companyDescriptionForSchema,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress,
+      addressLocality: locality,
+      postalCode,
+      addressCountry: country,
+    },
+    telephone,
+    email,
+    url: SLODKOLANDIA_BASE_URL,
+    image: logoUrl,
+    priceRange,
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "09:00",
+        closes: "18:00",
+      },
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: "Saturday",
+        opens: "10:00",
+        closes: "15:00",
+      },
+    ],
+    sameAs: socialLinksHrefs,
+  };
+
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "SŁODKOLANDIA",
+    url: SLODKOLANDIA_BASE_URL,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SLODKOLANDIA_BASE_URL}${
+          actualLangUsed === defaultLang ? "" : "/" + actualLangUsed
+        }/search?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+    inLanguage: actualLangUsed,
+  };
+
+  const getBreadcrumbList = (): BreadcrumbListSchema | null => {
+    const itemList: BreadcrumbItem[] = [];
+    const homeName =
+      localizedPageNamesForBreadcrumbs[PAGE_KEYS.HOME]?.[actualLangUsed] ||
+      "Home";
+    const homePath = getLocalizedPath(PAGE_KEYS.HOME, actualLangUsed);
+    itemList.push({
+      "@type": "ListItem",
+      position: 1,
+      name: homeName,
+      item: `${SLODKOLANDIA_BASE_URL}${homePath.split("#")[0]}`,
+    });
+
+    if (basePageKey !== PAGE_KEYS.HOME) {
+      const pageName =
+        localizedPageNamesForBreadcrumbs[basePageKey]?.[actualLangUsed] ||
+        getLocalizedSlug(basePageKey, actualLangUsed)
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+      const pagePath = getLocalizedPath(basePageKey, actualLangUsed);
+      itemList.push({
+        "@type": "ListItem",
+        position: itemList.length + 1,
+        name: pageName,
+        item: `${SLODKOLANDIA_BASE_URL}${pagePath.split("#")[0]}`,
+      });
+    }
+
+    if (
+      detectedHashKey &&
+      (basePageKey === PAGE_KEYS.OFFER || basePageKey === PAGE_KEYS.GALLERY)
+    ) {
+      const hashPageName =
+        localizedPageNamesForBreadcrumbs[detectedHashKey]?.[actualLangUsed] ||
+        getLocalizedSlug(detectedHashKey, actualLangUsed)
+          .replace(/-/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+      const fullPathWithHash = getLocalizedPath(
+        basePageKey,
+        actualLangUsed,
+        detectedHashKey
+      );
+      itemList.push({
+        "@type": "ListItem",
+        position: itemList.length + 1,
+        name: hashPageName,
+        item: `${SLODKOLANDIA_BASE_URL}${fullPathWithHash}`,
+      });
+    }
+    if (itemList.length <= 1) return null;
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: itemList,
+    };
+  };
+
+  const breadcrumbSchema = getBreadcrumbList();
+
+  const alternateLinks: JSX.Element[] = [];
+  supportedLngs.forEach((lng) => {
+    let alternatePathForLang: string;
+    if (
+      detectedHashKey &&
+      (basePageKey === PAGE_KEYS.OFFER || basePageKey === PAGE_KEYS.GALLERY)
+    ) {
+      alternatePathForLang = getLocalizedPath(
+        basePageKey,
+        lng,
+        detectedHashKey
+      );
+    } else {
+      alternatePathForLang = getLocalizedPath(basePageKey, lng);
+    }
+    alternateLinks.push(
+      <link
+        key={lng}
+        rel="alternate"
+        hrefLang={lng}
+        href={`${SLODKOLANDIA_BASE_URL}${alternatePathForLang}`}
+      />
+    );
+  });
+
+  let xDefaultPath: string;
+  if (
+    detectedHashKey &&
+    (basePageKey === PAGE_KEYS.OFFER || basePageKey === PAGE_KEYS.GALLERY)
+  ) {
+    xDefaultPath = getLocalizedPath(basePageKey, defaultLang, detectedHashKey);
+  } else {
+    xDefaultPath = getLocalizedPath(basePageKey, defaultLang);
+  }
+
+  return (
+    <Helmet>
+      <html lang={actualLangUsed} />
+      <title>{seoTitle}</title>
+      <meta name="description" content={seoDescription} />
+      <link rel="canonical" href={canonicalUrl} />
+      {alternateLinks}
+      <link
+        rel="alternate"
+        hrefLang="x-default"
+        href={`${SLODKOLANDIA_BASE_URL}${xDefaultPath}`}
+      />
+      <meta property="og:title" content={seoTitle} />
+      <meta property="og:description" content={seoDescription} />
+      <meta property="og:url" content={canonicalUrl} />
+      <meta property="og:image" content={fullOgImageUrl} />
+      <meta property="og:type" content="website" />
+      <meta property="og:site_name" content="SŁODKOLANDIA wita:" />
+      <script type="application/ld+json">
+        {JSON.stringify(localBusinessSchema)}
+      </script>
+      <script type="application/ld+json">
+        {JSON.stringify(websiteSchema)}
+      </script>
+      {breadcrumbSchema && (
+        <script type="application/ld+json">
+          {JSON.stringify(breadcrumbSchema)}
+        </script>
+      )}
+    </Helmet>
+  );
+}
+
+
+----------------------------------
+
+Options -Indexes
+AddDefaultCharset utf-8
+RewriteEngine On
+
+# Przekierowanie Z WWW na BEZ WWW (jeśli SŁODKOLANDIA ma być bez www)
+# ZMIEŃ 'slodkolandia.cba.pl' na swoją domenę!
+RewriteCond %{HTTP_HOST} ^www\.slodkolandia.cba\.pl [NC]
+RewriteRule ^(.*)$ https://slodkolandia.cba.pl/$1 [L,R=301]
+
+# Przekierowanie na HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+<IfModule mod_headers.c>
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    # Header set Permissions-Policy "geolocation=(),midi=(),sync-xhr=(),microphone=(),camera=(),magnetometer=(),gyroscope=(),fullscreen=(self),payment=()" # Opcjonalnie, jeśli działa
+    <FilesMatch "\.(ico|jpe?g|png|gif|swf|svg|avif|webp|mp4|webm|woff2?|ttf|otf|css|js|webmanifest)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+        # Header set Access-Control-Allow-Origin "*" # Zazwyczaj niepotrzebne dla zasobów z tej samej domeny
+    </FilesMatch>
+    <FilesMatch "^index\.html$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+    Header append Vary "Accept-Encoding"
+</IfModule>
+
+# Jeśli masz jakieś stare URL-e do przekierowania na nowe ścieżki SPA dla SŁODKOLANDII,
+# umieść je TUTAJ, przed regułami SPA, np.:
+# RewriteRule ^stary-link-slodkolandia/?$ /nowa-sciezka-oferta [L,R=301,NC]
+
+# Reguły dla aplikacji jednostronicowej (SPA)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/ttf font/otf font/woff font/woff2
+</IfModule>
+
+AddType image/avif .avif
+AddType image/webp .webp
+
+# Proste blokowanie niektórych botów (możesz rozbudować, jeśli potrzebujesz)
+RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [NC,OR]
+RewriteCond %{HTTP_USER_AGENT} ^HTTrack [NC]
+RewriteRule ^.* - [F,L]
+
+# Zabezpieczenie plików konfiguracyjnych
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|conf|config|cnf|sql|bak|backup|swp|~$)$">
+  Require all denied
+</FilesMatch>
+
+
+-------------------------------
+
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>SŁODKOLANDIA wita: - Atrakcje Eventowe Radom</title>
+    <meta
+      name="description"
+      content="Wynajem namiotów, dmuchańców i atrakcji na imprezy w Radomiu i okolicach. SŁODKOLANDIA wita: zaprasza!"
+    />
+    <meta name="theme-color" content="#0EA5E9" />
+
+    <meta name="apple-mobile-web-app-title" content="SŁODKOLANDIA wita:" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="SŁODKOLANDIA wita:" />
+
+    <meta property="og:image" content="/img/21.avif" />
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/android-chrome-192x192.png"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="preload"
+      href="/fonts/twoja-lokalna-czcionka.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+
+
+-----------------------------------
+
+
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Info } from "lucide-react";
+import { Attraction } from "@/data/attractions";
+import Modal from "./Modal";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/hooks/useLanguage";
+
+interface AttractionCardProps {
+  attraction: Attraction;
+  index?: number;
+}
+
+export default function AttractionCard({
+  attraction,
+  index = 0,
+}: AttractionCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t, language } = useLanguage();
+
+  const getIconElement = (iconClass: string) => {
+    const iconMap: { [key: string]: string } = {
+      "fas fa-campground": "🏕️",
+      "fas fa-castle": "🏰",
+      "fas fa-candy-cane": "🍭",
+      "fas fa-seedling": "🍿",
+      "fas fa-birthday-cake": "🍫",
+      "fas fa-users": "👥",
+      "fas fa-chair": "🪑",
+    };
+    return iconMap[iconClass] || "🎉";
+  };
+
+  const attractionNameKey = `attractionsData.${attraction.id}.name`;
+  const attractionShortDescriptionKey = `attractionsData.${attraction.id}.shortDescription`;
+
+  const translatedName =
+    t(attractionNameKey) !== attractionNameKey
+      ? t(attractionNameKey)
+      : attraction.name;
+  const translatedShortDescription =
+    t(attractionShortDescriptionKey) !== attractionShortDescriptionKey
+      ? t(attractionShortDescriptionKey)
+      : attraction.shortDescription;
+
+  const categoryKey = `category.${attraction.category
+    .toLowerCase()
+    .replace(/\s+/g, "")}`;
+  const translatedCategory =
+    t(categoryKey) !== categoryKey ? t(categoryKey) : attraction.category;
+
+  const mainPricingOption = attraction.pricingOptions[0];
+
+  if (!mainPricingOption) {
+    console.error(`Attraction ${attraction.id} has no pricing options!`);
+    return null;
+  }
+
+  const periodKey = `pricing.perPeriod.${mainPricingOption.period.toLowerCase()}`;
+  const translatedPeriod =
+    t(periodKey) !== periodKey ? t(periodKey) : mainPricingOption.period;
+
+  const pricingFromText = t("attractionCard.priceFrom");
+  const currencyUnitText = t(
+    `currencyUnit.${mainPricingOption.currency.toLowerCase()}`
+  );
+
+  const isItemized = attraction.pricingDisplayMode === "itemList";
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+      >
+        <Card className="card-hover cursor-pointer group h-full flex flex-col">
+          <CardContent className="p-0 flex-grow flex flex-col">
+            <div className="relative overflow-hidden rounded-t-lg">
+              <img
+                src={attraction.images[0]}
+                alt={translatedName}
+                className="w-full h-60 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="absolute top-3 left-3">
+                <Badge
+                  variant="secondary"
+                  className="bg-white/90 text-slate-800 dark:bg-slate-800 dark:text-white px-2 py-1 text-xs"
+                >
+                  <span className="text-base mr-1.5">
+                    {getIconElement(attraction.icon)}
+                  </span>
+                  {translatedCategory}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="p-4 flex-grow flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-slate-700  dark:text-slate-800 mb-1.5 line-clamp-2">
+                  {translatedName}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-600 mb-3 text-xs leading-relaxed line-clamp-3 min-h-[3.75rem]">
+                  {translatedShortDescription}
+                </p>
+
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-md font-semibold text-sky-700 dark:text-sky-800">
+                    {isItemized && attraction.id === "stoly-krzesla-obrusy"
+                      ? t("pricingPage.itemizedPricingLabel")
+                      : language === "en"
+                      ? `${pricingFromText}${currencyUnitText}${mainPricingOption.base}`
+                      : `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`}
+                    {!(
+                      isItemized && attraction.id === "stoly-krzesla-obrusy"
+                    ) && (
+                      <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                        / {translatedPeriod}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full btn-gradient text-white hover:shadow-lg transition-all text-sm py-2"
+              >
+                <Info className="h-3.5 w-3.5 mr-1.5" />
+                {t("attractionCard.details")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        attraction={attraction}
+      />
+    </>
+  );
+}
+
+
+----------
+
+import React, { useState, useEffect, useRef } from "react";
+import { Link as WouterLink, useLocation } from "wouter";
+import {
+  Menu,
+  X,
+  Phone,
+  Globe,
+  MessageCircle,
+  Star,
+  ChevronDown,
+} from "lucide-react";
+import { BsMessenger } from "react-icons/bs";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/hooks/useLanguage";
+import ThemeToggle from "./ThemeToggle";
+import {
+  getLocalizedPath,
+  findPageKeyByLocalizedPath,
+  getLocalizedSlug,
+  PAGE_KEYS,
+  PageKey,
+  Language,
+  getInternalRoutePath,
+} from "@/config/paths";
+import { AnimatePresence, motion } from "framer-motion";
+
+export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [mobileDropdownsOpen, setMobileDropdownsOpen] = useState<{}>({});
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  const { language, setLanguage: setContextLanguage, t } = useLanguage();
+  const navRef = useRef<HTMLElement>(null);
+  const [scrollbarWidth, setScrollbarWidth] = useState(0);
+
+  useEffect(() => {
+    const calculateScrollbarWidth = () => {
+      const width = window.innerWidth - document.documentElement.clientWidth;
+      setScrollbarWidth(width > 0 ? width : 0);
+    };
+    calculateScrollbarWidth();
+    window.addEventListener("resize", calculateScrollbarWidth);
+    return () => window.removeEventListener("resize", calculateScrollbarWidth);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const body = document.body;
+    const navElement = navRef.current;
+    if (!navElement || scrollbarWidth === undefined) return;
+    const initialNavRight = navElement.style.right || "";
+    const initialNavPaddingRight = navElement.style.paddingRight || "";
+
+    const observer = new MutationObserver(() => {
+      const bodyIsLocked = body.style.overflow === "hidden";
+      const bodyHasSufficientPadding =
+        (parseFloat(body.style.paddingRight) || 0) >= scrollbarWidth;
+
+      if (bodyIsLocked && !bodyHasSufficientPadding && scrollbarWidth > 0) {
+        navElement.style.right = `${scrollbarWidth}px`;
+        navElement.style.paddingRight = "0px";
+      } else {
+        navElement.style.right = initialNavRight;
+        navElement.style.paddingRight = initialNavPaddingRight;
+      }
+    });
+    observer.observe(body, { attributes: true, attributeFilter: ["style"] });
+    return () => {
+      observer.disconnect();
+      if (navElement) {
+        navElement.style.right = initialNavRight;
+        navElement.style.paddingRight = initialNavPaddingRight;
+      }
+    };
+  }, [scrollbarWidth]);
+
+  const switchLanguage = (newLang: Language) => {
+    if (newLang === language) return;
+    setContextLanguage(newLang, { preventNavigation: false });
+  };
+
+  const isActive = (pageKeyToCheck: PageKey) => {
+    const {
+      pageKey: currentPageKey,
+      lang: currentLangFromUrl,
+      hashSlug: currentHashSlugValue,
+    } = findPageKeyByLocalizedPath(
+      window.location.pathname + window.location.hash
+    );
+
+    if (currentLangFromUrl !== language) return false;
+    if (currentPageKey !== pageKeyToCheck) return false;
+    return !currentHashSlugValue;
+  };
+
+  const handleLinkClick = (closeMobileMenu = true, targetPath?: string) => {
+    if (closeMobileMenu) {
+      setIsMobileMenuOpen(false);
+      setMobileDropdownsOpen({});
+    }
+    const homePathForCurrentLang = getLocalizedPath(PAGE_KEYS.HOME, language);
+    if (
+      targetPath === homePathForCurrentLang &&
+      window.location.pathname === targetPath.split("#")[0] &&
+      !window.location.hash
+    ) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const navLinkHref = (pageKey: PageKey): string => {
+    return getInternalRoutePath(pageKey, language);
+  };
+
+  return (
+    <>
+      <nav
+        ref={navRef}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+          isScrolled
+            ? "bg-white/95 dark:bg-slate-900/95 shadow-lg"
+            : "bg-white dark:bg-slate-900"
+        )}
+      >
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <WouterLink
+              href={navLinkHref(PAGE_KEYS.HOME)}
+              onClick={() =>
+                handleLinkClick(
+                  true,
+                  getLocalizedPath(PAGE_KEYS.HOME, language)
+                )
+              }
+            >
+              <div className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                <img
+                  src="/img/logo.avif"
+                  alt="Logo Słodkolandia wita:"
+                  className="w-10 h-10"
+                />
+                <span className="brand-title text-xl font-bold text-slate-800 dark:text-white whitespace-nowrap">
+                  <span className="brand-main">
+                    {t("hero.title")?.split(" wita:")[0]}
+                  </span>
+                  {t("hero.title")?.includes(" wita:") && (
+                    <span className="brand-suffix"> wita:</span>
+                  )}
+                </span>
+              </div>
+            </WouterLink>
+
+            <div className="hidden lg:flex items-center space-x-4">
+              <WouterLink href={navLinkHref(PAGE_KEYS.HOME)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.HOME) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.HOME) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() =>
+                    handleLinkClick(
+                      true,
+                      getLocalizedPath(PAGE_KEYS.HOME, language)
+                    )
+                  }
+                >
+                  {t("nav.home")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={navLinkHref(PAGE_KEYS.ABOUT)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.ABOUT) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.ABOUT) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.about")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={navLinkHref(PAGE_KEYS.OFFER)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.OFFER) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.OFFER) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.offer")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={navLinkHref(PAGE_KEYS.GALLERY)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.GALLERY) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.GALLERY) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.photo")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={navLinkHref(PAGE_KEYS.PRICING)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.PRICING) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.PRICING) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.pricing")}
+                </Button>
+              </WouterLink>
+              <WouterLink href={navLinkHref(PAGE_KEYS.CONTACT)}>
+                <Button
+                  variant={isActive(PAGE_KEYS.CONTACT) ? "default" : "ghost"}
+                  className={cn(
+                    "text-base font-medium px-3",
+                    !isActive(PAGE_KEYS.CONTACT) &&
+                      "text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white"
+                  )}
+                  onClick={() => handleLinkClick()}
+                >
+                  {t("nav.contact")}
+                </Button>
+              </WouterLink>
+
+              <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label={t(
+                      "nav.changeLanguage",
+                      undefined,
+                      "Zmień język"
+                    )}
+                  >
+                    <Globe className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => switchLanguage("pl")}>
+                    🇵🇱 Polski
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => switchLanguage("en")}>
+                    🇬🇧 English
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <ThemeToggle />
+              <a
+                href="https://m.me/wata.cukrowa.popcorn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-700 p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="Messenger"
+              >
+                <BsMessenger className="h-5 w-5" />
+              </a>
+              <Dialog
+                open={isReviewModalOpen}
+                onOpenChange={setIsReviewModalOpen}
+              >
+                <DialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="text-amber-600 hover:text-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/20"
+                    title={t("nav.review")}
+                  >
+                    <Star className="h-5 w-5" />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md z-[60]">
+                  <DialogHeader>
+                    <DialogTitle className="text-center">
+                      {t("reviewModal.title", { companyName: t("hero.title") })}
+                    </DialogTitle>
+                    <DialogDescription className="text-center dark:text-white/80">
+                      {t("reviewModal.description")}
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col items-center space-y-4 py-4">
+                    <div className="bg-white p-4 rounded-lg shadow-inner">
+                      <img
+                        src="/qr-opinia.png"
+                        alt={t("reviewModal.qrAlt")}
+                        className="w-48 h-48"
+                      />
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-100 text-center">
+                      {t("reviewModal.qrLabelLine1")}
+                      <br />
+                      {t("reviewModal.qrLabelLine2")}
+                    </p>
+                    <a
+                      href="https://g.page/r/CWM4dGuLyfXlEAE/review"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                    >
+                      {t("reviewModal.googleButton")}
+                    </a>
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <a
+                href="tel:+48531890827"
+                className="btn-gradient text-white px-3 py-2 rounded-lg font-semibold hover:shadow-lg transition-all flex items-center space-x-2 whitespace-nowrap text-sm"
+              >
+                <Phone className="h-4 w-4" />
+                <span>531 890 827</span>
+              </a>
+            </div>
+
+            <div className="lg:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  setIsMobileMenuOpen(!isMobileMenuOpen);
+                  if (isMobileMenuOpen) setMobileDropdownsOpen({});
+                }}
+                aria-label="Toggle mobile menu"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="lg:hidden fixed inset-x-0 top-16 z-40 bg-white/95 dark:bg-slate-900/95 overflow-y-auto"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                maxHeight: "calc(100vh - 4rem)",
+              }}
+            >
+              <div className="px-4 pt-2 pb-24 space-y-1">
+                <WouterLink href={navLinkHref(PAGE_KEYS.HOME)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.HOME) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.HOME) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() =>
+                      handleLinkClick(
+                        true,
+                        getLocalizedPath(PAGE_KEYS.HOME, language)
+                      )
+                    }
+                  >
+                    {t("nav.home")}
+                  </Button>
+                </WouterLink>
+                <WouterLink href={navLinkHref(PAGE_KEYS.ABOUT)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.ABOUT) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.ABOUT) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.about")}
+                  </Button>
+                </WouterLink>
+
+                <WouterLink href={navLinkHref(PAGE_KEYS.OFFER)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.OFFER) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.OFFER) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.offer")}
+                  </Button>
+                </WouterLink>
+
+                <WouterLink href={navLinkHref(PAGE_KEYS.GALLERY)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.GALLERY) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.GALLERY) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.photo")}
+                  </Button>
+                </WouterLink>
+
+                <WouterLink href={navLinkHref(PAGE_KEYS.PRICING)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.PRICING) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.PRICING) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.pricing")}
+                  </Button>
+                </WouterLink>
+                <WouterLink href={navLinkHref(PAGE_KEYS.CONTACT)}>
+                  <Button
+                    variant={isActive(PAGE_KEYS.CONTACT) ? "default" : "ghost"}
+                    className={cn(
+                      "w-full justify-start text-base font-medium py-3",
+                      !isActive(PAGE_KEYS.CONTACT) &&
+                        "text-slate-700 dark:text-slate-200"
+                    )}
+                    onClick={() => handleLinkClick()}
+                  >
+                    {t("nav.contact")}
+                  </Button>
+                </WouterLink>
+                <div className="pt-4 space-y-3 border-t border-slate-200 dark:border-slate-700 mt-3">
+                  <div className="flex justify-center space-x-4">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => switchLanguage("pl")}
+                      className={
+                        language === "pl" ? "bg-sky-100 dark:bg-sky-900" : ""
+                      }
+                    >
+                      🇵🇱 PL
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => switchLanguage("en")}
+                      className={
+                        language === "en" ? "bg-sky-100 dark:bg-sky-900" : ""
+                      }
+                    >
+                      🇬🇧 EN
+                    </Button>
+                    <ThemeToggle />
+                  </div>
+                  <Button
+                    onClick={() => {
+                      setIsReviewModalOpen(true);
+                      handleLinkClick();
+                    }}
+                    className="w-full bg-amber-600 hover:bg-amber-700 text-white font-semibold flex items-center justify-center space-x-2"
+                  >
+                    <Star className="h-4 w-4" />
+                    <span>{t("nav.review")}</span>
+                  </Button>
+                  <a
+                    href="https://m.me/wata.cukrowa.popcorn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
+                    onClick={() => handleLinkClick()}
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Messenger</span>
+                  </a>
+                  <a
+                    href="tel:+48531890827"
+                    className="btn-gradient text-white px-4 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 w-full"
+                    onClick={() => handleLinkClick()}
+                  >
+                    <Phone className="h-4 w-4" />
+                    <span>Zadzwoń: 531 890 827</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </nav>
+      <AnimatePresence>
+        {isReviewModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black/10 z-[55]"
+            onClick={() => setIsReviewModalOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+
+------------------------------
+
+import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import {
+  Star,
+  Calendar,
+  Award,
+  Shield,
+  Clock,
+  Heart,
+  ChevronDown,
+} from "lucide-react";
+import { motion } from "framer-motion";
+// import SEOHead from "@/components/SEOHead";
+import AttractionCard from "@/components/AttractionCard";
+import CallToAction from "@/components/CallToAction";
+import { attractions } from "@/data/attractions";
+import { heroImages } from "@/data/stockPhotos";
+import { useLanguage } from "@/hooks/useLanguage";
+
+export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const { t } = useLanguage();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const featuredAttractions = attractions.slice(0, 6);
+
+  return (
+    <>
+      {/* <SEOHead
+        title={t("seo.homeTitle")}
+        description={t("seo.homeDescription")}
+      /> */}
+
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          {heroImages.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={image}
+                alt={`Event setup ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 hero-gradient"></div>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* <h1 className="brand-title text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+              {t("hero.title")}
+            </h1> */}
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+              <span className="brand-title-home-main">
+                {t("hero.title")?.split(" wita:")[0]}
+              </span>
+              {t("hero.title")?.includes(" wita:") && (
+                <span className="brand-title-home-suffix"> wita:</span>
+              )}
+            </h1>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-amber-300 mb-6">
+              {t("hero.subtitle")}
+            </div>
+
+            <p className="text-xl sm:text-2xl mb-8 text-white/90 font-medium">
+              {t("hero.description")}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/oferta">
+                <Button
+                  size="lg"
+                  className="bg-white text-sky-800 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg"
+                >
+                  <Star className="h-5 w-5 mr-2" />
+                  {t("hero.seeOffer")}
+                </Button>
+              </Link>
+              <Link href="/kontakt">
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-2 bg-sky-800 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
+                >
+                  <Calendar className="h-5 w-5 mr-2" />
+                  {t("hero.askDate")}
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <ChevronDown className="h-8 w-8 text-white opacity-70" />
+        </motion.div>
+      </section>
+
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">
+              {t("services.title")}
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              {t("services.description")}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredAttractions.map((attraction, index) => (
+              <AttractionCard
+                key={attraction.id}
+                attraction={attraction}
+                index={index}
+              />
+            ))}
+          </div>
+
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <Link href="/oferta">
+              <Button
+                size="lg"
+                className="btn-gradient text-white px-8 py-4 text-lg font-semibold hover:shadow-lg transition-all"
+              >
+                {t("services.seeAll")}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gradient-to-br from-sky-50 to-emerald-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">
+              {t("whyUs.title")}
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              {t("whyUs.description")}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: <Award className="h-8 w-8 text-sky-600" />,
+                titleKey: "whyUs.experience",
+                descriptionKey: "whyUs.experienceDesc",
+                color: "bg-sky-100",
+              },
+              {
+                icon: <Shield className="h-8 w-8 text-emerald-600" />,
+                titleKey: "whyUs.safety",
+                descriptionKey: "whyUs.safetyDesc",
+                color: "bg-emerald-100",
+              },
+              {
+                icon: <Clock className="h-8 w-8 text-amber-600" />,
+                titleKey: "whyUs.punctuality",
+                descriptionKey: "whyUs.punctualityDesc",
+                color: "bg-amber-100",
+              },
+              {
+                icon: <Heart className="h-8 w-8 text-purple-600" />,
+                titleKey: "whyUs.individual",
+                descriptionKey: "whyUs.individualDesc",
+                color: "bg-purple-100",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div
+                  className={`w-20 h-20 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-6`}
+                >
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">
+                  {t(feature.titleKey)}
+                </h3>
+                <p className="text-slate-600">{t(feature.descriptionKey)}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <CallToAction />
+
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { number: "500+", labelKey: "home.stats.eventsOrganized" },
+              { number: "50+", labelKey: "home.stats.happyClientsMonthly" },
+              { number: "11", labelKey: "home.stats.yearsExperience" },
+              { number: "100 km", labelKey: "home.stats.serviceRadius" },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="text-3xl md:text-4xl font-bold text-sky-700 mb-2">
+                  {stat.number}
+                </div>
+                <div className="text-slate-600 text-sm md:text-base">
+                  {t(stat.labelKey)}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+----------------------------
+
+import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { Button } from "@/components/ui/button";
+import {
+  Star,
+  Calendar,
+  Award,
+  Shield,
+  Clock,
+  Heart,
+  ChevronDown,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import AttractionCard from "@/components/AttractionCard";
+import CallToAction from "@/components/CallToAction";
+import { attractions } from "@/data/attractions";
+import { heroImages } from "@/data/stockPhotos";
+import { useLanguage } from "@/hooks/useLanguage";
+import { PAGE_KEYS, getInternalRoutePath } from "@/config/paths"; // Dodaj importy
+
+export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const { t, language } = useLanguage(); // Dodaj language
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const featuredAttractions = attractions.slice(0, 6);
+
+  return (
+    <>
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0">
+          {heroImages.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentSlide ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <img
+                src={image}
+                alt={`Event setup ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 hero-gradient"></div>
+            </div>
+          ))}
+        </div>
+
+        <div className="relative z-10 text-center text-white px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+              <span className="brand-title-home-main">
+                {t("hero.title")?.split(" wita:")[0]}
+              </span>
+              {t("hero.title")?.includes(" wita:") && (
+                <span className="brand-title-home-suffix"> wita:</span>
+              )}
+            </h1>
+            <div className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-amber-300 mb-6">
+              {t("hero.subtitle")}
+            </div>
+
+            <p className="text-xl sm:text-2xl mb-8 text-white/90 font-medium">
+              {t("hero.description")}
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href={getInternalRoutePath(PAGE_KEYS.OFFER, language)}>
+                <Button
+                  size="lg"
+                  className="bg-white text-sky-800 px-8 py-4 rounded-full text-lg font-semibold hover:bg-slate-100 transition-all transform hover:scale-105 shadow-lg"
+                >
+                  <Star className="h-5 w-5 mr-2" />
+                  {t("hero.seeOffer")}
+                </Button>
+              </Link>
+              <Link href={getInternalRoutePath(PAGE_KEYS.CONTACT, language)}>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-2 bg-sky-800 border-white text-white hover:bg-white hover:text-sky-600 px-8 py-4 rounded-full text-lg font-semibold transition-all transform hover:scale-105"
+                >
+                  <Calendar className="h-5 w-5 mr-2" />
+                  {t("hero.askDate")}
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <ChevronDown className="h-8 w-8 text-white opacity-70" />
+        </motion.div>
+      </section>
+
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">
+              {t("services.title")}
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              {t("services.description")}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {featuredAttractions.map((attraction, index) => (
+              <AttractionCard
+                key={attraction.id}
+                attraction={attraction}
+                index={index}
+              />
+            ))}
+          </div>
+
+          <motion.div
+            className="text-center mt-12"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <Link href={getInternalRoutePath(PAGE_KEYS.OFFER, language)}>
+              <Button
+                size="lg"
+                className="btn-gradient text-white px-8 py-4 text-lg font-semibold hover:shadow-lg transition-all"
+              >
+                {t("services.seeAll")}
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-gradient-to-br from-sky-50 to-emerald-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-slate-800 mb-4">
+              {t("whyUs.title")}
+            </h2>
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+              {t("whyUs.description")}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              {
+                icon: <Award className="h-8 w-8 text-sky-600" />,
+                titleKey: "whyUs.experience",
+                descriptionKey: "whyUs.experienceDesc",
+                color: "bg-sky-100",
+              },
+              {
+                icon: <Shield className="h-8 w-8 text-emerald-600" />,
+                titleKey: "whyUs.safety",
+                descriptionKey: "whyUs.safetyDesc",
+                color: "bg-emerald-100",
+              },
+              {
+                icon: <Clock className="h-8 w-8 text-amber-600" />,
+                titleKey: "whyUs.punctuality",
+                descriptionKey: "whyUs.punctualityDesc",
+                color: "bg-amber-100",
+              },
+              {
+                icon: <Heart className="h-8 w-8 text-purple-600" />,
+                titleKey: "whyUs.individual",
+                descriptionKey: "whyUs.individualDesc",
+                color: "bg-purple-100",
+              },
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div
+                  className={`w-20 h-20 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-6`}
+                >
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-3">
+                  {t(feature.titleKey)}
+                </h3>
+                <p className="text-slate-600">{t(feature.descriptionKey)}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <CallToAction />
+
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {[
+              { number: "500+", labelKey: "home.stats.eventsOrganized" },
+              { number: "50+", labelKey: "home.stats.happyClientsMonthly" },
+              { number: "11", labelKey: "home.stats.yearsExperience" },
+              { number: "100 km", labelKey: "home.stats.serviceRadius" },
+            ].map((stat, index) => (
+              <motion.div
+                key={index}
+                className="text-center"
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <div className="text-3xl md:text-4xl font-bold text-sky-700 mb-2">
+                  {stat.number}
+                </div>
+                <div className="text-slate-600 text-sm md:text-base">
+                  {t(stat.labelKey)}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+
+---------------------------------
+
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Info } from "lucide-react";
+import { Attraction } from "@/data/attractions";
+import Modal from "./Modal";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/hooks/useLanguage";
+
+interface AttractionCardProps {
+  attraction: Attraction;
+  index?: number;
+}
+
+export default function AttractionCard({
+  attraction,
+  index = 0,
+}: AttractionCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t, language } = useLanguage();
+
+  const getIconElement = (iconClass: string) => {
+    const iconMap: { [key: string]: string } = {
+      "fas fa-campground": "🏕️",
+      "fas fa-castle": "🏰",
+      "fas fa-candy-cane": "🍭",
+      "fas fa-seedling": "🍿",
+      "fas fa-birthday-cake": "🍫",
+      "fas fa-users": "👥",
+      "fas fa-chair": "🪑",
+    };
+    return iconMap[iconClass] || "🎉";
+  };
+
+  const attractionNameKey = `attractionsData.${attraction.id}.name`;
+  const attractionShortDescriptionKey = `attractionsData.${attraction.id}.shortDescription`;
+
+  const translatedName =
+    t(attractionNameKey) !== attractionNameKey
+      ? t(attractionNameKey)
+      : attraction.name;
+  const translatedShortDescription =
+    t(attractionShortDescriptionKey) !== attractionShortDescriptionKey
+      ? t(attractionShortDescriptionKey)
+      : attraction.shortDescription;
+
+  const categoryKey = `category.${attraction.category
+    .toLowerCase()
+    .replace(/\s+/g, "")}`;
+  const translatedCategory =
+    t(categoryKey) !== categoryKey ? t(categoryKey) : attraction.category;
+
+  const mainPricingOption = attraction.pricingOptions[0];
+
+  if (!mainPricingOption) {
+    console.error(`Attraction ${attraction.id} has no pricing options!`);
+    return null;
+  }
+
+  const periodKey = `pricing.perPeriod.${mainPricingOption.period.toLowerCase()}`;
+  const translatedPeriod =
+    t(periodKey) !== periodKey ? t(periodKey) : mainPricingOption.period;
+
+  const pricingFromText = t("attractionCard.priceFrom");
+  const currencyUnitText = t(
+    `currencyUnit.${mainPricingOption.currency.toLowerCase()}`
+  );
+
+  const isItemized = attraction.pricingDisplayMode === "itemList";
+  let formattedPriceText: string;
+
+  if (isItemized && attraction.id === "stoly-krzesla-obrusy") {
+    formattedPriceText = t("pricingPage.itemizedPricingLabel");
+  } else {
+    if (!mainPricingOption.base) {
+      formattedPriceText = t("pricingPage.askForDate", {
+        defaultValue: "Zapytaj o cenę",
+      });
+    } else {
+      if (language === "en") {
+        formattedPriceText = `${pricingFromText}${currencyUnitText} ${mainPricingOption.base}`;
+      } else {
+        formattedPriceText = `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`;
+      }
+    }
+  }
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+      >
+        <Card className="card-hover cursor-pointer group h-full flex flex-col">
+          <CardContent className="p-0 flex-grow flex flex-col">
+            <div className="relative overflow-hidden rounded-t-lg">
+              <img
+                src={attraction.images[0]}
+                alt={translatedName}
+                className="w-full h-60 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="absolute top-3 left-3">
+                <Badge
+                  variant="secondary"
+                  className="bg-white/90 text-slate-800 dark:bg-slate-800 dark:text-white px-2 py-1 text-xs"
+                >
+                  <span className="text-base mr-1.5">
+                    {getIconElement(attraction.icon)}
+                  </span>
+                  {translatedCategory}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="p-4 flex-grow flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-slate-700  dark:text-slate-800 mb-1.5 line-clamp-2">
+                  {translatedName}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-600 mb-3 text-xs leading-relaxed line-clamp-3 min-h-[3.75rem]">
+                  {translatedShortDescription}
+                </p>
+
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-md font-semibold text-sky-700 dark:text-sky-800">
+                    {formattedPriceText}
+                    {!(
+                      isItemized && attraction.id === "stoly-krzesla-obrusy"
+                    ) &&
+                      mainPricingOption.base && (
+                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                          / {translatedPeriod}
+                        </span>
+                      )}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full btn-gradient text-white hover:shadow-lg transition-all text-sm py-2"
+              >
+                <Info className="h-3.5 w-3.5 mr-1.5" />
+                {t("attractionCard.details")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        attraction={attraction}
+      />
+    </>
+  );
+}
+
+
+-------------------------------
+
+import { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Info } from "lucide-react";
+import { Attraction } from "@/data/attractions";
+import Modal from "./Modal";
+import { motion } from "framer-motion";
+import { useLanguage } from "@/hooks/useLanguage";
+
+interface AttractionCardProps {
+  attraction: Attraction;
+  index?: number;
+}
+
+export default function AttractionCard({
+  attraction,
+  index = 0,
+}: AttractionCardProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t, language } = useLanguage();
+
+  const getIconElement = (iconClass: string) => {
+    const iconMap: { [key: string]: string } = {
+      "fas fa-campground": "🏕️",
+      "fas fa-castle": "🏰",
+      "fas fa-candy-cane": "🍭",
+      "fas fa-seedling": "🍿",
+      "fas fa-birthday-cake": "🍫",
+      "fas fa-users": "👥",
+      "fas fa-chair": "🪑",
+    };
+    return iconMap[iconClass] || "🎉";
+  };
+
+  const attractionNameKey = `attractionsData.${attraction.id}.name`;
+  const attractionShortDescriptionKey = `attractionsData.${attraction.id}.shortDescription`;
+
+  const translatedName = t(attractionNameKey, undefined, attraction.name);
+  const translatedShortDescription = t(
+    attractionShortDescriptionKey,
+    undefined,
+    attraction.shortDescription
+  );
+
+  const categoryKey = `category.${attraction.category
+    .toLowerCase()
+    .replace(/\s+/g, "")}`;
+  const translatedCategory = t(categoryKey, undefined, attraction.category);
+
+  const mainPricingOption = attraction.pricingOptions[0];
+
+  if (!mainPricingOption) {
+    console.error(`Attraction ${attraction.id} has no pricing options!`);
+    return null;
+  }
+
+  const periodKey = `pricing.perPeriod.${mainPricingOption.period.toLowerCase()}`;
+  const translatedPeriod = t(periodKey, undefined, mainPricingOption.period);
+
+  const pricingFromText = t("attractionCard.priceFrom");
+  const currencyUnitText = t(
+    `currencyUnit.${mainPricingOption.currency.toLowerCase()}`,
+    undefined,
+    mainPricingOption.currency
+  );
+
+  const isItemized = attraction.pricingDisplayMode === "itemList";
+  let formattedPriceText: string;
+
+  if (isItemized && attraction.id === "stoly-krzesla-obrusy") {
+    formattedPriceText = t("pricingPage.itemizedPricingLabel");
+  } else {
+    if (!mainPricingOption.base) {
+      formattedPriceText = t("pricingPage.askForDate", {
+        defaultValue: "Zapytaj o cenę",
+      });
+    } else {
+      if (language === "en") {
+        formattedPriceText = `${pricingFromText}${currencyUnitText} ${mainPricingOption.base}`;
+      } else {
+        formattedPriceText = `${pricingFromText}${mainPricingOption.base} ${currencyUnitText}`;
+      }
+    }
+  }
+
+  return (
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+      >
+        <Card className="card-hover cursor-pointer group h-full flex flex-col">
+          <CardContent className="p-0 flex-grow flex flex-col">
+            <div className="relative overflow-hidden rounded-t-lg">
+              <img
+                src={attraction.images[0]}
+                alt={translatedName}
+                className="w-full h-60 md:h-72 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="absolute top-3 left-3">
+                <Badge
+                  variant="secondary"
+                  className="bg-white/90 text-slate-800 dark:bg-slate-800 dark:text-white px-2 py-1 text-xs"
+                >
+                  <span className="text-base mr-1.5">
+                    {getIconElement(attraction.icon)}
+                  </span>
+                  {translatedCategory}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="p-4 flex-grow flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-slate-700  dark:text-slate-800 mb-1.5 line-clamp-2">
+                  {translatedName}
+                </h3>
+                <p className="text-slate-500 dark:text-slate-600 mb-3 text-xs leading-relaxed line-clamp-3 min-h-[3.75rem]">
+                  {translatedShortDescription}
+                </p>
+
+                <div className="flex items-center justify-between mb-3">
+                  <div className="text-md font-semibold text-sky-700 dark:text-sky-800">
+                    {formattedPriceText}
+                    {!(
+                      isItemized && attraction.id === "stoly-krzesla-obrusy"
+                    ) &&
+                      mainPricingOption.base && (
+                        <span className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                          / {translatedPeriod}
+                        </span>
+                      )}
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                className="w-full btn-gradient text-white hover:shadow-lg transition-all text-sm py-2"
+              >
+                <Info className="h-3.5 w-3.5 mr-1.5" />
+                {t("attractionCard.details")}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        attraction={attraction}
+      />
+    </>
+  );
+}
