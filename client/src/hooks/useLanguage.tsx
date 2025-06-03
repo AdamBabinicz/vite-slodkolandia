@@ -114,7 +114,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.perPeriod.dzień": "dzień",
     "pricing.perPeriod.impreza": "impreza",
     "pricing.perPeriod.event": "event",
-    "pricing.perPeriod.sztuka-dzień": "sztuka/dzień",
+    "pricing.perPeriod.sztuka/dzień": "sztuka/dzień", // Zmieniono klucz na ukośnik
     "pricing.perPeriod.od": "od",
     "pricing.perPeriod.gratis": "Gratis*",
     "pricing.perPeriod.hour": "godzina",
@@ -795,7 +795,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.perPeriod.dzień": "day",
     "pricing.perPeriod.impreza": "party",
     "pricing.perPeriod.event": "event",
-    "pricing.perPeriod.sztuka-dzień": "pc./day",
+    "pricing.perPeriod.sztuka/dzień": "pc./day", // Zmieniono klucz na ukośnik i wartość
     "pricing.perPeriod.od": "from",
     "pricing.perPeriod.gratis": "Free*",
     "pricing.perPeriod.hour": "hour",
@@ -1417,10 +1417,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
       } else if (replacements?.defaultValue) {
         translation = String(replacements.defaultValue);
       } else {
-        console.warn(
-          `[i18n] Missing translation for key: "${key}" in language "${language}". Returning key.`
-        );
-        translation = key;
+        // console.warn(
+        //   `[i18n] Missing translation for key: "${key}" in language "${language}". Returning key.`
+        // );
+        translation = key; // Zmieniono zachowanie, aby zwracać klucz zamiast logować ostrzeżenie za każdym razem
       }
     }
 

@@ -161,22 +161,71 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                             spec.period
                         )
                         .map((item, index) => {
+                          const itemPeriodValueFromData = item.period;
                           const itemPeriodKey = item.period
                             ? `pricing.perPeriod.${item.period
                                 .toLowerCase()
                                 .replace(/\s+/g, "-")}`
                             : "";
-                          const itemTranslatedPeriod = item.period
-                            ? t(itemPeriodKey, { defaultValue: item.period })
+                          const itemTranslatedPeriodRaw = item.period
+                            ? t(
+                                itemPeriodKey,
+                                undefined,
+                                `FALLBACK_FOR_${item.period}`
+                              )
                             : "";
+
+                          console.log(
+                            "%c[Modal itemList DEBUG]",
+                            "color: lime; font-weight: bold;",
+                            {
+                              itemName: t(
+                                item.labelKey,
+                                undefined,
+                                `NO_LABEL_KEY_${item.labelKey}`
+                              ),
+                              currentLanguage: language,
+                              originalPeriodFromData: itemPeriodValueFromData,
+                              generatedPeriodKeyForT: itemPeriodKey,
+                              rawTranslatedPeriodOutput:
+                                itemTranslatedPeriodRaw,
+                              finalPeriodDisplay:
+                                itemTranslatedPeriodRaw.replace(/\//g, " / "),
+                            }
+                          );
+
                           const itemCurrencyUnitText = item.currency
                             ? t(`currencyUnit.${item.currency.toLowerCase()}`, {
                                 defaultValue: item.currency,
                               })
                             : "";
-                          const pricingFromTextForItem = t(
-                            "attractionCard.priceFrom"
-                          );
+
+                          let priceDisplay;
+                          if (
+                            item.price === 0 &&
+                            item.period?.toLowerCase() === "gratis"
+                          ) {
+                            priceDisplay = t(itemPeriodKey, {
+                              defaultValue: item.period,
+                            });
+                          } else {
+                            const formattedBasePrice =
+                              language === "en"
+                                ? `${itemCurrencyUnitText} ${item.price}`
+                                : `${item.price} ${itemCurrencyUnitText}`;
+
+                            if (
+                              item.price !== 0 &&
+                              item.period &&
+                              item.period.toLowerCase() !== "gratis"
+                            ) {
+                              const displayPeriod =
+                                itemTranslatedPeriodRaw.replace(/\//g, " / ");
+                              priceDisplay = `${formattedBasePrice} / ${displayPeriod}`;
+                            } else {
+                              priceDisplay = formattedBasePrice;
+                            }
+                          }
 
                           return (
                             <div
@@ -187,21 +236,7 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                                 {t(item.labelKey)}
                               </span>
                               <span className="font-semibold text-primary whitespace-nowrap">
-                                {item.price === 0 &&
-                                item.period?.toLowerCase() === "gratis"
-                                  ? t(itemPeriodKey, {
-                                      defaultValue: item.period,
-                                    })
-                                  : language === "en"
-                                  ? `${pricingFromTextForItem}${itemCurrencyUnitText} ${item.price}` // POPRAWKA TUTAJ
-                                  : `${pricingFromTextForItem}${item.price} ${itemCurrencyUnitText}`}
-                                {item.price !== 0 &&
-                                  item.period &&
-                                  item.period.toLowerCase() !== "gratis" && (
-                                    <span className="text-xs text-muted-foreground ml-1">
-                                      / {itemTranslatedPeriod}
-                                    </span>
-                                  )}
+                                {priceDisplay}
                               </span>
                             </div>
                           );
@@ -242,7 +277,7 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                             )}
                             <div className="text-xl md:text-2xl font-bold text-primary">
                               {language === "en"
-                                ? `${pricingFromTextGlobal}${currencyUnitText} ${option.base}` // POPRAWKA TUTAJ
+                                ? `${pricingFromTextGlobal}${currencyUnitText} ${option.base}`
                                 : `${pricingFromTextGlobal}${option.base} ${currencyUnitText}`}
                               <span className="text-base md:text-lg text-muted-foreground ml-1.5">
                                 {" "}
