@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Filter } from "lucide-react";
 import { motion } from "framer-motion";
-// import SEOHead from "@/components/SEOHead";
 import AttractionCard from "@/components/AttractionCard";
 import CallToAction from "@/components/CallToAction";
 import {
@@ -14,13 +13,10 @@ import {
 import { useLanguage } from "@/hooks/useLanguage";
 import { useLocation } from "wouter";
 import {
-  getLocalizedPath,
   getLocalizedSlug,
   PageKey,
-  Language,
   PAGE_KEYS,
-  getInternalRoutePath, // Potrzebne do generowania ścieżki dla navigate
-  defaultLang, // Potrzebne do logiki
+  getInternalRoutePath,
 } from "@/config/paths";
 
 interface CategoryFilter {
@@ -31,13 +27,10 @@ interface CategoryFilter {
   filterLogic: (attraction: Attraction) => boolean;
 }
 
-// Ta funkcja pomocnicza deriveInternalPathFromLocalized nie jest już potrzebna,
-// jeśli WouterLink i navigate używają poprawnych ścieżek względem base
-
 export default function Oferta() {
   const [activeCategory, setActiveCategory] = useState("all");
   const { t, language } = useLanguage();
-  const [location, navigate] = useLocation(); // location to ścieżka względna do base
+  const [location, navigate] = useLocation();
 
   const categories: CategoryFilter[] = [
     {
@@ -93,9 +86,6 @@ export default function Oferta() {
 
   useEffect(() => {
     const hash = window.location.hash.replace("#", "");
-    // location z useLocation() to ścieżka WZGLĘDNA do base routera
-    // np. jeśli base="/en" i URL to /en/offer#tents, location to "/offer#tents"
-
     const categoryFromHash = categories.find((cat) => {
       if (cat.id === "all" && !hash) return true;
       if (
@@ -109,25 +99,18 @@ export default function Oferta() {
     const internalOfferPathForLang = getInternalRoutePath(
       PAGE_KEYS.OFFER,
       language
-    ); // np. "/offer" lub "/oferta"
+    );
 
     if (categoryFromHash) {
       if (activeCategory !== categoryFromHash.id) {
-        console.log(
-          `[Oferta useEffect] Setting activeCategory from hash: ${categoryFromHash.id}`
-        );
         setActiveCategory(categoryFromHash.id);
       }
     } else if (!hash && location.startsWith(internalOfferPathForLang)) {
-      // Sprawdź, czy jesteśmy na bazowej ścieżce oferty
       if (activeCategory !== "all") {
-        console.log(
-          `[Oferta useEffect] No hash, on offer base path. Setting activeCategory to "all"`
-        );
         setActiveCategory("all");
       }
     }
-  }, [location, language]); // Usunięto categories z zależności, bo jest stała
+  }, [location, language, activeCategory]); // Dodano activeCategory do zależności
 
   const selectedFilter = categories.find((cat) => cat.id === activeCategory);
   const filteredAttractions = selectedFilter
@@ -137,11 +120,10 @@ export default function Oferta() {
   const activeCategoryName = selectedFilter?.nameKey || "nav.allAttractions";
 
   const handleCategoryChange = (categoryId: string) => {
-    setActiveCategory(categoryId); // Ustaw kategorię lokalnie od razu dla UI
     const categoryObject = categories.find((c) => c.id === categoryId);
+    setActiveCategory(categoryId);
 
-    // Generujemy ścieżkę WEWNĘTRZNĄ (względną do base) dla Woutera
-    let pathForWouter = getInternalRoutePath(PAGE_KEYS.OFFER, language); // np. "/offer" lub "/oferta"
+    let pathForWouter = getInternalRoutePath(PAGE_KEYS.OFFER, language);
     let hashTargetSlug = "";
 
     if (
@@ -156,29 +138,13 @@ export default function Oferta() {
       if (hashTargetSlug) pathForWouter += `#${hashTargetSlug}`;
     }
 
-    console.log(
-      `[Oferta handleCategoryChange] Target path for Wouter navigate: "${pathForWouter}" (current language: ${language})`
-    );
-
-    // location z useLocation() to już ścieżka względna do base.
-    // Porównujemy ją z nowo wygenerowaną ścieżką względną.
     if (location !== pathForWouter) {
       navigate(pathForWouter, { replace: true });
-    } else {
-      console.log(
-        `[Oferta handleCategoryChange] Wouter location already "${location}", no navigation needed.`
-      );
     }
   };
 
   return (
     <>
-      {/* <SEOHead
-        title={t("seo.offerTitle")}
-        description={t("seo.offerDescription")}
-        canonical={getLocalizedPath(PAGE_KEYS.OFFER, language)}
-      /> */}
-
       <div className="pt-16">
         <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

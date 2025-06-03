@@ -27,7 +27,7 @@ import {
   PageKey,
   Language,
   defaultLang,
-  getInternalRoutePath,
+  getInternalRoutePath, // Zakładamy, że ta funkcja zwraca ścieżkę WZGLĘDNĄ do base routera
 } from "@/config/paths";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -88,7 +88,7 @@ export default function Navbar() {
 
   const switchLanguage = (newLang: Language) => {
     if (newLang === language) {
-      if (isMobileMenuOpen) setIsMobileMenuOpen(false); // Zamknij nawet jeśli język ten sam
+      if (isMobileMenuOpen) setIsMobileMenuOpen(false);
       return;
     }
     setContextLanguage(newLang, { preventNavigation: false });
@@ -124,9 +124,12 @@ export default function Navbar() {
   };
 
   const navLinkHref = (pageKey: PageKey): string => {
+    // Wewnątrz WouterRouter z ustawionym 'base', link do strony głównej (dla tego base) to zawsze "/"
     if (pageKey === PAGE_KEYS.HOME) {
-      return language === defaultLang ? "/" : `/${language}`;
+      return "/";
     }
+    // getInternalRoutePath powinno zwracać ścieżkę bez prefiksu językowego, np. "/offer", "/kontakt"
+    // ponieważ prefiks językowy jest już obsługiwany przez 'base' WouterRouter.
     return getInternalRoutePath(pageKey, language);
   };
 
@@ -148,7 +151,7 @@ export default function Navbar() {
               onClick={() =>
                 handleLinkClick(
                   true,
-                  getLocalizedPath(PAGE_KEYS.HOME, language)
+                  getLocalizedPath(PAGE_KEYS.HOME, language) // getLocalizedPath zwraca pełną ścieżkę do porównania
                 )
               }
             >

@@ -51,11 +51,14 @@ export default function AttractionCard({
   const mainPricingOption = attraction.pricingOptions[0];
 
   if (!mainPricingOption) {
+    // Zostawiam console.error, bo to ważna informacja o błędzie w danych
     console.error(`Attraction ${attraction.id} has no pricing options!`);
     return null;
   }
 
-  const periodKey = `pricing.perPeriod.${mainPricingOption.period.toLowerCase()}`;
+  const periodKey = `pricing.perPeriod.${mainPricingOption.period
+    .toLowerCase()
+    .replace(/\s+/g, "-")}`;
   const translatedPeriod = t(periodKey, undefined, mainPricingOption.period);
 
   const pricingFromTextRaw = t("attractionCard.priceFrom");
@@ -78,37 +81,13 @@ export default function AttractionCard({
       });
     } else {
       const priceBaseStr = String(mainPricingOption.base);
+      const part1 = pricingFromTextRaw.trim();
+      const part2 = currencyUnitTextRaw.trim();
 
       if (language === "en") {
-        // Bardzo jawne składanie stringa ze spacjami
-        const part1 = pricingFromTextRaw.trim(); // Usuń ewentualne spacje z tłumaczenia
-        const part2 = currencyUnitTextRaw.trim(); // Usuń ewentualne spacje z tłumaczenia
-
         formattedPriceText = part1 + " " + part2 + " " + priceBaseStr;
-
-        console.log("[AttractionCard EN DEBUG FINAL]", {
-          rawFrom: `"${pricingFromTextRaw}"`,
-          rawCurrency: `"${currencyUnitTextRaw}"`,
-          trimmedFrom: `"${part1}"`,
-          trimmedCurrency: `"${part2}"`,
-          base: priceBaseStr,
-          finalEN: `"${formattedPriceText}"`,
-        });
       } else {
-        // dla 'pl'
-        const part1 = pricingFromTextRaw.trim();
-        const part2 = currencyUnitTextRaw.trim();
-
         formattedPriceText = part1 + " " + priceBaseStr + " " + part2;
-
-        console.log("[AttractionCard PL DEBUG FINAL]", {
-          rawFrom: `"${pricingFromTextRaw}"`,
-          rawCurrency: `"${currencyUnitTextRaw}"`,
-          trimmedFrom: `"${part1}"`,
-          trimmedCurrency: `"${part2}"`,
-          base: priceBaseStr,
-          finalPL: `"${formattedPriceText}"`,
-        });
       }
     }
   }

@@ -36,30 +36,13 @@ function ScrollRestoration() {
 
   useEffect(() => {
     const hashValue = window.location.hash.replace("#", "");
-    if (APP_DEBUG_MODE) {
-      console.log(
-        `[ScrollRestoration] Detected hash: "${hashValue}", Full location for effect: "${wouterLocation}"`
-      );
-    }
-
     if (!hashValue) {
       window.scrollTo(0, 0);
     } else {
       const scrollTimeoutId = setTimeout(() => {
         const element = document.getElementById(hashValue);
         if (element) {
-          if (APP_DEBUG_MODE) {
-            console.log(
-              `[ScrollRestoration] Element with id "${hashValue}" FOUND. Attempting to scroll with block: "start".`
-            );
-          }
           element.scrollIntoView({ block: "start" });
-        } else {
-          if (APP_DEBUG_MODE) {
-            console.warn(
-              `[ScrollRestoration] Element with id "${hashValue}" NOT FOUND for scrolling.`
-            );
-          }
         }
       }, 200);
       return () => clearTimeout(scrollTimeoutId);
@@ -87,12 +70,6 @@ function LanguageRouterLogic() {
 
   useEffect(() => {
     if (!isLanguageInitialized) {
-      if (APP_DEBUG_MODE) {
-        console.log(
-          `%c[LRL_v13.5 USER_LANG_CHANGE_EFFECT] Waiting for init...`,
-          "color: brown;"
-        );
-      }
       return;
     }
 
@@ -100,12 +77,6 @@ function LanguageRouterLogic() {
       return;
     }
 
-    if (APP_DEBUG_MODE) {
-      console.log(
-        `%c[LRL_v13.5 USER_LANG_CHANGE_EFFECT] Context language is now: "${contextLanguage}". Previous intent: "${userInitiatedLangChangeRef.current}"`,
-        "color: orange; font-weight: bold;"
-      );
-    }
     userInitiatedLangChangeRef.current = contextLanguage;
     logicRunCounter.current = 0;
 
@@ -116,12 +87,6 @@ function LanguageRouterLogic() {
       lang: langCurrentlyInUrl,
       hashKey: currentHashKeyFromUrl,
     } = findPageKeyByLocalizedPath(currentBrowserFullPath);
-
-    if (APP_DEBUG_MODE) {
-      console.log(
-        `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] Current URL: "${currentBrowserFullPath}", langInUrl: "${langCurrentlyInUrl}", pageKeyFromUrl: "${currentPageKeyFromUrl}"`
-      );
-    }
 
     if (langCurrentlyInUrl !== contextLanguage) {
       const targetPageKeyForNav =
@@ -154,33 +119,12 @@ function LanguageRouterLogic() {
         newAbsolutePathTarget
       );
 
-      if (APP_DEBUG_MODE) {
-        console.log(
-          `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] New absolute target: "${newAbsolutePathTarget}", Relative for navigate: "${relativePathForNavigate}"`
-        );
-      }
-
       if (normalizedCurrent !== normalizedNewTargetAbsolute) {
-        if (APP_DEBUG_MODE) {
-          console.warn(
-            `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] ACTION: Navigating to reflect new context language. Target: "${newAbsolutePathTarget}" (using relative: "${relativePathForNavigate}")`
-          );
-        }
         navigate(relativePathForNavigate, { replace: true });
       } else {
-        if (APP_DEBUG_MODE) {
-          console.log(
-            `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] URL already matches new context language. Clearing intent.`
-          );
-        }
         userInitiatedLangChangeRef.current = null;
       }
     } else {
-      if (APP_DEBUG_MODE) {
-        console.log(
-          `  [LRL_v13.5 USER_LANG_CHANGE_EFFECT] URL lang ("${langCurrentlyInUrl}") already matches new context language ("${contextLanguage}"). Clearing intent.`
-        );
-      }
       userInitiatedLangChangeRef.current = null;
     }
   }, [contextLanguage, isLanguageInitialized, navigate]);
@@ -200,12 +144,6 @@ function LanguageRouterLogic() {
       userInitiatedLangChangeRef.current === contextLanguage &&
       langInCurrentUrlCheck !== contextLanguage
     ) {
-      if (APP_DEBUG_MODE) {
-        console.log(
-          `%c[LRL_v13.5 URL_SYNC_EFFECT] User intent for lang "${contextLanguage}" is active, but URL lang is "${langInCurrentUrlCheck}". URL_SYNC waits.`,
-          "color: gray;"
-        );
-      }
       return;
     }
 
@@ -215,11 +153,6 @@ function LanguageRouterLogic() {
       window.location.pathname + window.location.search + window.location.hash;
 
     if (runId > 6) {
-      if (APP_DEBUG_MODE) {
-        console.error(
-          `[LRL_v13.5 URL_SYNC_EFFECT #${runId}] FATAL LOOP. Path: "${currentBrowserFullPath}", ContextLang: "${contextLanguage}". Halting.`
-        );
-      }
       logicRunCounter.current = 0;
       userInitiatedLangChangeRef.current = null;
       return;
@@ -232,11 +165,6 @@ function LanguageRouterLogic() {
     } = findPageKeyByLocalizedPath(currentBrowserFullPath);
 
     if (langDetectedInUrl !== contextLanguage) {
-      if (APP_DEBUG_MODE) {
-        console.warn(
-          `  [LRL_v13.5 URL_SYNC_EFFECT #${runId}] ACTION (URL has priority): Context lang ("${contextLanguage}") differs from URL lang ("${langDetectedInUrl}"). Updating context.`
-        );
-      }
       setGlobalLanguage(langDetectedInUrl, { preventNavigation: true });
       return;
     }
@@ -258,19 +186,6 @@ function LanguageRouterLogic() {
     );
 
     if (normalizedCurrent !== normalizedCanonical) {
-      let reason = "Path MISMATCH";
-      if (
-        parsedPageKeyFromUrl === PAGE_KEYS.NOT_FOUND &&
-        pageKeyToUse === PAGE_KEYS.HOME
-      ) {
-        reason = "Page NOT_FOUND, redirecting to HOME";
-      }
-      if (APP_DEBUG_MODE) {
-        console.warn(
-          `  [LRL_v13.5 URL_SYNC_EFFECT #${runId}] ACTION: ${reason}. Current: "${currentBrowserFullPath}", Canonical: "${canonicalAbsolutePath}". NAVIGATING.`
-        );
-      }
-
       let relativePathForNavigate = getInternalRoutePath(
         pageKeyToUse,
         contextLanguage
@@ -287,11 +202,6 @@ function LanguageRouterLogic() {
     } else {
       logicRunCounter.current = 0;
       if (userInitiatedLangChangeRef.current === contextLanguage) {
-        if (APP_DEBUG_MODE) {
-          console.log(
-            `  [LRL_v13.5 URL_SYNC_EFFECT #${runId}] Path is canonical and lang intent fulfilled. Clearing userInitiatedLangChangeRef.`
-          );
-        }
         userInitiatedLangChangeRef.current = null;
       }
     }
