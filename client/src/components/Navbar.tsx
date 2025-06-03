@@ -27,7 +27,7 @@ import {
   PageKey,
   Language,
   defaultLang,
-  getInternalRoutePath, // Zakładamy, że ta funkcja zwraca ścieżkę WZGLĘDNĄ do base routera
+  getInternalRoutePath,
 } from "@/config/paths";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -86,13 +86,19 @@ export default function Navbar() {
     };
   }, [scrollbarWidth]);
 
+  const closeMobileMenu = () => {
+    if (isMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   const switchLanguage = (newLang: Language) => {
     if (newLang === language) {
-      if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+      closeMobileMenu();
       return;
     }
     setContextLanguage(newLang, { preventNavigation: false });
-    if (isMobileMenuOpen) setIsMobileMenuOpen(false);
+    closeMobileMenu();
   };
 
   const isActive = (pageKeyToCheck: PageKey) => {
@@ -109,9 +115,9 @@ export default function Navbar() {
     return !currentHashSlugValue;
   };
 
-  const handleLinkClick = (closeMobileMenu = true, targetPath?: string) => {
-    if (closeMobileMenu && isMobileMenuOpen) {
-      setIsMobileMenuOpen(false);
+  const handleLinkClick = (closeMenu = true, targetPath?: string) => {
+    if (closeMenu) {
+      closeMobileMenu();
     }
     const homePathForCurrentLang = getLocalizedPath(PAGE_KEYS.HOME, language);
     if (
@@ -124,12 +130,9 @@ export default function Navbar() {
   };
 
   const navLinkHref = (pageKey: PageKey): string => {
-    // Wewnątrz WouterRouter z ustawionym 'base', link do strony głównej (dla tego base) to zawsze "/"
     if (pageKey === PAGE_KEYS.HOME) {
       return "/";
     }
-    // getInternalRoutePath powinno zwracać ścieżkę bez prefiksu językowego, np. "/offer", "/kontakt"
-    // ponieważ prefiks językowy jest już obsługiwany przez 'base' WouterRouter.
     return getInternalRoutePath(pageKey, language);
   };
 
@@ -151,7 +154,7 @@ export default function Navbar() {
               onClick={() =>
                 handleLinkClick(
                   true,
-                  getLocalizedPath(PAGE_KEYS.HOME, language) // getLocalizedPath zwraca pełną ścieżkę do porównania
+                  getLocalizedPath(PAGE_KEYS.HOME, language)
                 )
               }
             >
@@ -488,7 +491,7 @@ export default function Navbar() {
                     >
                       🇬🇧 EN
                     </Button>
-                    <ThemeToggle />
+                    <ThemeToggle onToggle={closeMobileMenu} />
                   </div>
                   <Button
                     onClick={() => {
