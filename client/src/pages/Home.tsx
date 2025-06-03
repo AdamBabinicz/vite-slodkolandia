@@ -35,14 +35,6 @@ export default function Home() {
   const contactPathForLink = getInternalRoutePath(PAGE_KEYS.CONTACT, language);
   const offerPathForLink = getInternalRoutePath(PAGE_KEYS.OFFER, language);
 
-  if (language === "en") {
-    console.log("[Home.tsx DEBUG] For CONTACT link in EN:", {
-      languageFromContext: language,
-      generatedHrefContact: contactPathForLink,
-      generatedHrefOffer: offerPathForLink,
-    });
-  }
-
   return (
     <>
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
