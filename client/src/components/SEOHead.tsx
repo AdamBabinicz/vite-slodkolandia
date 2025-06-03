@@ -25,15 +25,13 @@ const pageSpecificSEOMeta: Record<
 > = {
   [PAGE_KEYS.HOME]: {
     pl: {
-      title:
-        "SŁODKOLANDIA wita: - Atrakcje Eventowe, Wynajem Sprzętu Imprezowego | Radom",
+      title: "SŁODKOLANDIA wita: Eventy, Wynajem Sprzętu | Radom | Warszawa",
       description:
         "Wynajem namiotów imprezowych, zjeżdżalni, zamków dmuchanych. Obsługa waty cukrowej, popcornu, fontanny czekoladowej. Radom i okolice.",
       ogImage: "/img/og-slodkolandia-home.png",
     },
     en: {
-      title:
-        "SŁODKOLANDIA wita: - Event Attractions, Party Equipment Rental | Radom",
+      title: "SŁODKOLANDIA wita: Events, Equipment Rental | Radom | Warsaw",
       description:
         "Party tent rental, slides, bouncy castles. Cotton candy, popcorn, chocolate fountain services. Radom and surroundings.",
       ogImage: "/img/f/4.avif",

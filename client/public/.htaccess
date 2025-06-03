@@ -1,5 +1,6 @@
 Options -Indexes
 AddDefaultCharset utf-8
+
 RewriteEngine On
 
 # Przekierowanie na HTTPS (powinno być pierwsze lub wczesne)
@@ -12,37 +13,112 @@ RewriteCond %{HTTP_HOST} !^www\. [NC]
 RewriteCond %{HTTP_HOST} !^localhost [NC] # Aby uniknąć problemów lokalnie
 RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+# ----- Nagłówki Bezpieczeństwa i Cache - START -----
 <IfModule mod_headers.c>
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-    <FilesMatch "\.(ico|jpe?g|png|gif|swf|svg|avif|webp|mp4|webm|woff2?|ttf|otf|css|js|webmanifest)$">
+
+    # Ustawienia Cache-Control dla różnych typów plików
+    # Dla plików, które się nie zmieniają lub mają unikalne nazwy (fingerprinting)
+    <FilesMatch "\.(ico|jpe?g|png|gif|svg|avif|webp|mp4|webm|woff2?|ttf|otf|webmanifest)$">
         Header set Cache-Control "public, max-age=31536000, immutable"
     </FilesMatch>
-    <FilesMatch "^index\.html$">
-        Header set Cache-Control "no-cache, must-revalidate"
+
+    # Dla CSS i JS - jeśli nie używasz fingerprintingu, możesz chcieć krótszy czas
+    # Jeśli używasz fingerprintingu (np. style.hash.css), możesz przenieść je do powyższej reguły
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "public, max-age=604800, immutable" # 1 tydzień, immutable jeśli fingerprintowane
+        # Alternatywnie, jeśli NIE są fingerprintowane:
+        # Header set Cache-Control "public, max-age=604800, must-revalidate"
     </FilesMatch>
+
+    # Dla głównego pliku HTML
+    <FilesMatch "^index\.html$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate, max-age=0"
+        Header set Pragma "no-cache" # Dla starszych klientów HTTP/1.0
+        Header set Expires "0" # Dla starszych klientów HTTP/1.0
+    </FilesMatch>
+
+    # Ważne dla proxy cache'ujących skompresowane zasoby
     Header append Vary "Accept-Encoding"
 </IfModule>
 
+# ----- Dodatkowe ustawienia Expires (jeśli mod_expires jest dostępny) - START -----
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault                              "access plus 1 month"
+    ExpiresByType text/html                     "access plus 0 seconds" # Zgodnie z no-cache dla index.html
+
+    # Dane
+    ExpiresByType application/json              "access plus 0 seconds"
+    ExpiresByType application/ld+json           "access plus 0 seconds"
+    ExpiresByType application/xml               "access plus 0 seconds"
+    ExpiresByType text/xml                      "access plus 0 seconds"
+
+    # Favicon (może być długo cache'owany)
+    ExpiresByType image/vnd.microsoft.icon      "access plus 1 year"
+    ExpiresByType image/x-icon                  "access plus 1 year"
+    ExpiresByType image/ico                     "access plus 1 year"
+
+    # Obrazy
+    ExpiresByType image/avif                    "access plus 1 year"
+    ExpiresByType image/webp                    "access plus 1 year"
+    ExpiresByType image/gif                     "access plus 1 year"
+    ExpiresByType image/jpeg                    "access plus 1 year"
+    ExpiresByType image/png                     "access plus 1 year"
+    ExpiresByType image/svg+xml                 "access plus 1 year"
+
+    # Wideo
+    ExpiresByType video/mp4                     "access plus 1 year"
+    ExpiresByType video/webm                    "access plus 1 year"
+
+    # Czcionki
+    ExpiresByType font/otf                      "access plus 1 year"
+    ExpiresByType font/ttf                      "access plus 1 year"
+    ExpiresByType font/woff                     "access plus 1 year"
+    ExpiresByType font/woff2                    "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+    ExpiresByType application/x-font-ttf        "access plus 1 year"
+    ExpiresByType application/x-font-woff       "access plus 1 year"
+
+    # CSS i JS
+    ExpiresByType text/css                      "access plus 1 week" # Lub 1 rok jeśli fingerprintowane
+    ExpiresByType application/javascript        "access plus 1 week" # Lub 1 rok jeśli fingerprintowane
+    ExpiresByType text/javascript               "access plus 1 week" # Lub 1 rok jeśli fingerprintowane
+
+    # Inne
+    ExpiresByType application/pdf               "access plus 1 month"
+    ExpiresByType application/x-shockwave-flash "access plus 1 month"
+    ExpiresByType application/manifest+json     "access plus 1 week" # Dla webmanifest
+</IfModule>
+# ----- Dodatkowe ustawienia Expires - KONIEC -----
+# ----- Nagłówki Bezpieczeństwa i Cache - KONIEC -----
+
+
+# Reguły przepisywania dla SPA (React/Vue/Angular itp.)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
 
+# Kompresja Gzip/Deflate
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
     AddOutputFilterByType DEFLATE image/svg+xml
     AddOutputFilterByType DEFLATE font/ttf font/otf font/woff font/woff2
 </IfModule>
 
+# Dodatkowe typy MIME dla nowoczesnych formatów obrazów
 AddType image/avif .avif
 AddType image/webp .webp
 
+# Blokowanie niechcianych botów
 RewriteCond %{HTTP_USER_AGENT} ^BlackWidow [NC,OR]
 RewriteCond %{HTTP_USER_AGENT} ^HTTrack [NC]
 RewriteRule ^.* - [F,L]
 
+# Zabezpieczenie wrażliwych plików
 <FilesMatch "\.(htaccess|htpasswd|ini|log|sh|conf|config|cnf|sql|bak|backup|swp|~$)$">
   Require all denied
 </FilesMatch>
