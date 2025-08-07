@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -7,13 +7,8 @@ import { motion } from "framer-motion";
 import CallToAction from "@/components/CallToAction";
 import { attractions, Attraction } from "@/data/attractions";
 import { useLanguage } from "@/hooks/useLanguage";
-import { Link as WouterLink } from "wouter";
-import {
-  PageKey,
-  PAGE_KEYS,
-  getInternalRoutePath,
-  getLocalizedSlug,
-} from "@/config/paths";
+import { useLocation } from "wouter";
+import Modal from "@/components/Modal"; // <-- 1. Importujemy ISTNIEJĄCY Modal.tsx
 
 interface CategoryFilterCennik {
   id: string;
@@ -21,18 +16,37 @@ interface CategoryFilterCennik {
   filterLogic: (attraction: Attraction) => boolean;
 }
 
-const attractionIdToOfferHashKeyMap: Record<string, PageKey | undefined> = {
-  "namioty-imprezowe": PAGE_KEYS.OFFER_TENTS,
-  "stoly-krzesla-obrusy": PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
-  "dmuchane-atrakcje": PAGE_KEYS.OFFER_INFLATABLES,
-  popcorn: PAGE_KEYS.OFFER_POPCORN,
-  "wata-cukrowa": PAGE_KEYS.OFFER_COTTON_CANDY,
-  "fontanna-czekoladowa": PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
-};
-
 export default function Cennik() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const { t, language } = useLanguage();
+  const [location] = useLocation();
+
+  // <-- 2. Dodajemy stan do obsługi modala (tak jak poprzednio)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAttraction, setSelectedAttraction] =
+    useState<Attraction | null>(null);
+
+  // Funkcja otwierająca modal (tak jak poprzednio)
+  const handleDetailsClick = (attraction: Attraction) => {
+    setSelectedAttraction(attraction);
+    setIsModalOpen(true);
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location]);
+
+  useEffect(() => {
+    const handleFooterNavigation = () => {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 50);
+    };
+    document.addEventListener("footerNavigation", handleFooterNavigation);
+    return () => {
+      document.removeEventListener("footerNavigation", handleFooterNavigation);
+    };
+  }, []);
 
   const additionalServices = [
     {
@@ -106,6 +120,7 @@ export default function Cennik() {
   return (
     <>
       <div className="pt-16">
+        {/* ... (sekcje hero, filtry - bez zmian) ... */}
         <section className="py-12 md:py-20 bg-gradient-to-br from-sky-100 to-emerald-100 dark:from-slate-900 dark:to-slate-400">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
@@ -214,19 +229,6 @@ export default function Cennik() {
                 });
                 const pricingFromText = t("attractionCard.priceFrom");
                 const isItemized = attraction.pricingDisplayMode === "itemList";
-                const offerHashPageKey =
-                  attractionIdToOfferHashKeyMap[attraction.id];
-
-                let linkToOfferSection = getInternalRoutePath(
-                  PAGE_KEYS.OFFER,
-                  language
-                );
-                if (offerHashPageKey) {
-                  const hashSlug = getLocalizedSlug(offerHashPageKey, language);
-                  if (hashSlug) {
-                    linkToOfferSection += `#${hashSlug}`;
-                  }
-                }
 
                 return (
                   <motion.div
@@ -274,15 +276,14 @@ export default function Cennik() {
                               </div>
                             )}
                         </div>
+                        {/* <-- 3. Zmieniamy przycisk: usuwamy WouterLink i asChild, dodajemy onClick */}
                         <Button
-                          asChild
                           variant="link"
                           className="p-0 h-auto mt-4 text-primary self-start"
+                          onClick={() => handleDetailsClick(attraction)}
                         >
-                          <WouterLink href={linkToOfferSection}>
-                            {t("attractionCard.details")}{" "}
-                            <Info className="ml-1.5 h-3.5 w-3.5" />
-                          </WouterLink>
+                          {t("attractionCard.details")}{" "}
+                          <Info className="ml-1.5 h-3.5 w-3.5" />
                         </Button>
                       </CardContent>
                     </Card>
@@ -304,6 +305,7 @@ export default function Cennik() {
           </div>
         </section>
 
+        {/* ... (pozostałe sekcje - bez zmian) ... */}
         <section className="py-12 md:py-16 bg-background dark:bg-background">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 items-start">
@@ -455,8 +457,18 @@ export default function Cennik() {
             </div>
           </div>
         </section>
+
         <CallToAction />
       </div>
+
+      {/* <-- 4. Renderujemy ISTNIEJĄCY Modal warunkowo */}
+      {isModalOpen && selectedAttraction && (
+        <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          attraction={selectedAttraction}
+        />
+      )}
     </>
   );
 }

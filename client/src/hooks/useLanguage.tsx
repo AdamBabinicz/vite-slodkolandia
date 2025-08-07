@@ -97,24 +97,74 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.quickLinks": "Szybkie Linki",
     "footer.servicesTitle": "Nasze Usługi",
     "footer.serviceTents": "Namioty Imprezowe",
+    "footer.serviceTables": "Stoły i Krzesła",
     "footer.serviceInflatables": "Dmuchańce",
     "footer.serviceCottonCandy": "Wata Cukrowa",
     "footer.servicePopcorn": "Maszyny do Popcornu",
     "footer.serviceFountains": "Fontanna Czekoladowa",
     "footer.serviceComprehensive": "Kompleksowa Obsługa",
+    "footer.seeAlsoTitle": "Zobacz również",
+    "footer.clientReviews": "Opinie Klientów",
     "footer.contactTitle": "Kontakt",
     "footer.address": "Radom i okolice",
     "footer.addressDetail": "(promień 100 km)",
-    "footer.copyright": "Radom {year} SŁODKOLANDIA wita:.",
+    "footer.copyright": "Radom, 2014 - {year} SŁODKOLANDIA wita:.",
     "footer.privacyPolicy": "Polityka Prywatności",
     "footer.terms": "Regulamin",
+    "reviews.pageTitle": "Opinie Naszych Klientów",
+    "reviews.pageSubtitle":
+      "Jesteśmy dumni z zaufania, jakim darzą nas Klienci. Zobacz, co mówią o współpracy z nami.",
+    "reviews.showMore": "Pokaż więcej opinii",
+    "reviews.seeAllGoogle": "Zobacz wszystkie opinie w Google",
+    "reviews.sourceGoogle": "Opinia z Google",
+    "reviews.kromer.author": "Kasia Kromer",
+    "reviews.kromer.details": "3 opinie",
+    "reviews.kromer.text":
+      "Serdecznie polecamy! Profesjonalne podejście do Klienta, wywiązanie się z umowy. Duży plus w cenie ubezpieczenie dziecka w razie wypadku. Polecam !",
+    "reviews.domosfera.author": "DOMOSFERA P.W.",
+    "reviews.domosfera.details": "7 opinii",
+    "reviews.domosfera.text":
+      "Z Całego Serca Polecam, obsługa na najwyższym Poziomie.",
+    "reviews.nowywy.author": "Mateusz Nowywy",
+    "reviews.nowywy.details": "5 opinii",
+    "reviews.nowywy.text":
+      "Polecam tę firmę innym ponieważ urządzenia takie jak dmuchańce pachną świeżością i są nowe. Obsługa jest bardzo miła i pomocna we wszystkim co wiąże się z zabawą i rozrywką dla dzieci. Nasze dzieci obecne na imprezie były bardzo zachwycone.",
+    "reviews.holmes.author": "Mr. Holmes",
+    "reviews.holmes.details": "Lokalny przewodnik",
+    "reviews.holmes.text":
+      "Firma Słodkolandia wita: traktuje swoje obowiązki wynikające z umowy bardzo rzetelnie.Jest elastyczna przy negocjacjach odnośnie ceny i oferuje bardzo dobrej jakości sprzęt.",
+    "reviews.pawel.author": "Paweł -",
+    "reviews.pawel.details": "7 opinii",
+    "reviews.pawel.text":
+      "Firma profesjonalna, duża fachowość, entuzjazm i zaangażowanie, przystępne ceny, zabawne dmuchańce. Polecam!",
+    "reviews.zak.author": "Zosia Żak",
+    "reviews.zak.details": "2 opinie",
+    "reviews.zak.text": "Bardzo polecam tą firmę 10/10 🙂👍",
+    "reviews.prondek.author": "jan prondek",
+    "reviews.prondek.details": "13 opinii",
+    "reviews.prondek.text":
+      "byłem na imprezie organizowanej przez was i musze powiedzieć że było super, pozdrawiam",
+    "reviews.chmielinski.author": "Adam Chmieliński",
+    "reviews.chmielinski.details": "32 opinie",
+    "reviews.chmielinski.text": "Polecam firmę :)",
+    "reviews.viranos.author": "viranos s",
+    "reviews.viranos.details": "3 opinie",
+    "reviews.viranos.text": "Polecam!",
+    "reviews.dawidt.author": "Dawid T",
+    "reviews.dawidt.details": "Lokalny przewodnik",
+    "reviews.dawidt.text": "Imprezy dla dzieci.",
+    "reviews.nawara.author": "Martyna Nawara",
+    "reviews.nawara.details": "brak danych",
+    "reviews.nawara.text": "5/5",
+    "reviews.nazwiskowski.author": "Imienin Nazwiskowski",
+    "reviews.nazwiskowski.details": "Lokalny przewodnik",
+    "reviews.nazwiskowski.text": "5/5",
     "attractionCard.details": "Szczegóły",
     "attractionCard.priceFrom": "od ",
-    "currencyUnit.zł": "zł",
     "pricing.perPeriod.dzień": "dzień",
     "pricing.perPeriod.impreza": "impreza",
     "pricing.perPeriod.event": "event",
-    "pricing.perPeriod.sztuka/dzień": "sztuka/dzień", // Zmieniono klucz na ukośnik
+    "pricing.perPeriod.sztuka/dzień": "sztuka/dzień",
     "pricing.perPeriod.od": "od",
     "pricing.perPeriod.gratis": "Gratis*",
     "pricing.perPeriod.hour": "godzina",
@@ -204,7 +254,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricingPage.transportSetup4":
       "• Wymagane jest zapewnienie dostępu do prądu 230V",
     "pricingPage.transportSetup5":
-      "• Dla dmuchańców - płaska powierzchnia trawiasta min. 10x10m",
+      "• Dla dmuchańców - płaska powierzchnia trawiasta",
     "pricingPage.packageChildName": "Pakiet Dziecięcy",
     "pricingPage.packageChildDesc": "Idealny na urodziny dziecka",
     "pricingPage.packageChildItem1": "Zamek dmuchany",
@@ -476,6 +526,8 @@ const translations: Record<Language, Record<string, string>> = {
     "contact.phoneValue": "+48531890827",
     "modal.freeWithTent":
       "* Przy wynajmie namiotu lub indywidualnej wycenie pakietu",
+    "modal.pricingNote.fountain":
+      "* Cena nie obejmuje dodatków. Klient może opcjonalnie samodzielnie je zakupić.",
     "seo.homeTitle": "SŁODKOLANDIA wita: - Wynajem Atrakcji Eventowych Radom",
     "seo.homeDescription":
       "Profesjonalny wynajem namiotów imprezowych, dmuchańców, waty cukrowej i popcornu w Radomiu i okolicach. Zorganizuj niezapomnianą imprezę!",
@@ -534,7 +586,7 @@ const translations: Record<Language, Record<string, string>> = {
       "Niniejsza polityka prywatności opisuje, w jaki sposób SŁODKOLANDIA wita: (zwana dalej Administratorem) gromadzi, wykorzystuje i chroni dane osobowe Użytkowników.",
     "privacyPolicyPage.dataAdmin.title": "2. Administrator Danych",
     "privacyPolicyPage.dataAdmin.content":
-      "Administratorem Twoich danych osobowych jest firma SŁODKOLANDIA wita: z siedzibą w Radomiu. Kontakt: mariusz1989poczta@wp.pl, tel. +48 531 890 827.",
+      "Administratorem Twoich danych osobowych jest firma SŁODKOLANDIA wita: z siedzibą w Radomiu. Kontakt: mariuszek1989poczta@wp.pl, tel. +48 531 890 827.",
     "privacyPolicyPage.dataCollection.title": "3. Jakie dane zbieramy?",
     "privacyPolicyPage.dataCollection.content":
       "Zbieramy dane podane dobrowolnie podczas kontaktu (formularz, email, telefon), takie jak imię i nazwisko, adres email, numer telefonu, informacje dotyczące eventu.",
@@ -559,14 +611,13 @@ const translations: Record<Language, Record<string, string>> = {
     "attractionsData.namioty-imprezowe.description":
       "Profesjonalne namioty imprezowe w różnych rozmiarach, idealne na wesela, urodziny, eventy firmowe i inne okazje. Nasze namioty są wykonane z wysokiej jakości materiałów, odpornych na warunki atmosferyczne. Zapewniamy pełny serwis montażu i demontażu.",
     "attractionsData.namioty-imprezowe.materialValue":
-      "PVC 650g/m² - trwały, wodoodporny, ognioodporny, odporny na UV i rozdarcia",
-    "attractionsData.namioty-imprezowe.option1.description": "Namiot 5x6m",
+      "PVC 650 g/m² - trwały, wodoodporny, ognioodporny, odporny na UV i rozdarcia",
+    "attractionsData.namioty-imprezowe.option1.description": "Namiot 6x6m",
     "attractionsData.namioty-imprezowe.option1.capacity": "do 30 osób",
     "attractionsData.namioty-imprezowe.option2.description": "Namiot 6x10m",
     "attractionsData.namioty-imprezowe.option2.capacity": "do 60 osób",
     "specification.label.availableSizes": "Dostępne rozmiary",
-    "attractionsData.namioty-imprezowe.availableSizesValue":
-      "5x6m, 6x10m, 6x12m i inne na zapytanie",
+    "attractionsData.namioty-imprezowe.availableSizesValue": "6x6m, 6x10m",
     "attractionsData.stoly-krzesla-obrusy.name": "Stoły, Krzesła i Obrusy",
     "attractionsData.stoly-krzesla-obrusy.shortDescription":
       "Kompleksowe wyposażenie stołów, krzeseł, obrusów, trawy i oświetlenia na Twoją imprezę.",
@@ -589,9 +640,9 @@ const translations: Record<Language, Record<string, string>> = {
       "Maszyny do popcornu, które dodają wyjątkowego charakteru każdemu eventowi. Świeży, aromatyczny popcorn przygotowywany na żywo podczas imprezy. Dostępne różne smaki - słony, słodki, karmelowy.",
     "attractionsData.fontanna-czekoladowa.name": "Fontanna Czekoladowa",
     "attractionsData.fontanna-czekoladowa.shortDescription":
-      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
+      "Elegancka fontanna czekoladowa. Wykwintna atrakcja dla smakoszy.",
     "attractionsData.fontanna-czekoladowa.description":
-      "Elegancka fontanna czekoladowa z różnymi rodzajami czekolady - mleczna, gorzka, biała. W zestawie świeże owoce, ciasteczka i inne dodatki do maczania. Idealne na wesela, bankiety i eleganckie przyjęcia.",
+      "Elegancka fontanna czekoladowa z dodatkami. Wykwintna atrakcja dla prawdziwych smakoszy.",
     "attractionsData.kompleksowa-obsluga.name": "Kompleksowa Obsługa Eventów",
     "attractionsData.kompleksowa-obsluga.shortDescription":
       "Pełna organizacja eventów z naszym doświadczonym zespołem.",
@@ -778,24 +829,74 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.quickLinks": "Quick Links",
     "footer.servicesTitle": "Our Services",
     "footer.serviceTents": "Party Tents",
+    "footer.serviceTables": "Tables & Chairs",
     "footer.serviceInflatables": "Inflatables",
     "footer.serviceCottonCandy": "Cotton Candy",
     "footer.servicePopcorn": "Popcorn Machines",
     "footer.serviceFountains": "Chocolate Fountains",
     "footer.serviceComprehensive": "Comprehensive Service",
+    "footer.seeAlsoTitle": "See Also",
+    "footer.clientReviews": "Client Reviews",
     "footer.contactTitle": "Contact",
     "footer.address": "Radom and surroundings",
     "footer.addressDetail": "(100km radius)",
-    "footer.copyright": "Radom {year} SŁODKOLANDIA wita:.",
+    "footer.copyright": "Radom, 2014 - {year} SŁODKOLANDIA wita:.",
     "footer.privacyPolicy": "Privacy Policy",
     "footer.terms": "Terms of Service",
+    "reviews.pageTitle": "Our Client Reviews",
+    "reviews.pageSubtitle":
+      "We are proud of the trust our clients place in us. See what they say about working with us.",
+    "reviews.showMore": "Show more reviews",
+    "reviews.seeAllGoogle": "See all reviews on Google",
+    "reviews.sourceGoogle": "Review from Google",
+    "reviews.kromer.author": "Kasia Kromer",
+    "reviews.kromer.details": "3 reviews",
+    "reviews.kromer.text":
+      "We highly recommend! Professional approach to the customer, fulfillment of the contract. A big plus is the child's accident insurance included in the price. I recommend!",
+    "reviews.domosfera.author": "DOMOSFERA P.W.",
+    "reviews.domosfera.details": "7 reviews",
+    "reviews.domosfera.text":
+      "I recommend with all my heart, service at the highest level.",
+    "reviews.nowywy.author": "Mateusz Nowywy",
+    "reviews.nowywy.details": "5 reviews",
+    "reviews.nowywy.text":
+      "I recommend this company to others because the equipment, such as the bouncy castles, smells fresh and is new. The staff is very nice and helpful with everything related to fun and entertainment for children. Our children at the party were very delighted.",
+    "reviews.holmes.author": "Mr. Holmes",
+    "reviews.holmes.details": "Local Guide",
+    "reviews.holmes.text":
+      "The company Słodkolandia wita: treats its contractual obligations very reliably. It is flexible in price negotiations and offers very good quality equipment.",
+    "reviews.pawel.author": "Paweł -",
+    "reviews.pawel.details": "7 reviews",
+    "reviews.pawel.text":
+      "Professional company, great expertise, enthusiasm and commitment, affordable prices, fun inflatables. I recommend!",
+    "reviews.zak.author": "Zosia Żak",
+    "reviews.zak.details": "2 reviews",
+    "reviews.zak.text": "I highly recommend this company 10/10 🙂👍",
+    "reviews.prondek.author": "jan prondek",
+    "reviews.prondek.details": "13 reviews",
+    "reviews.prondek.text":
+      "I was at a party organized by you and I must say it was great, greetings",
+    "reviews.chmielinski.author": "Adam Chmieliński",
+    "reviews.chmielinski.details": "32 reviews",
+    "reviews.chmielinski.text": "I recommend the company :)",
+    "reviews.viranos.author": "viranos s",
+    "reviews.viranos.details": "3 reviews",
+    "reviews.viranos.text": "I recommend!",
+    "reviews.dawidt.author": "Dawid T",
+    "reviews.dawidt.details": "Local Guide",
+    "reviews.dawidt.text": "Parties for children.",
+    "reviews.nawara.author": "Martyna Nawara",
+    "reviews.nawara.details": "no data",
+    "reviews.nawara.text": "5/5",
+    "reviews.nazwiskowski.author": "Imienin Nazwiskowski",
+    "reviews.nazwiskowski.details": "Local Guide",
+    "reviews.nazwiskowski.text": "5/5",
     "attractionCard.details": "Details",
     "attractionCard.priceFrom": "from ",
-    "currencyUnit.zł": "PLN",
     "pricing.perPeriod.dzień": "day",
     "pricing.perPeriod.impreza": "party",
     "pricing.perPeriod.event": "event",
-    "pricing.perPeriod.sztuka/dzień": "pc./day", // Zmieniono klucz na ukośnik i wartość
+    "pricing.perPeriod.sztuka/dzień": "pc./day",
     "pricing.perPeriod.od": "from",
     "pricing.perPeriod.gratis": "Free*",
     "pricing.perPeriod.hour": "hour",
@@ -884,8 +985,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricingPage.transportSetup3":
       "• Setup time: 2-4 hours depending on the attraction",
     "pricingPage.transportSetup4": "• Access to 230V power supply required",
-    "pricingPage.transportSetup5":
-      "• For inflatables - flat grassy surface min. 10x10m",
+    "pricingPage.transportSetup5": "• For inflatables - flat grassy surface",
     "pricingPage.packageChildName": "Kids Package",
     "pricingPage.packageChildDesc": "Perfect for a child's birthday",
     "pricingPage.packageChildItem1": "Bouncy castle",
@@ -1154,6 +1254,8 @@ const translations: Record<Language, Record<string, string>> = {
       "Contact us today to check availability and get an individual quote.",
     "contact.phoneValue": "+48531890827",
     "modal.freeWithTent": "* With tent rental or individual package quote",
+    "modal.pricingNote.fountain":
+      "* Price does not include toppings. The client may optionally purchase them separately.",
     "seo.homeTitle": "SŁODKOLANDIA wita: - Event Attraction Rental Radom",
     "seo.homeDescription":
       "Professional rental of party tents, inflatables, cotton candy, and popcorn in Radom and surroundings. Organize an unforgettable party!",
@@ -1210,7 +1312,7 @@ const translations: Record<Language, Record<string, string>> = {
       "This Privacy Policy describes how SŁODKOLANDIA wita: (hereinafter referred to as the Administrator) collects, uses, and protects the personal data of Users.",
     "privacyPolicyPage.dataAdmin.title": "2. Data Administrator",
     "privacyPolicyPage.dataAdmin.content":
-      "The administrator of your personal data is SŁODKOLANDIA wita:, based in Radom. Contact: mariusz1989poczta@wp.pl, phone +48 531 890 827.",
+      "The administrator of your personal data is SŁODKOLANDIA wita:, based in Radom. Contact: mariuszek1989poczta@wp.pl, phone +48 531 890 827.",
     "privacyPolicyPage.dataCollection.title": "3. What data do we collect?",
     "privacyPolicyPage.dataCollection.content":
       "We collect data provided voluntarily during contact (form, email, phone), such as name, email address, phone number, and event information.",
@@ -1235,14 +1337,13 @@ const translations: Record<Language, Record<string, string>> = {
     "attractionsData.namioty-imprezowe.description":
       "Professional party tents in various sizes, ideal for weddings, birthdays, corporate events, and other occasions. Our tents are made of high-quality, weather-resistant materials. We provide full assembly and disassembly service.",
     "attractionsData.namioty-imprezowe.materialValue":
-      "PVC 650g/m² - durable, waterproof, fire-retardant, UV and tear resistant",
-    "attractionsData.namioty-imprezowe.option1.description": "Tent 5x6m",
+      "PVC 650 g/m² - durable, waterproof, fire-retardant, UV and tear resistant",
+    "attractionsData.namioty-imprezowe.option1.description": "Tent 6x6m",
     "attractionsData.namioty-imprezowe.option1.capacity": "up to 30 people",
     "attractionsData.namioty-imprezowe.option2.description": "Tent 6x10m",
     "attractionsData.namioty-imprezowe.option2.capacity": "up to 60 people",
     "specification.label.availableSizes": "Available sizes",
-    "attractionsData.namioty-imprezowe.availableSizesValue":
-      "5x6m, 6x10m, 6x12m and others on request",
+    "attractionsData.namioty-imprezowe.availableSizesValue": "6x6m, 6x10m",
     "attractionsData.stoly-krzesla-obrusy.name": "Tables, Chairs & Linens",
     "attractionsData.stoly-krzesla-obrusy.shortDescription":
       "Comprehensive equipment of tables, chairs, tablecloths, grass, and lighting for your event.",
@@ -1265,14 +1366,14 @@ const translations: Record<Language, Record<string, string>> = {
       "Popcorn machines that add a unique character to any event. Fresh, aromatic popcorn prepared live during the party. Various flavors available - salty, sweet, caramel.",
     "attractionsData.fontanna-czekoladowa.name": "Chocolate Fountain",
     "attractionsData.fontanna-czekoladowa.shortDescription":
-      "Elegant chocolate fountain with toppings. An exquisite attraction for true connoisseurs.",
+      "Elegant chocolate fountain. An exquisite attraction for connoisseurs.",
     "attractionsData.fontanna-czekoladowa.description":
-      "Elegant chocolate fountain with various types of chocolate - milk, dark, white. Includes fresh fruits, cookies, and other dipping extras. Perfect for weddings, banquets, and elegant parties.",
+      "Elegant chocolate fountain with toppings. An exquisite attraction for true connoisseurs.",
     "attractionsData.kompleksowa-obsluga.name": "Comprehensive Event Service",
     "attractionsData.kompleksowa-obsluga.shortDescription":
       "Full event organization with our experienced team.",
     "attractionsData.kompleksowa-obsluga.description":
-      "Full event organization with our experienced team. From planning and design, through space organization, to full service during the event. We take care of everything so you can enjoy your event.",
+      "Full event organization with our experienced team. From planning to execution.",
     "feature.variousSizes": "Various sizes available",
     "feature.weatherResistant": "Weather resistant",
     "feature.professionalSetup": "Professional assembly & disassembly",
@@ -1291,9 +1392,9 @@ const translations: Record<Language, Record<string, string>> = {
     "feature.liabilityInsurance": "Liability insurance (OC)",
     "feature.generatorIncluded": "Power generator included",
     "feature.protectiveMats": "Protective mats",
-    "feature.variousFlavorsColors": "Cotton candy in various flavors & colors",
+    "feature.variousFlavorsColors": "Cotton candy in white color",
     "feature.professionalService": "Professional service",
-    "feature.hygienicPackaging": "Hygienic packaging",
+    "feature.hygienicPackaging": "Ecological, disposable wooden sticks",
     "feature.visualAttraction": "Visual attraction",
     "feature.fastProduction": "Fast production",
     "feature.ecoSugars": "Ecological sugars",
@@ -1373,7 +1474,7 @@ const translations: Record<Language, Record<string, string>> = {
     "specification.value.eventTypesFull":
       "Weddings, birthdays, corporate events",
     "specification.value.realizationTimeHours": "2-8 hours",
-    "reviewModal.title": 'Add a review for "SŁODKOLANDIA wita:"!',
+    "reviewModal.title": 'Add a review for "{companyName}"!',
     "reviewModal.description":
       "Scan the QR code to add a review on Google Maps.",
     "reviewModal.qrAlt": "QR Code - Add Review",
@@ -1417,10 +1518,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({
       } else if (replacements?.defaultValue) {
         translation = String(replacements.defaultValue);
       } else {
-        // console.warn(
-        //   `[i18n] Missing translation for key: "${key}" in language "${language}". Returning key.`
-        // );
-        translation = key; // Zmieniono zachowanie, aby zwracać klucz zamiast logować ostrzeżenie za każdym razem
+        translation = key;
       }
     }
 

@@ -175,25 +175,6 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                               )
                             : "";
 
-                          console.log(
-                            "%c[Modal itemList DEBUG]",
-                            "color: lime; font-weight: bold;",
-                            {
-                              itemName: t(
-                                item.labelKey,
-                                undefined,
-                                `NO_LABEL_KEY_${item.labelKey}`
-                              ),
-                              currentLanguage: language,
-                              originalPeriodFromData: itemPeriodValueFromData,
-                              generatedPeriodKeyForT: itemPeriodKey,
-                              rawTranslatedPeriodOutput:
-                                itemTranslatedPeriodRaw,
-                              finalPeriodDisplay:
-                                itemTranslatedPeriodRaw.replace(/\//g, " / "),
-                            }
-                          );
-
                           const itemCurrencyUnitText = item.currency
                             ? t(`currencyUnit.${item.currency.toLowerCase()}`, {
                                 defaultValue: item.currency,
@@ -279,6 +260,9 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                               {language === "en"
                                 ? `${pricingFromTextGlobal}${currencyUnitText} ${option.base}`
                                 : `${pricingFromTextGlobal}${option.base} ${currencyUnitText}`}
+                              {attraction.pricingNoteKey && (
+                                <sup className="top-[-0.5em] text-base">*</sup>
+                              )}
                               <span className="text-base md:text-lg text-muted-foreground ml-1.5">
                                 {" "}
                                 / {translatedPeriod}
@@ -293,6 +277,11 @@ export default function Modal({ isOpen, onClose, attraction }: ModalProps) {
                           </div>
                         );
                       })}
+                      {attraction.pricingNoteKey && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {t(attraction.pricingNoteKey)}
+                        </p>
+                      )}
                       <p className="text-xs md:text-sm text-muted-foreground mt-2 text-center">
                         {t("modal.pricingIncludes", {
                           defaultValue:

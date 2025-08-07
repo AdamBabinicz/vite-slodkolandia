@@ -11,6 +11,7 @@ export const PAGE_KEYS = {
   CONTACT: "contact",
   PRIVACY_POLICY: "privacy",
   TERMS: "terms",
+  REVIEWS: "reviews",
   NOT_FOUND: "notFound",
   OFFER_TENTS: "offer_tents",
   OFFER_TABLES_CHAIRS_LINENS: "offer_tables_chairs_linens",
@@ -28,25 +29,35 @@ export const PAGE_KEYS = {
 
 export type PageKey = (typeof PAGE_KEYS)[keyof typeof PAGE_KEYS];
 
-export type OfferHashKey = Extract<
-  PageKey,
-  | typeof PAGE_KEYS.OFFER_TENTS
-  | typeof PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS
-  | typeof PAGE_KEYS.OFFER_INFLATABLES
-  | typeof PAGE_KEYS.OFFER_POPCORN
-  | typeof PAGE_KEYS.OFFER_COTTON_CANDY
-  | typeof PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN
->;
-export type GalleryHashKey = Extract<
-  PageKey,
-  | typeof PAGE_KEYS.GALLERY_PHOTO_TENTS
-  | typeof PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS
-  | typeof PAGE_KEYS.GALLERY_PHOTO_INFLATABLES
-  | typeof PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY
-  | typeof PAGE_KEYS.GALLERY_PHOTO_POPCORN
-  | typeof PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS
->;
+export const OFFER_HASH_KEYS = [
+  PAGE_KEYS.OFFER_TENTS,
+  PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
+  PAGE_KEYS.OFFER_INFLATABLES,
+  PAGE_KEYS.OFFER_POPCORN,
+  PAGE_KEYS.OFFER_COTTON_CANDY,
+  PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+] as const;
+
+export const GALLERY_HASH_KEYS = [
+  PAGE_KEYS.GALLERY_PHOTO_TENTS,
+  PAGE_KEYS.GALLERY_PHOTO_TABLES_CHAIRS_LINENS,
+  PAGE_KEYS.GALLERY_PHOTO_INFLATABLES,
+  PAGE_KEYS.GALLERY_PHOTO_COTTON_CANDY,
+  PAGE_KEYS.GALLERY_PHOTO_POPCORN,
+  PAGE_KEYS.GALLERY_PHOTO_FOUNTAINS,
+] as const;
+
+export type OfferHashKey = (typeof OFFER_HASH_KEYS)[number];
+export type GalleryHashKey = (typeof GALLERY_HASH_KEYS)[number];
 export type HashKey = OfferHashKey | GalleryHashKey;
+
+export function isOfferHashKey(key: PageKey): key is OfferHashKey {
+  return (OFFER_HASH_KEYS as readonly string[]).includes(key);
+}
+
+export function isGalleryHashKey(key: PageKey): key is GalleryHashKey {
+  return (GALLERY_HASH_KEYS as readonly string[]).includes(key);
+}
 
 const slugsConfig: Record<Language, Record<PageKey, string>> = {
   pl: {
@@ -58,6 +69,7 @@ const slugsConfig: Record<Language, Record<PageKey, string>> = {
     [PAGE_KEYS.CONTACT]: "kontakt",
     [PAGE_KEYS.PRIVACY_POLICY]: "polityka-prywatnosci",
     [PAGE_KEYS.TERMS]: "regulamin",
+    [PAGE_KEYS.REVIEWS]: "opinie-klientow",
     [PAGE_KEYS.NOT_FOUND]: "404",
     [PAGE_KEYS.OFFER_TENTS]: "namioty",
     [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: "stoly-krzesla-obrusy",
@@ -75,12 +87,13 @@ const slugsConfig: Record<Language, Record<PageKey, string>> = {
   en: {
     [PAGE_KEYS.HOME]: "",
     [PAGE_KEYS.ABOUT]: "about-us",
-    [PAGE_KEYS.OFFER]: "offer", // Upewnij się, że ten slug istnieje i nie jest pusty
+    [PAGE_KEYS.OFFER]: "offer",
     [PAGE_KEYS.GALLERY]: "gallery",
     [PAGE_KEYS.PRICING]: "pricing",
     [PAGE_KEYS.CONTACT]: "contact",
     [PAGE_KEYS.PRIVACY_POLICY]: "privacy-policy",
     [PAGE_KEYS.TERMS]: "terms-of-service",
+    [PAGE_KEYS.REVIEWS]: "client-reviews",
     [PAGE_KEYS.NOT_FOUND]: "404",
     [PAGE_KEYS.OFFER_TENTS]: "tents",
     [PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS]: "tables-chairs-linens",
@@ -116,7 +129,6 @@ export function getInternalRoutePath(pageKey: PageKey, lang: Language): string {
   return `/${getLocalizedSlug(pageKey, lang)}`;
 }
 
-// Wersja getLocalizedPath FPLP v12.7
 export function getLocalizedPath(
   pageKey: PageKey,
   lang: Language,
@@ -126,13 +138,10 @@ export function getLocalizedPath(
   let basePathKeyToUse: PageKey = pageKey;
   let actualHashKeyForSlug: PageKey | undefined = hashPageKey;
 
-  if (typeof pageKey === "string" && pageKey.startsWith("OFFER_")) {
+  if (isOfferHashKey(pageKey)) {
     basePathKeyToUse = PAGE_KEYS.OFFER;
     actualHashKeyForSlug = pageKey;
-  } else if (
-    typeof pageKey === "string" &&
-    pageKey.startsWith("GALLERY_PHOTO_")
-  ) {
+  } else if (isGalleryHashKey(pageKey)) {
     basePathKeyToUse = PAGE_KEYS.GALLERY;
     actualHashKeyForSlug = pageKey;
   }
@@ -140,14 +149,12 @@ export function getLocalizedPath(
   let fullPath: string;
 
   if (basePathKeyToUse === PAGE_KEYS.HOME) {
-    fullPath = langPrefix || "/"; // Dla PL: "/", dla EN: "/en"
+    fullPath = langPrefix || "/";
   } else {
     const slug = getLocalizedSlug(basePathKeyToUse, lang);
     if (slug) {
-      // Jeśli slug istnieje i nie jest pusty
-      fullPath = `${langPrefix}/${slug}`; // Np. /en/offer lub /oferta
+      fullPath = `${langPrefix}/${slug}`;
     } else {
-      // Fallback, jeśli slug jest pusty dla strony innej niż HOME (nie powinno się zdarzyć)
       fullPath = langPrefix || "/";
       console.warn(
         `[getLocalizedPath] Slug for basePathKey "${basePathKeyToUse}" (lang "${lang}") is empty. Resulting path: "${fullPath}"`
@@ -158,14 +165,12 @@ export function getLocalizedPath(
   if (actualHashKeyForSlug) {
     const hashSlugValue = getLocalizedSlug(actualHashKeyForSlug, lang);
     if (hashSlugValue) {
-      // Dodaj hash tylko jeśli hashSlugValue nie jest pusty
       fullPath += `#${hashSlugValue}`;
     }
   }
   return fullPath;
 }
 
-// Wersja FPLP v12.6 (findPageKeyByLocalizedPath - pozostaje taka sama jak w poprzedniej odpowiedzi)
 export function findPageKeyByLocalizedPath(currentFullPath: string): {
   pageKey: PageKey | null;
   lang: Language;
@@ -173,7 +178,6 @@ export function findPageKeyByLocalizedPath(currentFullPath: string): {
   hashSlug: string | null;
   basePathWithoutLang: string;
 } {
-  // console.log(`%c[FPLP v12.6] Input currentFullPath: "${currentFullPath}"`, "color: blue;");
   const [pathAndQuery, hashValueFromUrl] = currentFullPath.split("#");
   const pathOnly = pathAndQuery.split("?")[0];
 
@@ -203,8 +207,8 @@ export function findPageKeyByLocalizedPath(currentFullPath: string): {
   foundPageKey =
     pageKeyCandidates.find(
       (key) =>
-        !key.startsWith("OFFER_") &&
-        !key.startsWith("GALLERY_PHOTO_") &&
+        !isOfferHashKey(key) &&
+        !isGalleryHashKey(key) &&
         currentLangSlugs[key] === slugToAnalyze
     ) || null;
 
@@ -217,9 +221,6 @@ export function findPageKeyByLocalizedPath(currentFullPath: string): {
   }
 
   if (!foundPageKey) {
-    console.warn(
-      `[FPLP v12.6] No pageKey found for slug "${slugToAnalyze}" (lang "${detectedLang}"). Path: "${currentFullPath}". Setting to NOT_FOUND.`
-    );
     foundPageKey = PAGE_KEYS.NOT_FOUND;
   }
 
@@ -229,18 +230,11 @@ export function findPageKeyByLocalizedPath(currentFullPath: string): {
       pageKeyCandidates.find(
         (key) => currentLangSlugs[key] === hashValueFromUrl
       ) || null;
-
-    if (!foundHashKey && foundPageKey !== PAGE_KEYS.NOT_FOUND) {
-      console.warn(
-        `[FPLP v12.6] No PageKey found for hashSlug "${hashValueFromUrl}" (lang "${detectedLang}"). Path: "${currentFullPath}".`
-      );
-    }
   }
 
-  const langToReturn = detectedLang;
   return {
     pageKey: foundPageKey,
-    lang: langToReturn,
+    lang: detectedLang,
     hashKey: foundHashKey,
     hashSlug: hashValueFromUrl || null,
     basePathWithoutLang: basePathWithoutLang,

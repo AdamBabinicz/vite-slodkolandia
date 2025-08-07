@@ -163,6 +163,7 @@ export default function Navbar() {
                   src="/img/logo.avif"
                   alt={t("hero.title")}
                   className="w-10 h-10"
+                  loading="lazy"
                 />
                 <span className="brand-title text-xl font-bold text-slate-800 dark:text-white whitespace-nowrap">
                   <span className="brand-main">
@@ -376,11 +377,7 @@ export default function Navbar() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="lg:hidden fixed inset-x-0 top-16 z-40 bg-white/95 dark:bg-slate-900/95 overflow-y-auto"
-              style={{
-                WebkitOverflowScrolling: "touch",
-                maxHeight: "calc(100vh - 4rem)",
-              }}
+              className="lg:hidden fixed inset-x-0 top-16 z-40 bg-white/95 dark:bg-slate-900/95 overflow-y-auto max-h-[calc(100vh-4rem)]"
             >
               <div className="px-4 pt-2 pb-24 space-y-1">
                 <WouterLink href={navLinkHref(PAGE_KEYS.HOME)}>

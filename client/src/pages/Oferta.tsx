@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter } from "lucide-react";
+import { Filter, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import AttractionCard from "@/components/AttractionCard";
 import CallToAction from "@/components/CallToAction";
@@ -11,13 +11,38 @@ import {
   Attraction,
 } from "@/data/attractions";
 import { useLanguage } from "@/hooks/useLanguage";
-import { useLocation } from "wouter";
-import {
-  getLocalizedSlug,
-  PageKey,
-  PAGE_KEYS,
-  getInternalRoutePath,
-} from "@/config/paths";
+import { getLocalizedSlug, PageKey, PAGE_KEYS } from "@/config/paths";
+
+// Ta sekcja została z pliku, ale nie będzie już używana do interaktywnego filtrowania.
+// Zostaje, bo może być przydatna w przyszłości
+const ReviewCard = ({
+  author,
+  text,
+  eventType,
+}: {
+  author: string;
+  text: string;
+  eventType: string;
+}) => (
+  <motion.div
+    className="bg-card dark:bg-slate-800 p-6 rounded-lg shadow-lg"
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5 }}
+  >
+    <div className="flex items-center mb-2">
+      {[...Array(5)].map((_, i) => (
+        <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+      ))}
+    </div>
+    <p className="text-muted-foreground italic mb-4">"{text}"</p>
+    <div className="text-right">
+      <p className="font-bold text-foreground">{author}</p>
+      <p className="text-sm text-muted-foreground">{eventType}</p>
+    </div>
+  </motion.div>
+);
 
 interface CategoryFilter {
   id: string;
@@ -30,117 +55,75 @@ interface CategoryFilter {
 export default function Oferta() {
   const [activeCategory, setActiveCategory] = useState("all");
   const { t, language } = useLanguage();
-  const [location, navigate] = useLocation();
 
   const categories: CategoryFilter[] = [
     {
       id: "all",
       nameKey: "nav.allAttractions",
       pageKeyForHash: null,
-      count: attractions.filter((attr) => attr.category !== "uslugi").length,
-      filterLogic: (attr) => attr.category !== "uslugi",
+      count: attractions.filter(
+        (attr: Attraction) => attr.category !== "uslugi"
+      ).length,
+      filterLogic: (attr: Attraction) => attr.category !== "uslugi",
     },
     {
       id: "namioty",
       nameKey: "nav.tents",
       pageKeyForHash: PAGE_KEYS.OFFER_TENTS,
       count: getAttractionsByCategory("namioty").length,
-      filterLogic: (attr) => attr.category === "namioty",
+      filterLogic: (attr: Attraction) => attr.category === "namioty",
     },
     {
       id: "stoly-krzesla-obrusy",
       nameKey: "nav.tablesChairs",
       pageKeyForHash: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
       count: getAttractionsByCategory("wyposazenie").length,
-      filterLogic: (attr) => attr.category === "wyposazenie",
+      filterLogic: (attr: Attraction) => attr.category === "wyposazenie",
     },
     {
       id: "dmuchance",
       nameKey: "nav.inflatables",
       pageKeyForHash: PAGE_KEYS.OFFER_INFLATABLES,
       count: getAttractionsByCategory("dmuchance").length,
-      filterLogic: (attr) => attr.category === "dmuchance",
+      filterLogic: (attr: Attraction) => attr.category === "dmuchance",
     },
     {
       id: "wata-cukrowa",
       nameKey: "nav.cottonCandy",
       pageKeyForHash: PAGE_KEYS.OFFER_COTTON_CANDY,
-      count: attractions.filter((a) => a.id === "wata-cukrowa").length,
-      filterLogic: (attr) => attr.id === "wata-cukrowa",
+      count: attractions.filter((a: Attraction) => a.id === "wata-cukrowa")
+        .length,
+      filterLogic: (attr: Attraction) => attr.id === "wata-cukrowa",
     },
     {
       id: "popcorn",
       nameKey: "nav.popcorn",
       pageKeyForHash: PAGE_KEYS.OFFER_POPCORN,
-      count: attractions.filter((a) => a.id === "popcorn").length,
-      filterLogic: (attr) => attr.id === "popcorn",
+      count: attractions.filter((a: Attraction) => a.id === "popcorn").length,
+      filterLogic: (attr: Attraction) => attr.id === "popcorn",
     },
     {
       id: "fontanna-czekoladowa",
       nameKey: "nav.chocolateFountain",
       pageKeyForHash: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
-      count: attractions.filter((a) => a.id === "fontanna-czekoladowa").length,
-      filterLogic: (attr) => attr.id === "fontanna-czekoladowa",
+      count: attractions.filter(
+        (a: Attraction) => a.id === "fontanna-czekoladowa"
+      ).length,
+      filterLogic: (attr: Attraction) => attr.id === "fontanna-czekoladowa",
     },
   ];
 
-  useEffect(() => {
-    const hash = window.location.hash.replace("#", "");
-    const categoryFromHash = categories.find((cat) => {
-      if (cat.id === "all" && !hash) return true;
-      if (
-        cat.pageKeyForHash &&
-        hash === getLocalizedSlug(cat.pageKeyForHash, language)
-      )
-        return true;
-      return false;
-    });
-
-    const internalOfferPathForLang = getInternalRoutePath(
-      PAGE_KEYS.OFFER,
-      language
-    );
-
-    if (categoryFromHash) {
-      if (activeCategory !== categoryFromHash.id) {
-        setActiveCategory(categoryFromHash.id);
-      }
-    } else if (!hash && location.startsWith(internalOfferPathForLang)) {
-      if (activeCategory !== "all") {
-        setActiveCategory("all");
-      }
-    }
-  }, [location, language, activeCategory]); // Dodano activeCategory do zależności
-
+  // Przywrócenie prostej logiki filtrowania opartej tylko na stanie komponentu
   const selectedFilter = categories.find((cat) => cat.id === activeCategory);
   const filteredAttractions = selectedFilter
     ? attractions.filter(selectedFilter.filterLogic)
-    : attractions.filter((attr) => attr.category !== "uslugi");
+    : attractions.filter((attr: Attraction) => attr.category !== "uslugi");
 
   const activeCategoryName = selectedFilter?.nameKey || "nav.allAttractions";
 
+  // Prosta funkcja obsługi kliknięcia - tak jak w działającym przykładzie
   const handleCategoryChange = (categoryId: string) => {
-    const categoryObject = categories.find((c) => c.id === categoryId);
     setActiveCategory(categoryId);
-
-    let pathForWouter = getInternalRoutePath(PAGE_KEYS.OFFER, language);
-    let hashTargetSlug = "";
-
-    if (
-      categoryObject &&
-      categoryObject.id !== "all" &&
-      categoryObject.pageKeyForHash
-    ) {
-      hashTargetSlug = getLocalizedSlug(
-        categoryObject.pageKeyForHash,
-        language
-      );
-      if (hashTargetSlug) pathForWouter += `#${hashTargetSlug}`;
-    }
-
-    if (location !== pathForWouter) {
-      navigate(pathForWouter, { replace: true });
-    }
   };
 
   return (
@@ -174,8 +157,8 @@ export default function Oferta() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
               <div className="w-full md:w-auto flex items-center justify-center md:justify-start mb-2 md:mb-0 md:mr-4">
-                <Filter className="h-4 w-4 text-muted-foreground mr-1.5" />
-                <span className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+                <Filter className="h-4 w-4 dark:text-slate-300 text-muted-foreground mr-1.5" />
+                <span className="text-sm font-medium dark:text-slate-300 text-muted-foreground whitespace-nowrap">
                   {t("offerPage.filterLabel")}
                 </span>
               </div>
@@ -332,7 +315,6 @@ export default function Oferta() {
                   </p>
                 </div>
               </motion.div>
-
               <div className="lg:col-span-2">
                 <motion.div
                   initial={{ opacity: 0, x: 30 }}

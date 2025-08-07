@@ -3,7 +3,7 @@ export const stockPhotos = {
   partyTents: [
     "/img/n/32.avif",
     "/img/n/29.avif",
-    "/img/n/18.avif",
+    "/img/n/31.avif",
     "/img/n/26.avif",
     "/img/n/28.avif",
     "/img/n/21.avif",

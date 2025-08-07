@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Phone, Calendar, Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/hooks/useLanguage";
+// Importujemy potrzebne funkcje i stałe
+import { getInternalRoutePath, PAGE_KEYS } from "@/config/paths";
 
 interface CallToActionProps {
   variant?: "primary" | "secondary";
@@ -13,7 +15,11 @@ export default function CallToAction({
   variant = "primary",
   className = "",
 }: CallToActionProps) {
-  const { t } = useLanguage();
+  // Pobieramy aktualny język
+  const { t, language } = useLanguage();
+
+  // Generujemy dynamiczną ścieżkę do strony kontaktowej
+  const contactPath = getInternalRoutePath(PAGE_KEYS.CONTACT, language);
 
   if (variant === "secondary") {
     return (
@@ -36,7 +42,8 @@ export default function CallToAction({
               <Phone className="h-4 w-4" />
               <span>{t("cta.callNow")}</span>
             </a>
-            <Link href="/kontakt">
+            {/* Używamy dynamicznej ścieżki */}
+            <Link href={contactPath}>
               <Button
                 variant="outline"
                 size="lg"
@@ -76,7 +83,8 @@ export default function CallToAction({
               <Phone className="h-5 w-5" />
               <span>+48 531 890 827</span>
             </a>
-            <Link href="/kontakt">
+            {/* Używamy dynamicznej ścieżki */}
+            <Link href={contactPath}>
               <Button
                 variant="outline"
                 size="lg"

@@ -11,7 +11,13 @@ interface LightboxProps {
   title?: string;
 }
 
-export default function Lightbox({ isOpen, onClose, images, currentIndex, title }: LightboxProps) {
+export default function Lightbox({
+  isOpen,
+  onClose,
+  images,
+  currentIndex,
+  title,
+}: LightboxProps) {
   const [current, setCurrent] = useState(currentIndex);
 
   useEffect(() => {
@@ -63,7 +69,10 @@ export default function Lightbox({ isOpen, onClose, images, currentIndex, title 
         className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center modal-backdrop"
         onClick={onClose}
       >
-        <div className="relative max-w-5xl max-h-full p-4 w-full" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="relative max-w-5xl max-h-full p-4 w-full"
+          onClick={(e) => e.stopPropagation()}
+        >
           {/* Close Button */}
           <Button
             variant="ghost"
@@ -82,8 +91,9 @@ export default function Lightbox({ isOpen, onClose, images, currentIndex, title 
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ duration: 0.3 }}
               src={images[current]}
-              alt={`${title || 'Image'} ${current + 1}`}
+              alt={`${title || "Image"} ${current + 1}`}
               className="max-w-full max-h-[90vh] object-contain mx-auto"
+              loading="lazy"
             />
 
             {/* Navigation Arrows */}

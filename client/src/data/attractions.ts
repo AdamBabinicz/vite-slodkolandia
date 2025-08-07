@@ -1,4 +1,4 @@
-import { PageKey, PAGE_KEYS } from "@/config/paths"; // Zaimportuj PageKey i PAGE_KEYS
+import { PageKey, PAGE_KEYS } from "@/config/paths";
 
 export interface SpecificationDetail {
   labelKey: string;
@@ -29,7 +29,8 @@ export interface Attraction {
   specifications: SpecificationDetail[];
   pricingOptions: PricingOption[];
   pricingDisplayMode?: "standard" | "itemList";
-  offerSectionPageKey?: PageKey; // NOWE POLE
+  offerSectionPageKey?: PageKey;
+  pricingNoteKey?: string;
 }
 
 export const attractions: Attraction[] = [
@@ -76,14 +77,14 @@ export const attractions: Attraction[] = [
     pricingOptions: [
       {
         base: 600,
-        currency: "zł",
+        currency: "pln",
         period: "impreza",
         descriptionKey: "attractionsData.namioty-imprezowe.option1.description",
         capacityKey: "attractionsData.namioty-imprezowe.option1.capacity",
       },
       {
         base: 800,
-        currency: "zł",
+        currency: "pln",
         period: "impreza",
         descriptionKey: "attractionsData.namioty-imprezowe.option2.description",
         capacityKey: "attractionsData.namioty-imprezowe.option2.capacity",
@@ -114,7 +115,7 @@ export const attractions: Attraction[] = [
         value: "specification.value.tableRentalDesc",
         isTranslatableValue: true,
         price: 25,
-        currency: "zł",
+        currency: "pln",
         period: "sztuka/dzień",
       },
       {
@@ -122,7 +123,7 @@ export const attractions: Attraction[] = [
         value: "specification.value.chairRentalDesc",
         isTranslatableValue: true,
         price: 10,
-        currency: "zł",
+        currency: "pln",
         period: "sztuka/dzień",
       },
       {
@@ -130,7 +131,7 @@ export const attractions: Attraction[] = [
         value: "specification.value.tableclothRentalDesc",
         isTranslatableValue: true,
         price: 20,
-        currency: "zł",
+        currency: "pln",
         period: "sztuka/dzień",
       },
       {
@@ -138,7 +139,7 @@ export const attractions: Attraction[] = [
         value: "specification.value.grassRentalDesc",
         isTranslatableValue: true,
         price: 0,
-        currency: "zł",
+        currency: "pln",
         period: "gratis",
       },
       {
@@ -146,11 +147,11 @@ export const attractions: Attraction[] = [
         value: "specification.value.lightingRentalDesc",
         isTranslatableValue: true,
         price: 0,
-        currency: "zł",
+        currency: "pln",
         period: "gratis",
       },
     ],
-    pricingOptions: [{ base: 10, currency: "zł", period: "od" }],
+    pricingOptions: [{ base: 10, currency: "pln", period: "od" }],
     pricingDisplayMode: "itemList",
     offerSectionPageKey: PAGE_KEYS.OFFER_TABLES_CHAIRS_LINENS,
   },
@@ -186,9 +187,9 @@ export const attractions: Attraction[] = [
         value: "specification.value.capacity815children",
         isTranslatableValue: true,
       },
-      { labelKey: "specification.label.power", value: "230V/16A" },
+      { labelKey: "specification.label.power", value: "230 V/16A" },
     ],
-    pricingOptions: [{ base: 800, currency: "zł", period: "impreza" }],
+    pricingOptions: [{ base: 800, currency: "pln", period: "impreza" }],
     pricingDisplayMode: "standard",
     offerSectionPageKey: PAGE_KEYS.OFFER_INFLATABLES,
   },
@@ -238,7 +239,7 @@ export const attractions: Attraction[] = [
         isTranslatableValue: true,
       },
     ],
-    pricingOptions: [{ base: 250, currency: "zł", period: "hour" }],
+    pricingOptions: [{ base: 120, currency: "pln", period: "hour" }],
     pricingDisplayMode: "standard",
     offerSectionPageKey: PAGE_KEYS.OFFER_COTTON_CANDY,
   },
@@ -288,7 +289,7 @@ export const attractions: Attraction[] = [
         isTranslatableValue: true,
       },
     ],
-    pricingOptions: [{ base: 280, currency: "zł", period: "hour" }],
+    pricingOptions: [{ base: 140, currency: "pln", period: "hour" }],
     pricingDisplayMode: "standard",
     offerSectionPageKey: PAGE_KEYS.OFFER_POPCORN,
   },
@@ -342,9 +343,10 @@ export const attractions: Attraction[] = [
         isTranslatableValue: true,
       },
     ],
-    pricingOptions: [{ base: 800, currency: "zł", period: "impreza" }],
+    pricingOptions: [{ base: 800, currency: "pln", period: "impreza" }],
     pricingDisplayMode: "standard",
     offerSectionPageKey: PAGE_KEYS.OFFER_CHOCOLATE_FOUNTAIN,
+    pricingNoteKey: "modal.pricingNote.fountain",
   },
   {
     id: "kompleksowa-obsluga",
@@ -396,7 +398,7 @@ export const attractions: Attraction[] = [
         isTranslatableValue: true,
       },
     ],
-    pricingOptions: [{ base: 500, currency: "zł", period: "event" }],
+    pricingOptions: [{ base: 500, currency: "pln", period: "event" }],
     pricingDisplayMode: "standard",
   },
 ];

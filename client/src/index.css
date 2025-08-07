@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Ruslan+Display&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Ruslan+Display&display=swap"); */
 
 @tailwind base;
 @tailwind components;
@@ -225,4 +225,8 @@
     transform: translateY(0);
     opacity: 1;
   }
+}
+img {
+  max-width: 100%;
+  height: auto;
 }

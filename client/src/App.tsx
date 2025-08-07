@@ -10,6 +10,7 @@ import Footer from "./components/Footer";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import Home from "./pages/Home";
 import Oferta from "./pages/Oferta";
+import Opinie from "./pages/Opinie";
 import Galeria from "./pages/Galeria";
 import Cennik from "./pages/Cennik";
 import Kontakt from "./pages/Kontakt";
@@ -29,25 +30,17 @@ import {
 } from "@/config/paths";
 import SEOHead from "@/components/SEOHead";
 
-const APP_DEBUG_MODE = false;
-
 function ScrollRestoration() {
-  const [wouterLocation] = useLocation();
+  const [location] = useLocation();
 
   useEffect(() => {
-    const hashValue = window.location.hash.replace("#", "");
-    if (!hashValue) {
+    const timer = setTimeout(() => {
       window.scrollTo(0, 0);
-    } else {
-      const scrollTimeoutId = setTimeout(() => {
-        const element = document.getElementById(hashValue);
-        if (element) {
-          element.scrollIntoView({ block: "start" });
-        }
-      }, 200);
-      return () => clearTimeout(scrollTimeoutId);
-    }
-  }, [wouterLocation]);
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [location]);
+
   return null;
 }
 
@@ -58,7 +51,6 @@ function LanguageRouterLogic() {
     setLanguage: setGlobalLanguage,
     isLanguageInitialized,
   } = useLanguage();
-
   const logicRunCounter = useRef(0);
   const userInitiatedLangChangeRef = useRef<Language | null>(null);
 
@@ -69,37 +61,26 @@ function LanguageRouterLogic() {
   };
 
   useEffect(() => {
-    if (!isLanguageInitialized) {
-      return;
-    }
-
-    if (userInitiatedLangChangeRef.current === contextLanguage) {
-      return;
-    }
-
+    if (!isLanguageInitialized) return;
+    if (userInitiatedLangChangeRef.current === contextLanguage) return;
     userInitiatedLangChangeRef.current = contextLanguage;
     logicRunCounter.current = 0;
-
-    const currentBrowserFullPath =
-      window.location.pathname + window.location.search + window.location.hash;
+    const currentBrowserFullPath = wouterLocation;
     const {
       pageKey: currentPageKeyFromUrl,
       lang: langCurrentlyInUrl,
       hashKey: currentHashKeyFromUrl,
     } = findPageKeyByLocalizedPath(currentBrowserFullPath);
-
     if (langCurrentlyInUrl !== contextLanguage) {
       const targetPageKeyForNav =
         currentPageKeyFromUrl && currentPageKeyFromUrl !== PAGE_KEYS.NOT_FOUND
           ? currentPageKeyFromUrl
           : PAGE_KEYS.HOME;
-
       const newAbsolutePathTarget = getLocalizedPath(
         targetPageKeyForNav,
         contextLanguage,
         currentHashKeyFromUrl || undefined
       );
-
       let relativePathForNavigate = getInternalRoutePath(
         targetPageKeyForNav,
         contextLanguage
@@ -111,14 +92,12 @@ function LanguageRouterLogic() {
         );
         if (hashSlug) relativePathForNavigate += `#${hashSlug}`;
       }
-
       const normalizedCurrent = normalizePathForComparison(
         currentBrowserFullPath
       );
       const normalizedNewTargetAbsolute = normalizePathForComparison(
         newAbsolutePathTarget
       );
-
       if (normalizedCurrent !== normalizedNewTargetAbsolute) {
         navigate(relativePathForNavigate, { replace: true });
       } else {
@@ -127,48 +106,36 @@ function LanguageRouterLogic() {
     } else {
       userInitiatedLangChangeRef.current = null;
     }
-  }, [contextLanguage, isLanguageInitialized, navigate]);
+  }, [contextLanguage, isLanguageInitialized, navigate, wouterLocation]);
 
   useEffect(() => {
-    if (!isLanguageInitialized) {
-      return;
-    }
-
-    const currentBrowserFullPathForCheck =
-      window.location.pathname + window.location.search + window.location.hash;
+    if (!isLanguageInitialized) return;
+    const currentBrowserFullPathForCheck = wouterLocation;
     const { lang: langInCurrentUrlCheck } = findPageKeyByLocalizedPath(
       currentBrowserFullPathForCheck
     );
-
     if (
       userInitiatedLangChangeRef.current === contextLanguage &&
       langInCurrentUrlCheck !== contextLanguage
-    ) {
+    )
       return;
-    }
-
     logicRunCounter.current += 1;
     const runId = logicRunCounter.current;
-    const currentBrowserFullPath =
-      window.location.pathname + window.location.search + window.location.hash;
-
+    const currentBrowserFullPath = wouterLocation;
     if (runId > 6) {
       logicRunCounter.current = 0;
       userInitiatedLangChangeRef.current = null;
       return;
     }
-
     const {
       pageKey: parsedPageKeyFromUrl,
       lang: langDetectedInUrl,
       hashKey: parsedHashKeyFromUrl,
     } = findPageKeyByLocalizedPath(currentBrowserFullPath);
-
     if (langDetectedInUrl !== contextLanguage) {
       setGlobalLanguage(langDetectedInUrl, { preventNavigation: true });
       return;
     }
-
     const pageKeyToUse =
       parsedPageKeyFromUrl && parsedPageKeyFromUrl !== PAGE_KEYS.NOT_FOUND
         ? parsedPageKeyFromUrl
@@ -184,7 +151,6 @@ function LanguageRouterLogic() {
     const normalizedCanonical = normalizePathForComparison(
       canonicalAbsolutePath
     );
-
     if (normalizedCurrent !== normalizedCanonical) {
       let relativePathForNavigate = getInternalRoutePath(
         pageKeyToUse,
@@ -252,6 +218,10 @@ function AppRoutes() {
         path={getInternalRoutePath(PAGE_KEYS.PRIVACY_POLICY, language)}
         component={PolitykaPrywatnosci}
       />
+      <Route
+        path={getInternalRoutePath(PAGE_KEYS.REVIEWS, language)}
+        component={Opinie}
+      />
       <Route component={NotFound} />
     </Switch>
   );
@@ -273,14 +243,9 @@ function AppMainContent() {
 
 function LanguageAwareRouter() {
   const { language, isLanguageInitialized } = useLanguage();
-
-  if (!isLanguageInitialized) {
-    return null;
-  }
-
+  if (!isLanguageInitialized) return null;
   const base = language === defaultLang ? "" : `/${language}`;
   const routerKey = `main-router-${base || "root"}`;
-
   return (
     <WouterRouter key={routerKey} base={base}>
       <SEOHead />

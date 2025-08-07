@@ -32,8 +32,8 @@ export default function Kontakt() {
       icon: <Mail className="h-6 w-6 text-emerald-600" />,
       titleKey: "contactPage.emailTitle",
       descriptionKey: "contactPage.emailDescription",
-      details: "mariusz1989poczta@wp.pl",
-      action: "mailto:mariusz1989poczta@wp.pl",
+      details: "mariuszek1989poczta@wp.pl",
+      action: "mailto:mariuszek1989poczta@wp.pl",
       bgColor: "bg-emerald-100",
     },
     {
@@ -41,7 +41,7 @@ export default function Kontakt() {
       titleKey: "contactPage.whatsappTitle",
       descriptionKey: "contactPage.whatsappDescription",
       details: "+48 531 890 827",
-      action: "https://wa.me/48531890827",
+      action: "https://m.me/wata.cukrowa.popcorn",
       bgColor: "bg-purple-100",
     },
     {

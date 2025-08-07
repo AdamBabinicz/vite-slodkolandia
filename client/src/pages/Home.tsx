@@ -50,6 +50,7 @@ export default function Home() {
                 src={image}
                 alt={`Event setup ${index + 1}`}
                 className="w-full h-full object-cover"
+                loading="lazy"
               />
               <div className="absolute inset-0 hero-gradient"></div>
             </div>
